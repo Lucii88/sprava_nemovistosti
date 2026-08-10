@@ -66,6 +66,7 @@ Provedeno 10. 8. 2026 nad prototypem `prototyp/index.html`.
 3. **Komentář pod grafem** („1× změna ceny od 1/2024 · aktuálně kancelář K1") odstraněn — počítal se sice z dat, ale neříkal nic, co v grafu není.
 4. **Skloňování počtů** („1 nemovitosti") — doplněno pevné pravidlo 1 / 2–4 / 5+.
 5. **„jeden chybí!"** → „1 chybí" (číslo z výpočtu, ne slovem).
+6. **Termín u poznámky jako samostatné pole.** Dřív se termín psal do textu poznámky („Dodělat dveře. 1.9.2026") — aplikace by ho musela z věty vyčíst, což je bez AI nespolehlivé a s AI nevhodné (u dokladů a termínů nesmí nic „hádat"). Nyní má poznámka **text** a **datum termínu** jako dvě oddělená pole; jen díky tomu se termín objeví na nástěnce i v kalendáři. Formulář pro novou poznámku je nahoře, aby se k němu nemuselo rolovat.
 
 ## 5. Závěr
 

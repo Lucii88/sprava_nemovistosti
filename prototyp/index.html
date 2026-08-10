@@ -189,7 +189,14 @@
   .sticky .timeline li::before{background:#C08A1E}
   .sticky .timeline .d{color:#8A7434}
   .sticky .tnote{background:#F3DE9A; color:#7A5A12}
-  .sticky .search{background:#FFFDF0; border-color:#E4CB82}
+  .sticky .search{background:#FFFDF0; border-color:#E4CB82; width:100%; min-width:0}
+  .stickyhead{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px}
+  .stickyhead h2{margin:0}
+  .addnote{width:28px; height:28px; border-radius:8px; border:1px solid #E4CB82; background:#FFFDF0; color:#7A5A12; font-size:1.15rem; font-weight:800; line-height:1; display:grid; place-items:center}
+  .addnote:hover{background:#F6E9AC}
+  .noteform{display:none; background:rgba(255,253,240,.7); border:1px dashed #E4CB82; border-radius:8px; padding:10px 12px; margin-bottom:12px}
+  .noteform.on{display:block}
+  .noteform label{display:block; font-size:.68rem; text-transform:uppercase; letter-spacing:.08em; color:#8A7434; margin-bottom:3px; font-weight:700}
   .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px}
   .timeline{list-style:none}
   .timeline li{padding:8px 0 8px 16px; border-left:2px solid var(--mint-line); position:relative; font-size:.85rem}
@@ -491,12 +498,21 @@
       </div>
       <div class="dcol">
         <div class="sticky">
-          <h2>Poznámky</h2>
-          <ul class="timeline" id="det-notes"></ul>
-          <div class="toolbar" style="margin:auto 0 0; padding-top:14px">
-            <input class="search" style="flex:1; min-width:0" placeholder="Nová poznámka… (+ volitelný termín)" aria-label="Nová poznámka">
-            <button class="btn small" id="note-save">Uložit</button>
+          <div class="stickyhead">
+            <h2>Poznámky</h2>
+            <button class="addnote" id="note-open" aria-label="Přidat poznámku" title="Přidat poznámku">+</button>
           </div>
+          <div class="noteform" id="note-form">
+            <label>Text poznámky</label>
+            <input class="search" id="note-text" placeholder="např. Dodělat dveře" aria-label="Text poznámky">
+            <label style="margin-top:8px">Termín <span style="text-transform:none; letter-spacing:0">(nepovinný — objeví se na nástěnce a v kalendáři)</span></label>
+            <input class="search" type="date" id="note-date" aria-label="Termín poznámky">
+            <div style="display:flex; gap:8px; margin-top:10px">
+              <button class="btn small" id="note-save">Uložit</button>
+              <button class="btn sec small" id="note-cancel">Zrušit</button>
+            </div>
+          </div>
+          <ul class="timeline" id="det-notes"></ul>
         </div>
       </div>
     </div>
@@ -1168,7 +1184,26 @@
   document.querySelectorAll(".savebtn").forEach(function(b){
     b.addEventListener("click", function(){ toast("✓ Uloženo — v prototypu se data neukládají."); });
   });
-  document.getElementById("note-save").addEventListener("click", function(){ toast("✓ Poznámka uložena — v prototypu se data neukládají."); });
+  var nf = document.getElementById("note-form");
+  document.getElementById("note-open").addEventListener("click", function(){
+    nf.classList.toggle("on");
+    if(nf.classList.contains("on")){ document.getElementById("note-text").focus(); }
+  });
+  document.getElementById("note-cancel").addEventListener("click", function(){
+    nf.classList.remove("on");
+    document.getElementById("note-text").value = "";
+    document.getElementById("note-date").value = "";
+  });
+  document.getElementById("note-save").addEventListener("click", function(){
+    var txt = document.getElementById("note-text").value.trim();
+    var dt = document.getElementById("note-date").value;
+    if(!txt){ toast("Napište prosím text poznámky."); return; }
+    nf.classList.remove("on");
+    document.getElementById("note-text").value = "";
+    document.getElementById("note-date").value = "";
+    toast(dt ? "✓ Poznámka s termínem uložena — objeví se na nástěnce i v kalendáři. (V prototypu se data neukládají.)"
+             : "✓ Poznámka uložena. (V prototypu se data neukládají.)");
+  });
   document.getElementById("zipbtn").addEventListener("click", function(){ toast("⬇ V ostré verzi se stáhne ZIP všech PDF za zvolené období."); });
 
   /* ---- wizard ---- */
