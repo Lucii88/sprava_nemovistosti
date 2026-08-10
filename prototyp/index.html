@@ -217,9 +217,18 @@
   .alert.warn{background:var(--warn-bg); color:var(--warn); border:1px solid #EBD9AE}
   .alert.ok{background:var(--ok-bg); color:var(--ok); border:1px solid #CBE3D3}
   .alert .act{margin-left:auto}
-  .calline{border-left:4px solid var(--line); padding-left:10px; border-radius:2px}
-  .calline.ok{border-left-color:var(--ok)}
-  .calline.old{border-left-color:var(--faint); color:var(--muted)}
+  .doclist{display:flex; flex-direction:column; gap:8px}
+  .docrow{display:flex; gap:12px; align-items:center; border:1px solid var(--line); border-radius:10px; padding:10px 12px; background:var(--surface); cursor:pointer; text-align:left; width:100%; font:inherit}
+  .docrow:hover{background:var(--mint-soft); border-color:var(--petrol-70)}
+  .docrow .pdfico{width:34px; height:40px; border-radius:5px; background:var(--mint-soft); border:1px solid var(--mint-line); color:var(--petrol); font-size:.6rem; font-weight:800; letter-spacing:.04em; display:grid; place-items:center; flex:none; position:relative}
+  .docrow .pdfico::after{content:""; position:absolute; top:0; right:0; border-width:0 8px 8px 0; border-style:solid; border-color:var(--surface) var(--surface) var(--mint-line) var(--mint-line)}
+  .docrow .dmain{flex:1; min-width:0}
+  .docrow .dnum{font-weight:800; color:var(--petrol); font-variant-numeric:tabular-nums}
+  .docrow .chev{color:var(--faint); font-size:1.1rem; flex:none}
+  .docrow.old{opacity:.72}
+  .docrow.old .pdfico{background:#F1F1EE; border-color:var(--line); color:var(--faint)}
+  .docrow.old .pdfico::after{border-color:var(--surface) var(--surface) var(--line) var(--line)}
+  .archhead{font-size:.7rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); font-weight:700; margin:14px 0 2px}
   .trend{color:var(--petrol-70); font-size:.75rem; font-weight:700; white-space:nowrap}
   .tnote{background:var(--warn-bg); color:var(--warn); border-radius:6px; padding:0 8px; font-size:.73rem; font-weight:700; white-space:nowrap}
 
@@ -474,8 +483,8 @@
         </div>
         <div class="card">
           <h2>Platební kalendáře</h2>
-          <p class="sub" style="margin-bottom:6px; font-size:.78rem">kliknutím na doklad otevřete PDF</p>
-          <ul class="task-list" id="det-cals"></ul>
+          <p class="sub" style="margin-bottom:10px; font-size:.78rem">kliknutím na doklad otevřete PDF</p>
+          <div id="det-cals"></div>
         </div>
       </div>
       <div class="dcol">
@@ -911,40 +920,61 @@
   /* ---- nájemci ----
      alerts: [úroveň (danger|warn), text, akce]  ·  notes: [datum, text, termín?] */
   var T = [
-    {n:"Novák Autodíly s.r.o.", ent:"AD", ico:"87654321", dic:"CZ87654321", ucet:"987654321/0100", vs:"202614", props:["H1 výrobní hala","G2 garáž","P4 pozemek"], cals:2, rent:"64 500", konec:"31. 8. 2027", kauce:{v:"100 000 Kč", s:"12. 8. 2019", r:"—"},
+    {n:"Novák Autodíly s.r.o.", ent:"AD", ico:"87654321", dic:"CZ87654321", ucet:"987654321/0100", vs:"202614", props:["H1 výrobní hala","G2 garáž","P4 pozemek"], cals:2, rent:"64 500", konec:"31. 8. 2027", endY:2027, endM:8, kauce:{v:"100 000 Kč", s:"12. 8. 2019", r:"—"},
      sml:[{o:"H1 výrobní hala + G2 garáž", p:"1. 9. 2026 – 31. 8. 2027", d:"25. den předch. měs.", items:["nájem 21 %","energie 21 % · záloha"], k:"100 000 Kč · složena 12. 8. 2019"},{o:"P4 pozemek", p:"1. 9. 2026 – 31. 8. 2027", d:"25. den předch. měs.", items:["nájem bez DPH"], k:"bez kauce"}],
      alerts:[["danger","Chybí kalendář nájmu na období od 9/2026 — první splatnost už 25. 8. 2026!","Vystavit"],["warn","Do 15. 10. 2026 zajistit novou požární zprávu",""]],
-     hist:[["2019–2021","hala H1","36 000"],["2022–2023","hala H1 + garáž G2","41 500"],["2024–2025","H1 + G2 + pozemek P4","59 900"],["od 9/2026","H1 + G2 + P4","64 500"]],
-     calList:[["AD-2026-014","nájem H1 · 9/2026–8/2027","vystaven"],["AD-2026-015","energie H1 · 9/2026–8/2027","vystaven"],["AD-2025-041","nájem H1 · 9/2025–8/2026","nahrazen"]],
+     hist:[[2019,9,"hala H1",36000],[2022,1,"hala H1 + garáž G2",41500],[2024,1,"H1 + G2 + pozemek P4",59900],[2026,9,"H1 + G2 + P4",64500]],
+     calList:[["AD-2026-014","nájem — hala H1 + garáž G2","9/2026 – 8/2027","vystaven"],["AD-2026-015","energie (záloha) — hala H1","9/2026 – 8/2027","vystaven"],["AD-2025-041","nájem — hala H1 + garáž G2","9/2025 – 8/2026","nahrazen"],["AD-2025-042","energie (záloha) — hala H1","9/2025 – 8/2026","ukončen"],["AD-2024-033","nájem — hala H1 + garáž G2","9/2024 – 8/2025","ukončen"]],
      notes:[["3. 6. 2026","Vymalována hala H1 na naše náklady — o 900 Kč/měs. navýšen nájem od 9/2026.",""],["15. 3. 2026","Prodlouženo do 8/2027; zajistit novou požární zprávu.","15. 10. 2026"]]},
-    {n:"Pekárna U Lípy s.r.o.", ent:"AD", ico:"11223344", dic:"CZ11223344", ucet:"112233445/0800", vs:"202615", props:["K3 kancelář"], cals:3, rent:"14 200", konec:"31. 12. 2027", kauce:{v:"36 000 Kč", s:"2. 1. 2026", r:"—"},
+
+    {n:"Pekárna U Lípy s.r.o.", ent:"AD", ico:"11223344", dic:"CZ11223344", ucet:"112233445/0800", vs:"202615", props:["K3 kancelář"], cals:3, rent:"14 200", konec:"31. 12. 2027", endY:2027, endM:12, kauce:{v:"36 000 Kč", s:"2. 1. 2026", r:"—"},
      sml:[{o:"K3 kancelář", p:"1. 1. 2026 – 31. 12. 2027", d:"20. den předch. měs.", items:["nájem 21 %","energie 21 % · paušál","voda 12 % · záloha"], k:"36 000 Kč · složena 2. 1. 2026"}],
      alerts:[],
-     hist:[["od 1/2026","kancelář K3","14 200"]], calList:[["AD-2026-016","voda K3 · 9/2026–8/2027","vystaven"]], notes:[["2. 1. 2026","Předání kanceláře, drobné vady v protokolu.",""]]},
-    {n:"KovoTech Dvořák s.r.o.", ent:"BL", ico:"22334455", dic:"CZ22334455", ucet:"223344556/0100", vs:"202620", props:["S2 skladová hala"], cals:2, rent:"52 000", konec:"31. 5. 2027", kauce:{v:"120 000 Kč", s:"1. 6. 2026", r:"—"},
+     hist:[[2026,1,"kancelář K3",14200]],
+     calList:[["AD-2026-016","voda (záloha) — kancelář K3","9/2026 – 8/2027","vystaven"],["AD-2026-003","nájem — kancelář K3","1/2026 – 12/2026","vystaven"],["AD-2026-004","energie (paušál) — kancelář K3","1/2026 – 12/2026","vystaven"]],
+     notes:[["2. 1. 2026","Předání kanceláře, drobné vady v protokolu.",""]]},
+
+    {n:"KovoTech Dvořák s.r.o.", ent:"BL", ico:"22334455", dic:"CZ22334455", ucet:"223344556/0100", vs:"202620", props:["S2 skladová hala"], cals:2, rent:"52 000", konec:"31. 5. 2027", endY:2027, endM:5, kauce:{v:"120 000 Kč", s:"1. 6. 2026", r:"—"},
      sml:[{o:"S2 skladová hala", p:"1. 6. 2026 – 31. 5. 2027", d:"25. den předch. měs.", items:["nájem 21 %","energie 21 % · záloha"], k:"120 000 Kč · složena 1. 6. 2026"}],
      alerts:[["warn","Položka energie platí jen do 31. 12. 2026 — prodloužit platnost, jinak nepůjde vystavit kalendář na celé období",""]],
-     hist:[["od 6/2026","hala S2","52 000"]], calList:[["BL-2026-025","nájem S2 · 6/2026–5/2027","vystaven"]], notes:[]},
-    {n:"AutoServis Beneš", ent:"BL", ico:"33445566", dic:"—", ucet:"334455667/0300", vs:"202621", props:["G5 garáž + dvůr"], cals:1, rent:"9 800", konec:"28. 2. 2027", kauce:{v:"24 000 Kč", s:"1. 3. 2026", r:"—"}, endsSoon:true,
+     hist:[[2026,6,"hala S2",52000]],
+     calList:[["BL-2026-025","nájem — skladová hala S2","6/2026 – 5/2027","vystaven"],["BL-2026-026","energie (záloha) — hala S2","6/2026 – 12/2026","vystaven"]],
+     notes:[]},
+
+    {n:"AutoServis Beneš", ent:"BL", ico:"33445566", dic:"—", ucet:"334455667/0300", vs:"202621", props:["G5 garáž + dvůr"], cals:1, rent:"9 800", konec:"28. 2. 2027", endY:2027, endM:2, kauce:{v:"24 000 Kč", s:"1. 3. 2026", r:"—"}, endsSoon:true,
      sml:[{o:"G5 garáž + dvůr", p:"1. 3. 2026 – 28. 2. 2027", d:"25. den předch. měs.", items:["nájem 21 %"], k:"24 000 Kč · složena 1. 3. 2026"}],
      alerts:[["warn","Smlouva končí 28. 2. 2027 — domluvit prodloužení (výpovědní doba 3 měsíce)",""]],
-     hist:[["od 3/2026","garáž G5 + dvůr","9 800"]], calList:[["BL-2026-018","nájem G5 · 3/2026–2/2027","vystaven"]], notes:[["1. 7. 2026","Zvažuje prodloužení — ozvat se.","leden 2027"]]},
-    {n:"E-shop Balíkov s.r.o.", ent:"BL", ico:"44556677", dic:"CZ44556677", ucet:"445566778/0100", vs:"202622", props:["S1 skladová hala"], cals:2, rent:"90 000", konec:"28. 2. 2029", kauce:{v:"210 000 Kč", s:"1. 3. 2026", r:"—"},
+     hist:[[2024,3,"garáž G5",7400],[2026,3,"garáž G5 + dvůr",9800]],
+     calList:[["BL-2026-018","nájem — garáž G5 + dvůr","3/2026 – 2/2027","vystaven"],["BL-2025-012","nájem — garáž G5","3/2025 – 2/2026","ukončen"],["BL-2024-009","nájem — garáž G5","3/2024 – 2/2025","ukončen"]],
+     notes:[["1. 7. 2026","Zvažuje prodloužení — ozvat se.","leden 2027"]]},
+
+    {n:"E-shop Balíkov s.r.o.", ent:"BL", ico:"44556677", dic:"CZ44556677", ucet:"445566778/0100", vs:"202622", props:["S1 skladová hala"], cals:2, rent:"90 000", konec:"28. 2. 2029", endY:2029, endM:2, kauce:{v:"210 000 Kč", s:"1. 3. 2026", r:"—"},
      sml:[{o:"S1 skladová hala", p:"1. 3. 2026 – 28. 2. 2029", d:"25. den předch. měs.", items:["nájem 21 %","energie 21 % · záloha"], k:"210 000 Kč · složena 1. 3. 2026"}],
      alerts:[],
-     hist:[["od 3/2026","hala S1","90 000"]], calList:[["BL-2026-021","nájem S1 · 3/2026–2/2027","vystaven"]], notes:[]},
-    {n:"Marešová účetnictví", ent:"GR", ico:"55667788", dic:"CZ55667788", ucet:"556677889/0800", vs:"202630", props:["K1 kancelář"], cals:2, rent:"11 500", konec:"31. 12. 2026", kauce:{v:"30 000 Kč", s:"2. 1. 2024", r:"—"}, endsSoon:true,
+     hist:[[2026,3,"hala S1",90000]],
+     calList:[["BL-2026-021","nájem — skladová hala S1","3/2026 – 2/2027","vystaven"],["BL-2026-022","energie (záloha) — hala S1","3/2026 – 2/2027","vystaven"]],
+     notes:[]},
+
+    {n:"Marešová účetnictví", ent:"GR", ico:"55667788", dic:"CZ55667788", ucet:"556677889/0800", vs:"202630", props:["K1 kancelář"], cals:2, rent:"11 500", konec:"31. 12. 2026", endY:2026, endM:12, kauce:{v:"30 000 Kč", s:"2. 1. 2024", r:"—"}, endsSoon:true,
      sml:[{o:"K1 kancelář", p:"1. 1. 2024 – 31. 12. 2026", d:"15. den předch. měs.", items:["nájem 21 %","voda 12 % · záloha"], k:"30 000 Kč · složena 2. 1. 2024"}],
      alerts:[["warn","Smlouva končí 31. 12. 2026 — prodloužení domluvit do konce září (výpovědní doba 3 měsíce)",""]],
-     hist:[["2024","kancelář K1","10 500"],["od 1/2025","kancelář K1","11 500"]], calList:[["GR-2026-009","nájem K1 · 1/2026–12/2026","vystaven"]], notes:[["10. 6. 2026","Domluvit prodloužení smlouvy.","30. 9. 2026"]]},
-    {n:"Print+ tiskárna s.r.o.", ent:"GR", ico:"66778899", dic:"CZ66778899", ucet:"667788990/0100", vs:"202631", props:["H3 výrobní hala"], cals:3, rent:"48 000", konec:"30. 6. 2028", kauce:{v:"150 000 Kč", s:"1. 7. 2025", r:"—"},
+     hist:[[2024,1,"kancelář K1",10500],[2025,1,"kancelář K1",11500]],
+     calList:[["GR-2026-009","nájem — kancelář K1","1/2026 – 12/2026","vystaven"],["GR-2026-010","voda (záloha) — kancelář K1","1/2026 – 12/2026","vystaven"],["GR-2025-007","nájem — kancelář K1","1/2025 – 12/2025","ukončen"],["GR-2024-005","nájem — kancelář K1","1/2024 – 12/2024","ukončen"]],
+     notes:[["10. 6. 2026","Domluvit prodloužení smlouvy.","30. 9. 2026"]]},
+
+    {n:"Print+ tiskárna s.r.o.", ent:"GR", ico:"66778899", dic:"CZ66778899", ucet:"667788990/0100", vs:"202631", props:["H3 výrobní hala"], cals:3, rent:"48 000", konec:"30. 6. 2028", endY:2028, endM:6, kauce:{v:"150 000 Kč", s:"1. 7. 2025", r:"—"},
      sml:[{o:"H3 výrobní hala", p:"1. 7. 2025 – 30. 6. 2028", d:"25. den předch. měs.", items:["nájem 21 %","energie 21 % · záloha","voda 12 % · záloha"], k:"150 000 Kč · složena 1. 7. 2025"}],
      alerts:[],
-     hist:[["od 7/2025","hala H3","48 000"]], calList:[["GR-2026-011","nájem H3 · 7/2026–6/2027","vystaven"]], notes:[]},
-    {n:"Jan Horák 🔒", ent:"SV", ico:"—", dic:"—", ucet:"778899001/0600", vs:"202640", props:["G7 garáž"], cals:1, rent:"1 800", konec:"neurčitá", kauce:{v:"6 000 Kč", s:"2. 1. 2026", r:"—"},
+     hist:[[2025,7,"hala H3",46000],[2026,7,"hala H3",48000]],
+     calList:[["GR-2026-011","nájem — výrobní hala H3","7/2026 – 6/2027","vystaven"],["GR-2026-012","energie (záloha) — hala H3","7/2026 – 6/2027","vystaven"],["GR-2026-013","voda (záloha) — hala H3","7/2026 – 6/2027","vystaven"],["GR-2025-014","nájem — výrobní hala H3","7/2025 – 6/2026","nahrazen"]],
+     notes:[]},
+
+    {n:"Jan Horák 🔒", ent:"SV", ico:"—", dic:"—", ucet:"778899001/0600", vs:"202640", props:["G7 garáž"], cals:1, rent:"1 800", konec:"neurčitá", endY:2027, endM:12, kauce:{v:"6 000 Kč", s:"2. 1. 2026", r:"—"},
      sml:[{o:"G7 garáž", p:"od 1. 1. 2026 · doba neurčitá", d:"25. den předch. měs.", items:["nájem 21 %"], k:"6 000 Kč · složena 2. 1. 2026"}],
      alerts:[["warn","Do 1. 9. 2026 zkontrolovat vrata garáže",""]],
-     hist:[["od 1/2026","garáž G7","1 800"]], calList:[["SV-2026-003","nájem G7 · 1/2026–12/2026","vystaven"]], notes:[["5. 8. 2026","Zkontrolovat vrata garáže.","1. 9. 2026"]]}
+     hist:[[2026,1,"garáž G7",1800]],
+     calList:[["SV-2026-003","nájem — garáž G7","1/2026 – 12/2026","vystaven"],["SV-2027-001","nájem — garáž G7","1/2027 – 12/2027","připraven"]],
+     notes:[["5. 8. 2026","Zkontrolovat vrata garáže.","1. 9. 2026"]]}
   ];
 
   var rowsEl = document.getElementById("tenant-rows");
@@ -962,53 +992,54 @@
     });
   }
   tenSel.addEventListener("change", renderTenants);
-  /* schodový graf vývoje ceny (cena drží hladinu a mění se skokem) */
-  function priceChart(hist){
-    if(hist.length < 2){
-      var h0 = hist[0];
-      return "<svg viewBox='0 0 560 150' style='width:100%; height:auto; display:block' role='img' aria-label='Vývoj ceny nájmu'>"
-        + "<line x1='12' y1='46' x2='548' y2='46' stroke='var(--line)' stroke-width='1'/>"
-        + "<line x1='12' y1='96' x2='548' y2='96' stroke='var(--line)' stroke-width='1'/>"
-        + "<path d='M12 72 L548 72 L548 116 L12 116 Z' fill='var(--mint-soft)'/>"
-        + "<path d='M12 72 L548 72' fill='none' stroke='var(--petrol)' stroke-width='2.5'/>"
-        + "<circle cx='280' cy='72' r='5.5' fill='var(--honey)' stroke='#fff' stroke-width='2'><title>"+h0[0]+" · "+h0[1]+" · "+h0[2]+" Kč/měs.</title></circle>"
-        + "<text x='280' y='58' text-anchor='middle' font-size='12.5' font-weight='800' fill='var(--text)'>"+h0[2]+"</text>"
-        + "<text x='16' y='138' font-size='10.5' fill='var(--muted)'>"+h0[0]+"</text>"
-        + "<text x='544' y='138' text-anchor='end' font-size='10.5' fill='var(--muted)'>dnes</text>"
-        + "</svg>"
-        + "<p class='sub' style='margin:6px 0 0; font-size:.76rem'>Kč/měs. bez DPH · cena se zatím neměnila · "+h0[1]+"</p>";
-    }
-    var vals = hist.map(function(h){ return parseInt(h[2].replace(/\s/g,""), 10); });
+  /* schodový graf vývoje ceny — osa vždy v ROCÍCH, stejně u všech nájemců
+     hist: [rok, měsíc, co, cena]  ·  konec: [rok, měsíc] */
+  function priceChart(hist, endY, endM){
+    var W = 560, H = 190, pL = 16, pR = 16, pT = 38, pB = 34;
+    var axStart = hist[0][0] * 12 + (hist[0][1] - 1);
+    var axEnd = endY * 12 + (endM - 1);
+    var span = Math.max(axEnd - axStart, 11);
+    function X(mm){ return pL + (W - pL - pR) * Math.min(Math.max((mm - axStart) / span, 0), 1); }
+    function MM(h){ return h[0] * 12 + (h[1] - 1); }
+    var vals = hist.map(function(h){ return h[3]; });
     var min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
-    var W = 560, H = 195, pL = 12, pR = 12, pT = 32, pB = 42;
-    var iw = (W - pL - pR) / hist.length;
-    var lo = min - (max - min) * 0.4 - 1, hi = max + (max - min) * 0.2;
+    var pad = (max - min) || max * 0.12;
+    var lo = min - pad * 0.75, hi = max + pad * 0.55;
     function Y(v){ return pT + (H - pT - pB) * (1 - (v - lo) / (hi - lo)); }
-    var grid = "";
-    [0.28, 0.56, 0.84].forEach(function(f){
-      var gy = pT + (H - pT - pB) * f;
-      grid += "<line x1='"+pL+"' y1='"+gy+"' x2='"+(W-pR)+"' y2='"+gy+"' stroke='var(--line)' stroke-width='1'/>";
-    });
-    var d = "M"+pL+" "+Y(vals[0]);
-    vals.forEach(function(v, i){
-      d += " L"+(pL + i*iw)+" "+Y(v)+" L"+(pL + (i+1)*iw)+" "+Y(v);
-    });
-    var area = d + " L"+(W-pR)+" "+(H-pB)+" L"+pL+" "+(H-pB)+" Z";
-    var marks = "", labs = "";
+    var base = H - pB;
+
+    /* svislé linky a popisky let */
+    var grid = "", labs = "";
+    for(var y = hist[0][0]; y <= endY; y++){
+      var gx = X(y * 12);
+      grid += "<line x1='"+gx+"' y1='"+pT+"' x2='"+gx+"' y2='"+base+"' stroke='var(--line)' stroke-width='1'/>";
+      labs += "<text x='"+gx+"' y='"+(base+18)+"' text-anchor='"+(y === hist[0][0] ? "start" : (y === endY ? "end" : "middle"))+"' font-size='11' font-weight='700' fill='var(--muted)'>"+y+"</text>";
+    }
+    grid += "<line x1='"+pL+"' y1='"+base+"' x2='"+(W-pR)+"' y2='"+base+"' stroke='var(--line)' stroke-width='1'/>";
+
+    /* schodová čára */
+    var d = "M"+X(MM(hist[0]))+" "+Y(vals[0]), marks = "";
     hist.forEach(function(h, i){
-      var cx = pL + i*iw + iw/2, cy = Y(vals[i]);
+      if(i > 0){ d += " L"+X(MM(h))+" "+Y(vals[i-1])+" L"+X(MM(h))+" "+Y(vals[i]); }
+      var segEnd = (i < hist.length - 1) ? X(MM(hist[i+1])) : X(axEnd);
+      var mx = (X(MM(h)) + segEnd) / 2, my = Y(vals[i]);
       var last = i === hist.length - 1;
-      marks += "<circle cx='"+cx+"' cy='"+cy+"' r='"+(last ? 5.5 : 4)+"' fill='"+(last ? "var(--honey)" : "var(--petrol)")+"' stroke='#fff' stroke-width='2'><title>"+h[0]+" · "+h[1]+" · "+h[2]+" Kč/měs.</title></circle>";
-      labs += "<text x='"+cx+"' y='"+(cy-12)+"' text-anchor='middle' font-size='12.5' font-weight='"+(last ? "800" : "600")+"' fill='var(--text)'>"+h[2]+"</text>";
-      labs += "<text x='"+cx+"' y='"+(H-14)+"' text-anchor='middle' font-size='10.5' fill='var(--muted)'>"+h[0]+"</text>";
+      marks += "<circle cx='"+X(MM(h))+"' cy='"+my+"' r='"+(last ? 5 : 4)+"' fill='"+(last ? "var(--honey)" : "var(--petrol)")+"' stroke='#fff' stroke-width='2'><title>od "+h[1]+"/"+h[0]+" · "+h[2]+" · "+vals[i].toLocaleString("cs-CZ")+" Kč/měs.</title></circle>";
+      marks += "<text x='"+mx+"' y='"+(my-11)+"' text-anchor='middle' font-size='12.5' font-weight='"+(last ? "800" : "600")+"' fill='var(--text)'>"+vals[i].toLocaleString("cs-CZ")+"</text>";
     });
-    return "<svg viewBox='0 0 "+W+" "+H+"' style='width:100%; height:auto; display:block' role='img' aria-label='Vývoj ceny nájmu po obdobích'>"
+    d += " L"+X(axEnd)+" "+Y(vals[vals.length-1]);
+    var area = d + " L"+X(axEnd)+" "+base+" L"+X(MM(hist[0]))+" "+base+" Z";
+
+    var zmen = hist.length - 1;
+    return "<svg viewBox='0 0 "+W+" "+H+"' style='width:100%; height:auto; display:block' role='img' aria-label='Vývoj ceny nájmu po letech'>"
       + grid
       + "<path d='"+area+"' fill='var(--mint-soft)'/>"
       + "<path d='"+d+"' fill='none' stroke='var(--petrol)' stroke-width='2.5' stroke-linejoin='round'/>"
       + marks + labs
       + "</svg>"
-      + "<p class='sub' style='margin:6px 0 0; font-size:.76rem'>Kč/měs. bez DPH · aktuálně: "+hist[hist.length-1][1]+" · najetím na bod zobrazíte detail</p>";
+      + "<p class='sub' style='margin:6px 0 0; font-size:.76rem'>Kč/měs. bez DPH · "
+      + (zmen ? zmen + "× změna ceny od " + hist[0][1] + "/" + hist[0][0] : "cena se od " + hist[0][1] + "/" + hist[0][0] + " neměnila")
+      + " · aktuálně " + hist[hist.length-1][2] + "</p>";
   }
 
   function openDetail(t){
@@ -1027,7 +1058,7 @@
     document.getElementById("det-pills").innerHTML = pills;
 
     /* statistické dlaždice */
-    var activeCals = t.calList.filter(function(c){ return c[2] === "vystaven"; }).length;
+    var activeCals = t.calList.filter(function(c){ return c[3] === "vystaven"; }).length;
     var calCls = nDanger ? "danger" : "ok";
     document.getElementById("det-stats").innerHTML =
       "<div class='stat'><div class='lb'>Nájem / měs. bez DPH</div><div class='vl'>"+t.rent+" Kč</div><div class='sm'>"+t.props.length+" nemovitosti</div></div>"
@@ -1056,15 +1087,27 @@
         + "<button class='btn sec small mockbtn' style='margin-top:8px'>Otevřít smlouvu (PDF)</button></div>";
     }).join("");
 
-    /* vývoj ceny jako graf */
-    document.getElementById("det-chart").innerHTML = priceChart(t.hist);
+    /* vývoj ceny jako graf — osa v letech */
+    document.getElementById("det-chart").innerHTML = priceChart(t.hist, t.endY, t.endM);
 
-    /* kalendáře s barevným proužkem */
-    document.getElementById("det-cals").innerHTML = t.calList.length ? t.calList.map(function(c){
-      var cls = c[2] === "vystaven" ? "ok" : "old";
-      var chip = c[2] === "vystaven" ? "state-ok" : "state-old";
-      return "<li class='calline "+cls+" openpdf' title='Zobrazit PDF'><div><b>"+c[0]+"</b> — "+c[1]+" <span class='chip "+chip+"'>"+c[2]+"</span></div></li>";
-    }).join("") : "<li class='calline'><div>Žádné kalendáře.</div></li>";
+    /* kalendáře jako klikací doklady: platné + archiv */
+    function docRow(c, old){
+      var chip = c[3] === "vystaven" ? "state-ok" : (c[3] === "připraven" ? "state-warn" : "state-old");
+      return "<button class='docrow openpdf"+(old ? " old" : "")+"'>"
+        + "<span class='pdfico'>PDF</span>"
+        + "<span class='dmain'><span class='dnum'>"+c[0]+"</span> <span class='chip "+chip+"'>"+c[3]+"</span>"
+        + "<span class='sec2' style='display:block'>"+c[1]+" · "+c[2]+"</span></span>"
+        + "<span class='chev'>›</span></button>";
+    }
+    var plat = t.calList.filter(function(c){ return c[3] === "vystaven" || c[3] === "připraven"; });
+    var arch = t.calList.filter(function(c){ return c[3] === "nahrazen" || c[3] === "ukončen"; });
+    var out = plat.length ? "<div class='doclist'>" + plat.map(function(c){ return docRow(c, false); }).join("") + "</div>"
+                          : "<p class='sub' style='margin:0'>Zatím žádný platný kalendář.</p>";
+    if(arch.length){
+      out += "<div class='archhead'>Archiv — dřívější období ("+arch.length+")</div>"
+           + "<div class='doclist'>" + arch.map(function(c){ return docRow(c, true); }).join("") + "</div>";
+    }
+    document.getElementById("det-cals").innerHTML = out;
 
     /* poznámky s termíny */
     document.getElementById("det-notes").innerHTML = t.notes.length ? t.notes.map(function(n){
