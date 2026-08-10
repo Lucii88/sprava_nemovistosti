@@ -16,14 +16,19 @@ Interní aplikace, která nahradí excelovou evidenci pronájmů: přehled nemov
 - **Lokální provoz** — aplikace běží na firemním serveru, data neopouští firmu; přístup prohlížečem z firemní sítě (případně VPN).
 - **Nic navíc** — žádná funkce, kterou zadání nechce a která neulehčí práci (viz filtr v `rozsah-a-architektura.md`).
 
-## 3. Obrazovky V1
+## 3. Rozvržení a obrazovky V1
 
-1. **Nástěnka** — po přihlášení 2–3 seznamy s proklikem: kalendáře k vygenerování na nové období, smlouvy končící do X měsíců (předstih dle výpovědní doby), poznámky s blížícím se termínem. Žádné grafy, žádná KPI.
-2. **Nájemci** — kompaktní seznam (~20 řádků) s filtry (entita, typ nemovitosti, stav) → **detail nájemce**: co má pronajato, kalendáře, historie cen po letech, poznámky. Přesně model „úzký přehled → rozklik do detailu" ze zadání.
-3. **Nemovitosti** — seznam s filtry (typ, entita, volná/obsazená — odvozeno z aktivních smluv) → detail: kdo tam je a byl, dostupné služby.
-4. **Smlouvy** — široká „excelová" tabulka všech nájemních vztahů s filtry a řazením; export do Excelu respektující aktuální filtr.
-5. **Platební kalendáře** — přehled vygenerovaných dokladů + generování: jednotlivě (smlouva → položka → náhled → PDF) i **hromadně** („všechny kalendáře na nové období" jedním během s náhledem a kontrolami). Archiv všech verzí. **Hromadný export PDF (ZIP) za období** — přesně pro dnešní workflow „posílám účetní všechno v PDF".
-6. **Administrace** — entity, uživatelé a role **vč. přiřazení entit** (soukromou entitu vidí jen paní Včeláková), sazby DPH (s platností od–do), typy nemovitostí, formát číselných řad.
+**Rozvržení:** stálá boční lišta s menu + horní přepínač entit. Design je **dlaždicový** (geometricky pravidelná mřížka karet); rozsáhlé přehledy (smlouvy, kalendáře) jako tabulky. **Žádné vnitřní posuvníky** — roluje se jen celá stránka.
+
+Menu: **Přehled** (Nástěnka) · **Provoz** (Smlouvy, Platební kalendáře) · **Číselníky** (Entity, Nájemci, Nemovitosti) · **Systém** (Administrace).
+
+1. **Nástěnka** — dlaždice úkolů s proklikem: kalendáře k vygenerování, smlouvy končící do X měsíců (předstih dle výpovědní doby), poznámky s termínem, volné prostory. Žádné grafy, žádná KPI.
+2. **Číselník Entity** — dlaždice s klíčovými daty (název, IČO, DIČ, sídlo, bankovní účet, plátce DPH, prefix číselné řady, příznak viditelnosti); formulář pro založení/úpravu.
+3. **Číselník Nájemci** — dlaždice (název, IČO, pronajato, nájem/měs.) → **detail nájemce**: klíčová data (IČO, DIČ, účet, stálý VS), co má pronajato, kalendáře, historie cen po letech, kauce, poznámky. Formulář klíčových dat.
+4. **Číselník Nemovitosti** — dlaždice (označení, typ, adresa, entita, služby, obsazenost — odvozena z aktivních smluv); formulář s typem, entitou, výměrou a službami.
+5. **Smlouvy** — tabulka všech nájemních vztahů s filtry; export do Excelu respektující aktuální filtr.
+6. **Platební kalendáře** — přehled vygenerovaných dokladů + generování: jednotlivě i **hromadně** (průvodce s náhledem a kontrolami). Archiv všech verzí, náhled PDF. **Hromadný export PDF (ZIP) za období** pro účetní.
+7. **Administrace** — uživatelé a role **vč. přiřazení entit** (soukromou entitu vidí jen paní Včeláková), sazby DPH (s platností od–do), typy nemovitostí, stav záloh.
 
 ## 4. Platební kalendáře (jádro)
 
