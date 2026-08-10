@@ -3,8 +3,9 @@
   :root{
     --petrol:#03363D; --petrol-90:#0A454D; --petrol-70:#2E5E64;
     --mint:#BDD9D7; --mint-soft:#EAF2F1; --mint-line:#CFE2E0;
-    --bg:#F4F7F7; --surface:#FFFFFF; --line:#DCE7E6;
-    --text:#12363C; --muted:#5E7A7E; --faint:#8AA0A2;
+    --bg:#F8F5EE; --surface:#FFFFFF; --line:#E3DECE;
+    --text:#1F3A38; --muted:#6C7A70; --faint:#98A296;
+    --honey:#DFA43F; --honey-bg:#FAF0DB; --honey-line:#EFDDB6;
     --ok:#2F7D4F; --ok-bg:#E7F2EB; --warn:#9A6B14; --warn-bg:#FBF2DE;
     --danger:#B23A31; --danger-bg:#FAE8E6;
     --radius:12px;
@@ -28,7 +29,7 @@
   }
   .logo{padding:0 10px 16px; border-bottom:1px solid rgba(255,255,255,.12); margin-bottom:14px}
   .logo b{font-size:1.05rem; display:block}
-  .logo span{color:var(--mint); font-size:.72rem; text-transform:uppercase; letter-spacing:.14em}
+  .logo span{color:var(--honey); font-size:.72rem; text-transform:uppercase; letter-spacing:.14em}
   .mgroup{font-size:.66rem; text-transform:uppercase; letter-spacing:.14em; color:#7FA5A3; padding:12px 10px 5px}
   .mitem{
     display:flex; align-items:center; gap:10px; width:100%;
@@ -40,7 +41,7 @@
   .mitem:hover{background:rgba(255,255,255,.08)}
   .mitem.active{background:var(--mint); color:var(--petrol)}
   .sidefoot{margin-top:auto; padding:12px 10px 0; border-top:1px solid rgba(255,255,255,.12); font-size:.75rem; color:#9FBEBC}
-  .avatar{width:26px;height:26px;border-radius:8px;background:var(--mint);color:var(--petrol);display:inline-grid;place-items:center;font-weight:700;font-size:.72rem; margin-right:8px}
+  .avatar{width:26px;height:26px;border-radius:8px;background:var(--honey);color:var(--petrol);display:inline-grid;place-items:center;font-weight:700;font-size:.72rem; margin-right:8px}
 
   /* ================= MAIN ================= */
   .main{min-width:0}
@@ -71,7 +72,7 @@
   }
   .tile .thead{display:flex; align-items:flex-start; justify-content:space-between; gap:8px}
   .tile h3{font-size:.95rem; color:var(--petrol)}
-  .tile .count{font-size:1.9rem; font-weight:700; color:var(--petrol); font-variant-numeric:tabular-nums; line-height:1}
+  .tile .count{font-size:1.9rem; font-weight:700; color:var(--honey); font-variant-numeric:tabular-nums; line-height:1}
   .tile .foot{margin-top:auto; display:flex; gap:6px; flex-wrap:wrap}
   .task-list{list-style:none; font-size:.85rem}
   .task-list li{display:flex; gap:9px; padding:7px 0; border-bottom:1px dashed var(--line); align-items:flex-start}
@@ -94,7 +95,7 @@
   th:first-child{border-top-left-radius:var(--radius)} th:last-child{border-top-right-radius:var(--radius)}
   td{padding:10px 14px; border-bottom:1px solid var(--line); vertical-align:top}
   tr:last-child td{border-bottom:0}
-  tbody tr:nth-child(even){background:#FAFCFC}
+  tbody tr:nth-child(even){background:#FBF8F1}
   tbody tr.click{cursor:pointer}
   tbody tr.click:hover{background:var(--mint-soft)}
   .num{font-variant-numeric:tabular-nums; white-space:nowrap}
@@ -131,7 +132,7 @@
   .spill.warn{background:var(--warn-bg); color:var(--warn)}
   .spill.danger{background:var(--danger-bg); color:var(--danger)}
   .statrow{display:grid; grid-template-columns:repeat(auto-fit, minmax(185px, 1fr)); gap:12px; margin:4px 0 16px}
-  .stat{background:var(--surface); border:1px solid var(--line); border-left:5px solid var(--petrol-70); border-radius:10px; padding:10px 14px}
+  .stat{background:var(--surface); border:1px solid var(--line); border-left:5px solid var(--honey); border-radius:10px; padding:10px 14px}
   .stat .lb{font-size:.66rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted)}
   .stat .vl{font-size:1.08rem; font-weight:700; color:var(--petrol); font-variant-numeric:tabular-nums}
   .stat .sm{font-size:.74rem; color:var(--muted)}
@@ -147,6 +148,26 @@
   .calline.old{border-left-color:var(--faint); color:var(--muted)}
   .trend{color:var(--petrol-70); font-size:.75rem; font-weight:700; white-space:nowrap}
   .tnote{background:var(--warn-bg); color:var(--warn); border-radius:6px; padding:0 8px; font-size:.73rem; font-weight:700; white-space:nowrap}
+
+  /* ---- nastavení: sekce s vlastní navigací ---- */
+  .setwrap{display:grid; grid-template-columns:216px 1fr; gap:20px; align-items:start}
+  .setnav{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:10px; position:sticky; top:16px}
+  .sgroup{font-size:.64rem; text-transform:uppercase; letter-spacing:.12em; color:var(--faint); padding:10px 10px 4px}
+  .sitem{display:flex; gap:9px; align-items:center; width:100%; text-align:left; background:none; border:0; padding:8px 10px; border-radius:8px; font-size:.87rem; font-weight:600; color:var(--muted)}
+  .sitem .ico{width:18px; text-align:center; font-size:.85rem}
+  .sitem:hover{background:var(--mint-soft); color:var(--petrol)}
+  .sitem.active{background:var(--mint-soft); color:var(--petrol)}
+  .setpane{display:none} .setpane.on{display:block}
+  .sethead{display:flex; gap:12px; align-items:flex-start; margin-bottom:12px}
+  .sethead .sico{width:36px; height:36px; border-radius:10px; background:var(--honey-bg); border:1px solid var(--honey-line); color:var(--petrol); display:grid; place-items:center; font-size:1rem; flex:none}
+  .sethead h2{margin:0}
+  .sethead p{font-size:.8rem; color:var(--muted)}
+  .setcard{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:4px 18px; margin-bottom:14px}
+  .srow{display:flex; gap:16px; align-items:center; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--line); font-size:.87rem; flex-wrap:wrap}
+  .srow:last-child{border-bottom:0}
+  .srow .sl b{display:block}
+  .srow .sl .hint{font-size:.76rem; color:var(--muted)}
+  .srow .sv{font-weight:600; text-align:right}
 
   /* ================= MODALY & FORMULÁŘE ================= */
   .overlay{position:fixed; inset:0; background:rgba(3,54,61,.5); display:none; align-items:flex-start; justify-content:center; padding:40px 16px; overflow:auto; z-index:50}
@@ -201,7 +222,7 @@
   <button class="mitem" data-tab="nemovitosti"><span class="ico">▣</span>Nemovitosti</button>
   <div class="mgroup" aria-hidden="true"></div>
   <button class="mitem" data-tab="admin"><span class="ico">⚙</span>Nastavení</button>
-  <div class="sidefoot"><span class="avatar">LV</span>Lucie Včeláková · superadmin</div>
+  <div class="sidefoot"><span class="avatar">LV</span>Lenka Včeláková · superadmin</div>
 </aside>
 
 <!-- ================= MAIN ================= -->
@@ -402,48 +423,94 @@
 <!-- ============ ADMINISTRACE ============ -->
 <section class="screen" id="s-admin">
   <h1>Nastavení</h1>
-  <p class="sub">Vaše firmy, uživatelé, sazby i typy — všechno si nastavíte sami, nic není „zadrátováno“ v programu.</p>
+  <p class="sub">Všechno si nastavíte sami — nic není „zadrátováno“ v programu. Vlevo vyberte, co chcete upravit.</p>
+  <div class="setwrap">
+    <nav class="setnav" aria-label="Sekce nastavení">
+      <div class="sgroup">Správa</div>
+      <button class="sitem active" data-set="firmy"><span class="ico">◆</span>Moje firmy</button>
+      <button class="sitem" data-set="uzivatele"><span class="ico">●</span>Uživatelé a práva</button>
+      <div class="sgroup">Doklady</div>
+      <button class="sitem" data-set="dph"><span class="ico">%</span>Sazby DPH</button>
+      <button class="sitem" data-set="rady"><span class="ico">⌗</span>Číselné řady</button>
+      <div class="sgroup">Ostatní</div>
+      <button class="sitem" data-set="typy"><span class="ico">▣</span>Typy nemovitostí</button>
+      <button class="sitem" data-set="zalohy"><span class="ico">◎</span>Zálohy</button>
+    </nav>
+    <div>
+      <div class="setpane on" id="set-firmy">
+        <div class="sethead"><span class="sico">◆</span><div><h2>Moje firmy</h2><p>Vaše firmy a jejich údaje, které se tisknou na doklady</p></div></div>
+        <div class="tablecard" style="margin-bottom:12px">
+          <table>
+            <thead><tr><th>Název</th><th class="num">IČO</th><th class="num">DIČ</th><th class="num">Bankovní účet</th><th>Plátce DPH</th><th>Viditelnost</th></tr></thead>
+            <tbody>
+              <tr class="click" data-form="f-entita"><td><b>Alfa Doprava s.r.o.</b></td><td class="num">12345678</td><td class="num">CZ12345678</td><td class="num">123456789/0100</td><td><span class="chip state-ok">ano</span></td><td>všichni</td></tr>
+              <tr class="click" data-form="f-entita"><td><b>Beta Logistika s.r.o.</b></td><td class="num">23456789</td><td class="num">CZ23456789</td><td class="num">234567890/0100</td><td><span class="chip state-ok">ano</span></td><td>všichni</td></tr>
+              <tr class="click" data-form="f-entita"><td><b>Gama Reality s.r.o.</b></td><td class="num">34567890</td><td class="num">CZ34567890</td><td class="num">345678901/0800</td><td><span class="chip state-ok">ano</span></td><td>všichni</td></tr>
+              <tr class="click" data-form="f-entita"><td><b>Soukromé — L. Včeláková</b> 🔒</td><td class="num">—</td><td class="num">—</td><td class="num">456789012/0300</td><td><span class="chip state-old">ne</span></td><td>jen vy</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <button class="btn small" data-form="f-entita">+ Přidat firmu</button>
+      </div>
 
-  <h2>Moje firmy</h2>
-  <div class="toolbar" style="margin-bottom:10px">
-    <span class="sub" style="margin:0">Každá firma má na dokladech vlastní údaje a vlastní číselnou řadu.</span>
-    <span class="spacer"></span>
-    <button class="btn small" data-form="f-entita">+ Přidat firmu</button>
-  </div>
-  <div class="tablecard" style="margin-bottom:22px">
-    <table>
-      <thead><tr><th>Název</th><th class="num">IČO</th><th class="num">DIČ</th><th class="num">Bankovní účet</th><th>Plátce DPH</th><th class="num">Řada dokladů</th><th>Viditelnost</th></tr></thead>
-      <tbody>
-        <tr class="click" data-form="f-entita"><td><b>Alfa Doprava s.r.o.</b></td><td class="num">12345678</td><td class="num">CZ12345678</td><td class="num">123456789/0100</td><td><span class="chip state-ok">ano</span></td><td class="num">AD-2026-###</td><td>všichni</td></tr>
-        <tr class="click" data-form="f-entita"><td><b>Beta Logistika s.r.o.</b></td><td class="num">23456789</td><td class="num">CZ23456789</td><td class="num">234567890/0100</td><td><span class="chip state-ok">ano</span></td><td class="num">BL-2026-###</td><td>všichni</td></tr>
-        <tr class="click" data-form="f-entita"><td><b>Gama Reality s.r.o.</b></td><td class="num">34567890</td><td class="num">CZ34567890</td><td class="num">345678901/0800</td><td><span class="chip state-ok">ano</span></td><td class="num">GR-2026-###</td><td>všichni</td></tr>
-        <tr class="click" data-form="f-entita"><td><b>Soukromé — L. Včeláková</b> 🔒</td><td class="num">—</td><td class="num">—</td><td class="num">456789012/0300</td><td><span class="chip state-old">ne</span></td><td class="num">SV-2026-###</td><td>jen superadmin</td></tr>
-      </tbody>
-    </table>
-  </div>
+      <div class="setpane" id="set-uzivatele">
+        <div class="sethead"><span class="sico">●</span><div><h2>Uživatelé a práva</h2><p>Kdo se může přihlásit a které firmy vidí</p></div></div>
+        <div class="tablecard" style="margin-bottom:12px">
+          <table><thead><tr><th>Uživatel</th><th>Role</th><th>Vidí firmy</th></tr></thead>
+          <tbody>
+            <tr><td><b>Lenka Včeláková</b></td><td><span class="chip">superadmin</span></td><td>všechny vč. 🔒 Soukromé</td></tr>
+            <tr><td><b>Petr Kolář</b></td><td><span class="chip">správce</span></td><td>Alfa, Beta, Gama</td></tr>
+            <tr><td><b>účetní (host)</b></td><td><span class="chip">jen náhled</span></td><td>Alfa, Beta, Gama</td></tr>
+          </tbody></table>
+        </div>
+        <button class="btn small mockbtn">+ Přidat uživatele</button>
+      </div>
 
-  <div class="cardsgrid">
-    <div class="card">
-      <h2>Uživatelé</h2>
-      <table><thead><tr><th>Uživatel</th><th>Role</th><th>Vidí firmy</th></tr></thead>
-      <tbody>
-        <tr><td>Lucie Včeláková</td><td><span class="chip">superadmin</span></td><td>všechny vč. 🔒 Soukromé</td></tr>
-        <tr><td>Petr Kolář</td><td><span class="chip">správce</span></td><td>Alfa, Beta, Gama</td></tr>
-        <tr><td>účetní (host)</td><td><span class="chip">jen náhled</span></td><td>Alfa, Beta, Gama</td></tr>
-      </tbody></table>
-      <div class="toolbar" style="margin:12px 0 0"><button class="btn sec small mockbtn">+ Přidat uživatele</button></div>
-    </div>
-    <div class="card">
-      <h2>Sazby DPH (číselník s platností)</h2>
-      <table><thead><tr><th>Sazba</th><th class="num">%</th><th>Platnost od</th><th>Použití</th></tr></thead>
-      <tbody>
-        <tr><td>základní</td><td class="num">21</td><td class="num">1. 1. 2024</td><td>nájem (zdaněný), elektřina, plyn</td></tr>
-        <tr><td>snížená</td><td class="num">12</td><td class="num">1. 1. 2024</td><td>vodné a stočné, teplo</td></tr>
-      </tbody></table>
-      <h2 style="margin-top:16px">Typy nemovitostí</h2>
-      <p><span class="chip">garáž</span> <span class="chip">kancelář</span> <span class="chip">výrobní hala</span> <span class="chip">skladová hala</span> <span class="chip">pozemek</span> <button class="btn sec small mockbtn" style="margin-left:6px">+ přidat typ</button></p>
-      <h2 style="margin-top:16px">Zálohy</h2>
-      <p style="font-size:.85rem; color:var(--muted)">Poslední automatická záloha: dnes 02:00 ✓ · noční dump databáze + archiv PDF do složky pro IT.</p>
+      <div class="setpane" id="set-dph">
+        <div class="sethead"><span class="sico">%</span><div><h2>Sazby DPH</h2><p>Když se sazby změní zákonem, přidáte novou s platností od data — staré doklady zůstanou správně</p></div></div>
+        <div class="tablecard" style="margin-bottom:12px">
+          <table><thead><tr><th>Sazba</th><th class="num">%</th><th>Platnost od</th><th>Použití</th></tr></thead>
+          <tbody>
+            <tr><td><b>základní</b></td><td class="num">21</td><td class="num">1. 1. 2024</td><td>nájem (zdaněný), elektřina, plyn</td></tr>
+            <tr><td><b>snížená</b></td><td class="num">12</td><td class="num">1. 1. 2024</td><td>vodné a stočné, teplo</td></tr>
+          </tbody></table>
+        </div>
+        <button class="btn small mockbtn">+ Přidat sazbu s platností</button>
+      </div>
+
+      <div class="setpane" id="set-rady">
+        <div class="sethead"><span class="sico">⌗</span><div><h2>Číselné řady</h2><p>Každá firma čísluje doklady vlastní řadou — formát sladíme s vaší účetní</p></div></div>
+        <div class="setcard">
+          <div class="srow"><div class="sl"><b>Formát čísla dokladu</b><span class="hint">ukázka: AD-2026-001</span></div><div class="sv"><select class="fsel"><option>FIRMA-ROK-POŘADÍ</option><option>ROK/POŘADÍ</option><option>vlastní…</option></select></div></div>
+        </div>
+        <div class="tablecard">
+          <table><thead><tr><th>Firma</th><th class="num">Prefix</th><th class="num">Příští číslo</th></tr></thead>
+          <tbody>
+            <tr><td>Alfa Doprava s.r.o.</td><td class="num">AD</td><td class="num">AD-2026-017</td></tr>
+            <tr><td>Beta Logistika s.r.o.</td><td class="num">BL</td><td class="num">BL-2026-026</td></tr>
+            <tr><td>Gama Reality s.r.o.</td><td class="num">GR</td><td class="num">GR-2026-012</td></tr>
+            <tr><td>Soukromé 🔒</td><td class="num">SV</td><td class="num">SV-2026-004</td></tr>
+          </tbody></table>
+        </div>
+      </div>
+
+      <div class="setpane" id="set-typy">
+        <div class="sethead"><span class="sico">▣</span><div><h2>Typy nemovitostí</h2><p>Vlastní kategorie pro filtry a přehledy</p></div></div>
+        <div class="setcard">
+          <div class="srow"><div class="sl"><b>Používané typy</b></div><div class="sv"><span class="chip">garáž</span> <span class="chip">kancelář</span> <span class="chip">výrobní hala</span> <span class="chip">skladová hala</span> <span class="chip">pozemek</span></div></div>
+        </div>
+        <button class="btn small mockbtn">+ Přidat typ</button>
+      </div>
+
+      <div class="setpane" id="set-zalohy">
+        <div class="sethead"><span class="sico">◎</span><div><h2>Zálohy</h2><p>Program se zálohuje sám — vy nemusíte nic</p></div></div>
+        <div class="setcard">
+          <div class="srow"><div class="sl"><b>Poslední záloha</b></div><div class="sv"><span class="chip state-ok">dnes 02:00 ✓ v pořádku</span></div></div>
+          <div class="srow"><div class="sl"><b>Co se zálohuje</b><span class="hint">všechna data i vystavené doklady</span></div><div class="sv">databáze + archiv PDF</div></div>
+          <div class="srow"><div class="sl"><b>Kam</b><span class="hint">vaše IT firma odváží kopii mimo server</span></div><div class="sv">složka pro IT</div></div>
+          <div class="srow"><div class="sl"><b>Jak často</b></div><div class="sv">každou noc</div></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -705,6 +772,16 @@
       document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("on"); });
       document.getElementById("s-"+b.dataset.tab).classList.add("on");
       window.scrollTo(0,0);
+    });
+  });
+
+  /* ---- podnavigace nastavení ---- */
+  document.querySelectorAll(".sitem").forEach(function(b){
+    b.addEventListener("click", function(){
+      document.querySelectorAll(".sitem").forEach(function(x){ x.classList.remove("active"); });
+      b.classList.add("active");
+      document.querySelectorAll(".setpane").forEach(function(p){ p.classList.remove("on"); });
+      document.getElementById("set-"+b.dataset.set).classList.add("on");
     });
   });
 
