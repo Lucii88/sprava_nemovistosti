@@ -22,8 +22,8 @@ Interní aplikace, která nahradí excelovou evidenci pronájmů: přehled nemov
 2. **Nájemci** — kompaktní seznam (~20 řádků) s filtry (entita, typ nemovitosti, stav) → **detail nájemce**: co má pronajato, kalendáře, historie cen po letech, poznámky. Přesně model „úzký přehled → rozklik do detailu" ze zadání.
 3. **Nemovitosti** — seznam s filtry (typ, entita, volná/obsazená — odvozeno z aktivních smluv) → detail: kdo tam je a byl, dostupné služby.
 4. **Smlouvy** — široká „excelová" tabulka všech nájemních vztahů s filtry a řazením; export do Excelu respektující aktuální filtr.
-5. **Platební kalendáře** — přehled vygenerovaných dokladů + generování: jednotlivě (smlouva → položka → náhled → PDF) i **hromadně** („všechny kalendáře na nové období" jedním během s náhledem a kontrolami). Archiv všech verzí.
-6. **Administrace** — entity, uživatelé a role, sazby DPH (s platností od–do), typy nemovitostí.
+5. **Platební kalendáře** — přehled vygenerovaných dokladů + generování: jednotlivě (smlouva → položka → náhled → PDF) i **hromadně** („všechny kalendáře na nové období" jedním během s náhledem a kontrolami). Archiv všech verzí. **Hromadný export PDF (ZIP) za období** — přesně pro dnešní workflow „posílám účetní všechno v PDF".
+6. **Administrace** — entity, uživatelé a role **vč. přiřazení entit** (soukromou entitu vidí jen paní Včeláková), sazby DPH (s platností od–do), typy nemovitostí, formát číselných řad.
 
 ## 4. Platební kalendáře (jádro)
 
@@ -39,7 +39,9 @@ Interní aplikace, která nahradí excelovou evidenci pronájmů: přehled nemov
 
 - Historie nájemce vzniká automaticky z položek smluv s platností od–do (změna ceny = nový řádek) — tabulka po letech bez dodatečné práce.
 - Ruční dozadání starých let u velkých nájemců (jednoduchý formulář).
-- Poznámky k nájemci/smlouvě/nemovitosti: volný text + volitelný termín (zobrazí se na nástěnce). Nic se z nich negeneruje.
+- Poznámky k nájemci/smlouvě/nemovitosti: volný text + volitelný termín (zobrazí se na nástěnce). Nic se z nich negeneruje. *(Potvrzeno klientkou.)*
+- **Kauce**: u smlouvy výše, datum složení a vrácení, poznámka. Kauce nevstupuje do platebních kalendářů ani do DPH.
+- U položek služeb příznak **paušál / záloha k vyúčtování** — vyúčtování samotné je etapa 2 (klientka ho dělá sama, potvrzeno), V1 na něj jen připravuje data.
 
 ## 6. Role a práva
 
@@ -49,7 +51,7 @@ Interní aplikace, která nahradí excelovou evidenci pronájmů: přehled nemov
 | Správce | zadávání a editace dat, generování kalendářů |
 | Náhled | pouze čtení |
 
-Každý uživatel má vlastní účet (audit log zaznamenává kdo-kdy-co; záložka Historie jen pro čtení). Případné omezení viditelnosti soukromé entity — k potvrzení na brainstormingu.
+Každý uživatel má vlastní účet (audit log zaznamenává kdo-kdy-co; záložka Historie jen pro čtení) a **seznam entit, které smí vidět** — soukromá entita je přiřazena jen paní Včelákové (potvrzeno). Přístup jen z PC ve firemní síti (potvrzeno — žádná mobilní verze, žádná VPN pro V1).
 
 ## 7. Technické řešení
 
@@ -59,9 +61,9 @@ Monolitická webová aplikace v Dockeru na firemním serveru; PostgreSQL; server
 
 1. **Etapa 0 — klikatelný prototyp** bez databáze: osahání obrazovek, odsouhlasení logiky (dle vzoru kalendáře od klientky).
 2. **Etapa 1 — V1**: rozsah dle `rozsah-a-architektura.md` oddíl E + jednorázový import stávajícího Excelu + nasazení.
-3. **Etapa 2 — jen na vyžádání**: modul Platby (výpisy KB, párování dle VS, podklady pro kontrolní hlášení), roční vyúčtování služeb, indexace nájmu, QR platba na kalendáři.
+3. **Etapa 2 — jen na vyžádání**: kandidát č. 1 roční vyúčtování služeb (klientka ho dělá sama — potvrzeno), dále modul Platby (výpisy KB, párování dle VS, podklady pro kontrolní hlášení), QR platba na kalendáři.
 4. Samostatné projekty mimo tuto aplikaci: kniha jízd, digitalizace stazek.
 
-## 9. Otevřené otázky
+## 9. Otevřené body
 
-Aktuální seznam otázek na brainstorming je v `rozsah-a-architektura.md`, oddíl F (vyúčtování služeb, inflační doložky, kauce, poznámky s termínem, vzor kalendáře, systém účetní firmy, VPN/viditelnost soukromé entity, číslování).
+Otázky z brainstormingu byly 10. 8. 2026 zodpovězeny a zapracovány (viz `zadani-hlavni-body.md` — „Doplnění zadání" a verdikty v `rozsah-a-architektura.md`). Zbývá: vzor platebního kalendáře + Excel od klientky a formát číslování dokladů (ověřuje s účetní firmou).

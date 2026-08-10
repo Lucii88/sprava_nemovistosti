@@ -61,3 +61,15 @@
 3. Po odsouhlasení prototypu: ostrá verze s ukládáním dat a oficiální cenou.
 4. **Paní Včeláková:** pošle vzor platebního kalendáře + stávající Excel s nájemci.
 5. Kontext: paralelně poptáno i u stávající externí IT firmy (konzervativní přístup) — bude se porovnávat.
+
+## Doplnění zadání — odpovědi klientky (10. 8. 2026, e-mail)
+
+1. **Roční vyúčtování záloh dělá klientka sama**; menší část nájemců má paušál, u ostatních se vyúčtovává.
+2. **Inflační doložky** ve smlouvách jsou, ale neuplatňují se pravidelně — není to automatický roční proces.
+3. **Kauce vybírají** — chce jednoduchý přehled (kolik, kdy složena, kdy vrácena); na callu zapomněla zmínit.
+4. **Poznámky s termínem na nástěnce: potvrzeno** („skvělé").
+5. Vzor platebního kalendáře a Excel s nájemci **pošle** (zatím bez obchodních dat/cen).
+6. **Účetní firma má vlastní program; klientka jí vše posílá v PDF.**
+7. Přístup: **jen z PC** (kancelář) — není potřeba mobilní přístup ani vzdálený přístup.
+8. **Soukromou entitu má v programu vidět jen klientka.**
+9. Číslování kalendářů je dnes nejednotné („název firmy, PK 1, PK 2…"); vyhovující formát **ověří s účetní firmou**.
