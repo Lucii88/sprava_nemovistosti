@@ -84,6 +84,24 @@
   .tile.warn{border-left:5px solid var(--warn)} .tile.warn .count{color:var(--warn)}
   .tile.okb{border-left:5px solid var(--ok)}
   .task-list .act{margin-left:auto; flex:none}
+  .greet{font-size:1.55rem}
+  .hero{background:var(--danger-bg); border:1px solid #F0CFCA; border-left:6px solid var(--danger); border-radius:var(--radius); padding:16px 18px; display:flex; align-items:center; gap:14px; margin-bottom:16px; flex-wrap:wrap}
+  .hero .htxt b{font-size:1.05rem}
+  .hero .hact{margin-left:auto; display:flex; gap:8px; flex-wrap:wrap}
+  .nastgrid{display:grid; grid-template-columns:1.6fr 1fr; gap:14px; align-items:start}
+  @media (max-width:980px){ .nastgrid{grid-template-columns:1fr} }
+  .duerow{display:flex; gap:12px; align-items:center; padding:10px 0; border-bottom:1px dashed var(--line); font-size:.9rem; flex-wrap:wrap}
+  .duerow:last-child{border-bottom:0}
+  .due{min-width:76px; text-align:center; font-variant-numeric:tabular-nums; font-weight:800; color:var(--petrol); background:var(--mint-soft); border:1px solid var(--mint-line); border-radius:8px; padding:3px 8px; font-size:.8rem; flex:none}
+  .due.warn{background:var(--warn-bg); border-color:#EBD9AE; color:var(--warn)}
+  .due.free{background:var(--ok-bg); border-color:#CBE3D3; color:var(--ok)}
+  .duerow .who{font-weight:700}
+  .duerow .what{color:var(--muted)}
+  .duerow .btn{margin-left:auto}
+  .pcount{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+  .pcount div{display:flex; flex-direction:column}
+  .pnum{font-size:1.7rem; font-weight:800; color:var(--petrol); font-variant-numeric:tabular-nums; line-height:1.1}
+  .plb{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em}
 
   /* ================= SEZNAMY („moderní excel“) ================= */
   .tablecard{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:2px 0}
@@ -259,42 +277,49 @@
 
 <!-- ============ NÁSTĚNKA ============ -->
 <section class="screen on" id="s-nastenka">
-  <h1>Dobrý den, paní Včeláková</h1>
-  <p class="sub" style="margin-bottom:10px">neděle 10. 8. 2026 — tady je všechno, co potřebuje vaši pozornost. Zbytek hlídá program za vás.</p>
+  <h1 class="greet">Dobrý den, Lenko</h1>
+  <p class="sub" style="margin-bottom:10px">neděle 10. srpna 2026</p>
   <div class="statuspills" style="margin-bottom:16px">
-    <span class="spill danger">● 1 věc spěchá</span>
-    <span class="spill warn">● 4 upozornění</span>
-    <span class="spill ok">✓ ostatní v pořádku</span>
+    <span class="spill danger">● 1 spěchá</span>
+    <span class="spill warn">● 5 termínů</span>
+    <span class="spill ok">✓ jinak klid</span>
   </div>
-  <div class="tiles">
-    <div class="tile danger">
-      <div class="thead"><h3>Spěchá — vystavit kalendáře</h3><span class="count">3</span></div>
-      <ul class="task-list">
-        <li><span class="dot danger"></span><div>Novák Autodíly — nájem H1 <div class="when">první splatnost už 25. 8. 2026!</div></div><button class="btn small act" data-form="f-kalendar">Vystavit</button></li>
-        <li><span class="dot warn"></span><div>Novák Autodíly — energie H1 <div class="when">období od 1. 9. 2026</div></div><button class="btn small act" data-form="f-kalendar">Vystavit</button></li>
-        <li><span class="dot info"></span><div>Pekárna U Lípy — voda K3 <div class="when">až od 1. 1. 2027 — nespěchá</div></div><button class="btn sec small act" data-form="f-kalendar">Vystavit</button></li>
-      </ul>
-      <div class="foot"><button class="btn small wizbtn">Vystavit všechny najednou</button></div>
+
+  <div class="hero">
+    <div class="htxt">
+      <b>Novák Autodíly — chybí kalendář nájmu od 9/2026</b>
+      <div class="sec2">první splatnost už 25. 8. 2026 · hala H1 + garáž G2</div>
     </div>
-    <div class="tile warn">
-      <div class="thead"><h3>Smlouvy končí — domluvit prodloužení</h3><span class="count">2</span></div>
-      <ul class="task-list">
-        <li><span class="dot warn"></span><div>Marešová účetnictví — kancelář K1 <div class="when">končí 31. 12. 2026 · výpověď nejpozději v září</div></div><button class="btn sec small act" data-go="smlouvy">Otevřít</button></li>
-        <li><span class="dot info"></span><div>AutoServis Beneš — garáž G5 <div class="when">končí 28. 2. 2027</div></div><button class="btn sec small act" data-go="smlouvy">Otevřít</button></li>
-      </ul>
+    <div class="hact">
+      <button class="btn" data-form="f-kalendar">Vystavit teď</button>
+      <button class="btn sec small wizbtn">Vystavit vše (3)</button>
     </div>
-    <div class="tile warn">
-      <div class="thead"><h3>Vaše poznámky s termínem</h3><span class="count">2</span></div>
-      <ul class="task-list">
-        <li><span class="dot warn"></span><div>Novák Autodíly — nová požární zpráva <div class="when">do 15. 10. 2026</div></div><button class="btn sec small act" data-go="najemci">Otevřít</button></li>
-        <li><span class="dot ok"></span><div>🔒 Horák — kontrola vrat garáže <div class="when">do 1. 9. 2026</div></div><button class="btn sec small act" data-go="najemci">Otevřít</button></li>
-      </ul>
+  </div>
+
+  <div class="nastgrid">
+    <div class="card">
+      <h2>Nejbližší termíny</h2>
+      <div class="duerow"><span class="due warn">25. 8.</span><span class="who">Novák</span><span class="what">vystavit kalendář energie od 9/2026</span><button class="btn sec small" data-form="f-kalendar">Vystavit</button></div>
+      <div class="duerow"><span class="due warn">1. 9.</span><span class="who">🔒 Horák</span><span class="what">kontrola vrat garáže</span><button class="btn sec small" data-go="najemci">Otevřít</button></div>
+      <div class="duerow"><span class="due warn">30. 9.</span><span class="who">Marešová</span><span class="what">domluvit prodloužení — smlouva končí 31. 12.</span><button class="btn sec small" data-go="smlouvy">Otevřít</button></div>
+      <div class="duerow"><span class="due">15. 10.</span><span class="who">Novák</span><span class="what">nová požární zpráva</span><button class="btn sec small" data-go="najemci">Otevřít</button></div>
+      <div class="duerow"><span class="due">1. 1. 27</span><span class="who">Pekárna U Lípy</span><span class="what">kalendář vody na rok 2027</span><button class="btn sec small" data-form="f-kalendar">Vystavit</button></div>
+      <div class="duerow"><span class="due">28. 2. 27</span><span class="who">Beneš</span><span class="what">končí smlouva na garáž G5</span><button class="btn sec small" data-go="smlouvy">Otevřít</button></div>
     </div>
-    <div class="tile okb">
-      <div class="thead"><h3>Pro informaci — volné prostory</h3><span class="count">1</span></div>
-      <ul class="task-list">
-        <li><span class="dot ok"></span><div>K2 — kancelář 22 m², Náměstí 1 <div class="when">Gama Reality · volná od 1. 7. 2026</div></div><button class="btn sec small act" data-go="nemovitosti">Otevřít</button></li>
-      </ul>
+    <div class="dcol">
+      <div class="card">
+        <h2>Portfolio v kostce</h2>
+        <div class="pcount">
+          <div><span class="pnum">8</span><span class="plb">nájemců</span></div>
+          <div><span class="pnum">11</span><span class="plb">nemovitostí</span></div>
+          <div><span class="pnum">10</span><span class="plb">aktivních smluv</span></div>
+          <div><span class="pnum" style="color:var(--ok)">1</span><span class="plb">volný prostor</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Pro informaci</h2>
+        <div class="duerow"><span class="due free">volné</span><span class="who">K2 kancelář</span><span class="what">22 m² · Náměstí 1 · od 1. 7.</span><button class="btn sec small" data-go="nemovitosti">Otevřít</button></div>
+      </div>
     </div>
   </div>
 </section>

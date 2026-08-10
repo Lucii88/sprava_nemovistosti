@@ -22,7 +22,7 @@ Interní aplikace, která nahradí excelovou evidenci pronájmů: přehled nemov
 
 Menu (ploché, bez žargonu): Nástěnka · Smlouvy · Platební kalendáře · Nájemci · Nemovitosti · **Nastavení** (zde se zakládají firmy). **V uživatelském rozhraní se „entita" vždy označuje jako „firma"** — jazyk klientky (viz `persona-lenka-vcelakova.md`); „entita" zůstává technickým pojmem dokumentace a datového modelu. Stejně tak žádné paragrafy v UI — česky („s DPH 21 %", „bez DPH"); § patří jen na PDF doklad.
 
-1. **Nástěnka** — odpovídá na jedinou otázku: *„musím dnes něco udělat?"* Pozdrav + jedna věta souhrnu (semafor: červená = spěchá, jantarová = upozornění, zelená = v pořádku), dlaždice úkolů seřazené podle naléhavosti, **u každé položky tlačítko akce** (Vystavit / Otevřít): kalendáře k vystavení, končící smlouvy, poznámky s termínem, volné prostory jako informace. Žádné grafy, žádná KPI.
+1. **Nástěnka (vítací stránka)** — odpovídá na jedinou otázku: *„musím dnes něco udělat?"* Stavěná na **skenování, ne čtení**: (a) osobní pozdrav křestním jménem — **deterministicky** z pole „oslovení" (5. pád) v profilu uživatele, předvyplněného pravidly českého skloňování a ručně upravitelného; (b) semafor v jedné řádce; (c) **hero karta** s jedinou nejnaléhavější věcí a tlačítkem akce; (d) **Nejbližší termíny** — jeden seznam řazený podle data, datum vlevo v rámečku, tučné jméno, akce vpravo; (e) Portfolio v kostce (jen počty, žádné grafy); (f) Pro informaci (volné prostory).
 2. **Smlouvy** — tabulka všech nájemních vztahů s filtry; export do Excelu respektující aktuální filtr.
 3. **Platební kalendáře** — seznam vygenerovaných dokladů + generování: jednotlivě i **hromadně** (průvodce s náhledem a kontrolami). Archiv všech verzí, náhled PDF. **Hromadný export PDF (ZIP) za období** pro účetní.
 4. **Číselník Nájemci** — seznam (název, IČO, entita, pronajato, nájem/měs.) → **detail nájemce**: klíčová data (IČO, DIČ, účet, stálý VS), co má pronajato, kalendáře, historie cen po letech, kauce, poznámky. Formulář klíčových dat.
@@ -55,7 +55,7 @@ Menu (ploché, bez žargonu): Nástěnka · Smlouvy · Platební kalendáře · 
 | Správce | zadávání a editace dat, generování kalendářů |
 | Náhled | pouze čtení |
 
-Každý uživatel má vlastní účet (audit log zaznamenává kdo-kdy-co; záložka Historie jen pro čtení) a **seznam entit, které smí vidět** — soukromá entita je přiřazena jen paní Včelákové (potvrzeno). Přístup jen z PC ve firemní síti (potvrzeno — žádná mobilní verze, žádná VPN pro V1).
+Každý uživatel má vlastní účet (audit log zaznamenává kdo-kdy-co; záložka Historie jen pro čtení), **seznam entit, které smí vidět** — soukromá entita je přiřazena jen paní Včelákové (potvrzeno) — a pole **jméno + oslovení (5. pád)** pro osobní pozdrav na nástěnce. Přístup jen z PC ve firemní síti (potvrzeno — žádná mobilní verze, žádná VPN pro V1).
 
 ## 7. Technické řešení
 
