@@ -1,7 +1,7 @@
 # Koncept aplikace pro správu nemovitostí
 
-> Pracovní návrh pro brainstorming — vychází z hlavních bodů zadání (viz `zadani-hlavni-body.md`).
-> Pouze textový popis, žádný kód ani grafika.
+> Pracovní návrh pro brainstorming — vychází z hlavních bodů zadání (`zadani-hlavni-body.md`).
+> **O rozsahu rozhoduje `rozsah-a-architektura.md`** (filtr: chtěla to žadatelka? → vyžaduje to zákon? → ulehčí, nebo zahltí?). Tento dokument popisuje, jak odsouhlasený rozsah vypadá z pohledu uživatele.
 
 ---
 
@@ -12,39 +12,34 @@ Interní aplikace, která nahradí excelovou evidenci pronájmů: přehled nemov
 ## 2. Základní principy
 
 - **Jeden zdroj pravdy** místo několika Excelů — vše se zadává jednou, výstupy (kalendáře, přehledy) se generují.
-- **Entita jako první filtr** — všude v aplikaci přepínač: Firma 1 / Firma 2 / Firma 3 / Soukromé / Vše. Entity spravovatelné v administraci (možnost přidat další).
-- **Lokální provoz** — aplikace poběží na firemním serveru (ve spolupráci s externí IT firmou), data neopouští firmu. Přístup přes webový prohlížeč v rámci firemní sítě (případně VPN).
-- **Nejdřív jednoduchost** — v první verzi žádná banka, žádné účetnictví; jen evidence + generování dokumentů.
+- **Entita jako první filtr** — všude přepínač: entita 1…N / Soukromé / Vše. Entity (názvy, IČO, DIČ, účty, číselné řady) jsou čistá konfigurace v administraci — libovolný počet.
+- **Lokální provoz** — aplikace běží na firemním serveru, data neopouští firmu; přístup prohlížečem z firemní sítě (případně VPN).
+- **Nic navíc** — žádná funkce, kterou zadání nechce a která neulehčí práci (viz filtr v `rozsah-a-architektura.md`).
 
-## 3. Datový model (slovně)
+## 3. Obrazovky V1
 
-- **Entita (pronajímatel)** — firma nebo soukromá osoba; název, IČO/DIČ, sídlo, bankovní účet (pro hlavičku kalendáře).
-- **Nemovitost** — typ (garáž / kancelář / výrobní hala / skladová hala / pozemek / jiné), adresa/označení, vlastnící entita, poznámka. U nemovitosti evidence dostupných služeb (elektřina ano/ne, voda ano/ne…).
-- **Nájemce** — firma či osoba, kontakty, fakturační údaje, poznámky.
-- **Smlouva (nájemní vztah)** — spojuje nájemce + nemovitost + entitu; období od–do, den splatnosti (např. 25. den předchozího měsíce), stav (aktivní / ukončená / plánovaná).
-- **Položky smlouvy** — oddělené řádky: nájem / energie a služby / voda — každá s částkou a **vlastní sazbou DPH** (proto samostatné platební kalendáře).
-- **Platební kalendář** — vygenerovaný dokument navázaný na smlouvu a položku; číslovaný, archivovaný, s historií verzí (když se cena změní, generuje se nový).
-- **Poznámky / události** — časová osa u nájemce i u smlouvy (dohody, opravy, „vymalováno → navýšen nájem"…). Jen pro čtení člověkem, nic se z nich negeneruje.
-- **Uživatel** — jméno, přihlášení, role.
+1. **Nástěnka** — po přihlášení 2–3 seznamy s proklikem: kalendáře k vygenerování na nové období, smlouvy končící do X měsíců (předstih dle výpovědní doby), poznámky s blížícím se termínem. Žádné grafy, žádná KPI.
+2. **Nájemci** — kompaktní seznam (~20 řádků) s filtry (entita, typ nemovitosti, stav) → **detail nájemce**: co má pronajato, kalendáře, historie cen po letech, poznámky. Přesně model „úzký přehled → rozklik do detailu" ze zadání.
+3. **Nemovitosti** — seznam s filtry (typ, entita, volná/obsazená — odvozeno z aktivních smluv) → detail: kdo tam je a byl, dostupné služby.
+4. **Smlouvy** — široká „excelová" tabulka všech nájemních vztahů s filtry a řazením; export do Excelu respektující aktuální filtr.
+5. **Platební kalendáře** — přehled vygenerovaných dokladů + generování: jednotlivě (smlouva → položka → náhled → PDF) i **hromadně** („všechny kalendáře na nové období" jedním během s náhledem a kontrolami). Archiv všech verzí.
+6. **Administrace** — entity, uživatelé a role, sazby DPH (s platností od–do), typy nemovitostí.
 
-## 4. Obrazovky
+## 4. Platební kalendáře (jádro)
 
-1. **Dashboard** — po přihlášení: počty aktivních smluv podle entity, smlouvy končící do X měsíců, kalendáře čekající na vygenerování, poslední změny.
-2. **Nájemci** — kompaktní seznam (~20 řádků) s filtry (entita, typ nemovitosti, stav) → **detail nájemce**: co všechno má pronajato, platební kalendáře, historie cen, poznámky. Přesně model „úzký přehled → rozklik do detailu", který paní Včeláková popsala.
-3. **Nemovitosti** — seznam s filtry (typ, entita, obsazená/volná) → detail: kdo tam je a kdo tam byl, jaké služby jsou k dispozici.
-4. **Smlouvy** — široká „excelová" tabulka všech nájemních vztahů (nájemce, nemovitost, entita, období, částky, splatnost) s filtry a řazením; export do Excelu pro jistotu zachován.
-5. **Platební kalendáře** — přehled všech vygenerovaných kalendářů + tlačítko „vygenerovat“: výběr smlouvy → aplikace nabídne položky (nájem / energie / voda) → náhled → PDF ke stažení/tisku. Hromadné generování (např. všechny kalendáře na nové období jedním klikem).
-6. **Historie nájemce** — záložka v detailu nájemce: tabulka po letech (cena nájmu, co měl pronajato) + časová osa poznámek. Možnost ručního dozadání starých let u velkých nájemců.
-7. **Administrace** — správa entit, uživatelů a rolí, sazeb DPH, číselníku typů nemovitostí.
+- Vstup: smlouva + položka (nájem / energie-služby / voda) + období (typicky 12 měsíců).
+- Výstup: PDF dle vzoru paní Včelákové — hlavička (entita jako pronajímatel, nájemce), 12 řádků: období, splatnost (dle pravidla smlouvy, např. „25. den předchozího měsíce"), základ, DPH, celkem.
+- **Režim DPH per smlouva** (viz `pruzkum-legislativa.md`): osvobozeno dle § 56a (kalendář = předpis plateb s textem osvobození) / zdaněno volbou 21 % (nájemce-plátce) / **povinně 21 % u garáží a parkování**. Voda 12 %, elektřina/plyn 21 % — sazby z číselníku, ne z kódu.
+- Náležitosti daňového dokladu (§ 29 + § 31a): evidenční číslo z řady entity, DIČ obou stran, rozpis základ/sazba/daň u každé platby.
+- Každá položka = samostatný dokument — kopíruje dnešní praxi 2–3+ kalendářů na nemovitost.
+- **Neměnnost:** vystavený kalendář se nemění ani nemaže; změna ceny = nový kalendář od data změny, starý zůstává v archivu (historie jednání + zákonná retence 10 let).
+- Kontroly proti chybám z Excelu: výpočty částek a DPH dělá systém, hlídá návaznost období, překryvy a díry.
 
-## 5. Generování platebních kalendářů (jádro aplikace)
+## 5. Historie a poznámky
 
-- Vstup: smlouva + položka (nájem / služby / voda) + období (typicky 12 měsíců).
-- Výstup: PDF se strukturou dle vzoru paní Včelákové — hlavička (pronajímatel = entita, nájemce), 12 řádků: období (1. 9.–30. 9.), splatnost (25. 8.), základ, DPH, celkem.
-- Pravidlo splatnosti („X. den předchozího měsíce") nastavitelné na smlouvě.
-- Každá položka = samostatný dokument (kvůli různým sazbám DPH) — přesně kopíruje dnešní praxi 2–3+ kalendářů na nemovitost.
-- Kalendáře se archivují; při změně ceny vzniká nová verze, stará zůstává dohledatelná (podklad pro historii jednání).
-- Kontroly proti chybám z Excelu: aplikace sama spočítá částky a DPH, pohlídá návaznost období a upozorní na překryvy či díry.
+- Historie nájemce vzniká automaticky z položek smluv s platností od–do (změna ceny = nový řádek) — tabulka po letech bez dodatečné práce.
+- Ruční dozadání starých let u velkých nájemců (jednoduchý formulář).
+- Poznámky k nájemci/smlouvě/nemovitosti: volný text + volitelný termín (zobrazí se na nástěnce). Nic se z nich negeneruje.
 
 ## 6. Role a práva
 
@@ -52,31 +47,21 @@ Interní aplikace, která nahradí excelovou evidenci pronájmů: přehled nemov
 |---|---|
 | Superadmin | vše + správa uživatelů a entit |
 | Správce | zadávání a editace dat, generování kalendářů |
-| Náhled | pouze čtení, bez editace a generování |
+| Náhled | pouze čtení |
 
-Viditelnost lze případně omezit i po entitách (např. soukromý modul vidí jen paní Včeláková) — k probrání na brainstormingu.
+Každý uživatel má vlastní účet (audit log zaznamenává kdo-kdy-co; záložka Historie jen pro čtení). Případné omezení viditelnosti soukromé entity — k potvrzení na brainstormingu.
 
-## 7. Technické řešení (stručně)
+## 7. Technické řešení
 
-- **Webová aplikace** provozovaná na firemním serveru (Docker kontejner — snadná instalace pro IT firmu, zálohování = záloha jedné databáze).
-- Databáze běžící lokálně u aplikace; **žádná data v cloudu třetí strany**.
-- Generování PDF přímo v aplikaci; export přehledů do Excelu.
-- Pravidelná automatická záloha databáze na firemní úložiště.
+Monolitická webová aplikace v Dockeru na firemním serveru; PostgreSQL; serverem renderované UI; PDF se generuje na serveru ze strukturovaných dat (připraveno na případnou budoucí e-fakturaci). Noční záloha databáze + archivu PDF, doporučení 3-2-1 pro IT firmu. Detaily a doménový model: `rozsah-a-architektura.md`, oddíl G.
 
 ## 8. Etapy
 
-1. **Etapa 0 — klikatelný prototyp** (bez databáze): obrazovky k osahání, nic se neukládá. Cíl: odsouhlasit vzhled a logiku. Ambice: do konce týdne.
-2. **Etapa 1 — ostrá verze**: evidence + generování kalendářů + role + nasazení na firemní server, import dat ze stávajícího Excelu.
-3. **Etapa 2 — nadstavby dle zájmu**: připravený modul plateb (párování podle výpisů z banky — KB), upomínky před splatností, další entity.
-4. **Samostatné projekty (mimo tuto aplikaci):** kniha jízd, digitalizace stazek — až po vyhodnocení etapy 1.
+1. **Etapa 0 — klikatelný prototyp** bez databáze: osahání obrazovek, odsouhlasení logiky (dle vzoru kalendáře od klientky).
+2. **Etapa 1 — V1**: rozsah dle `rozsah-a-architektura.md` oddíl E + jednorázový import stávajícího Excelu + nasazení.
+3. **Etapa 2 — jen na vyžádání**: modul Platby (výpisy KB, párování dle VS, podklady pro kontrolní hlášení), roční vyúčtování služeb, indexace nájmu, QR platba na kalendáři.
+4. Samostatné projekty mimo tuto aplikaci: kniha jízd, digitalizace stazek.
 
-## 9. Otevřené otázky na brainstorming
+## 9. Otevřené otázky
 
-1. Vzor platebního kalendáře a Excel od paní Včelákové — přesná pole a formát (čekáme na zaslání).
-2. Názvy a fakturační údaje tří firemních entit.
-3. Přístup jen z firemní sítě, nebo i vzdáleně (VPN)?
-4. Má se soukromý modul skrýt ostatním uživatelům?
-5. Kolik uživatelů reálně na startu a v jakých rolích?
-6. Číslování platebních kalendářů — existuje dnes nějaká řada, na kterou navázat?
-7. Upomínky/notifikace na končící smlouvy a blížící se splatnosti — chtít hned v etapě 1, nebo až později?
-8. Jednorázový import stávajícího Excelu — kdo připraví/vyčistí data?
+Aktuální seznam otázek na brainstorming je v `rozsah-a-architektura.md`, oddíl F (vyúčtování služeb, inflační doložky, kauce, poznámky s termínem, vzor kalendáře, systém účetní firmy, VPN/viditelnost soukromé entity, číslování).
