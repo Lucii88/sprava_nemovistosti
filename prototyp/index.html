@@ -299,6 +299,8 @@
   .pdf td,.pdf th{border-bottom:1px solid #DDD; padding:5px 8px}
   .pdf .r{text-align:right}
   .pdf tfoot td{font-weight:700; border-top:2px solid #1A1A1A; border-bottom:0}
+  .pagefoot{margin-top:34px; padding-top:14px; border-top:1px solid var(--line); display:flex; gap:16px; flex-wrap:wrap; justify-content:space-between; font-size:.76rem; color:var(--muted)}
+  .pagefoot b{color:var(--text)}
   .pdf .legal{margin-top:12px; font-size:.69rem; color:#555; font-style:italic}
 </style>
 
@@ -422,7 +424,7 @@
 <!-- ============ KALENDÁŘE ============ -->
 <section class="screen" id="s-kalendare">
   <h1>Platební kalendáře</h1>
-  <p class="sub">Každý kalendář je daňový doklad (§ 31a) s číslem z řady entity. Vystavený se nemění — změna ceny = nový kalendář, starý zůstává v archivu. Kliknutím na řádek zobrazíte náhled PDF.</p>
+  <p class="sub">Každý kalendář je daňový doklad (§ 31a) s číslem z číselné řady dané firmy. Vystavený se nemění — změna ceny = nový kalendář, starý zůstává v archivu. Kliknutím na řádek zobrazíte náhled PDF.</p>
   <div class="toolbar">
     <button class="btn" data-form="f-kalendar">+ Nový kalendář</button>
     <button class="btn sec" id="open-wizard">⚙ Hromadné generování</button>
@@ -573,14 +575,14 @@
           <table>
             <thead><tr><th>Název</th><th class="num">IČO</th><th class="num">DIČ</th><th class="num">Bankovní účet</th><th>Plátce DPH</th><th>Viditelnost</th></tr></thead>
             <tbody>
-              <tr class="click" data-form="f-entita"><td><b>Alfa Doprava s.r.o.</b></td><td class="num">12345678</td><td class="num">CZ12345678</td><td class="num">123456789/0100</td><td><span class="chip state-ok">ano</span></td><td>všichni</td></tr>
-              <tr class="click" data-form="f-entita"><td><b>Beta Logistika s.r.o.</b></td><td class="num">23456789</td><td class="num">CZ23456789</td><td class="num">234567890/0100</td><td><span class="chip state-ok">ano</span></td><td>všichni</td></tr>
-              <tr class="click" data-form="f-entita"><td><b>Gama Reality s.r.o.</b></td><td class="num">34567890</td><td class="num">CZ34567890</td><td class="num">345678901/0800</td><td><span class="chip state-ok">ano</span></td><td>všichni</td></tr>
-              <tr class="click" data-form="f-entita"><td><b>Soukromé — L. Včeláková</b> 🔒</td><td class="num">—</td><td class="num">—</td><td class="num">456789012/0300</td><td><span class="chip state-old">ne</span></td><td>jen vy</td></tr>
+              <tr class="click" data-form="f-firma"><td><b>Alfa Doprava s.r.o.</b></td><td class="num">12345678</td><td class="num">CZ12345678</td><td class="num">123456789/0100</td><td><span class="chip state-ok">ano</span></td><td>všichni</td></tr>
+              <tr class="click" data-form="f-firma"><td><b>Beta Logistika s.r.o.</b></td><td class="num">23456789</td><td class="num">CZ23456789</td><td class="num">234567890/0100</td><td><span class="chip state-ok">ano</span></td><td>všichni</td></tr>
+              <tr class="click" data-form="f-firma"><td><b>Gama Reality s.r.o.</b></td><td class="num">34567890</td><td class="num">CZ34567890</td><td class="num">345678901/0800</td><td><span class="chip state-ok">ano</span></td><td>všichni</td></tr>
+              <tr class="click" data-form="f-firma"><td><b>Soukromé — L. Včeláková</b> 🔒</td><td class="num">—</td><td class="num">—</td><td class="num">456789012/0300</td><td><span class="chip state-old">ne</span></td><td>jen vy</td></tr>
             </tbody>
           </table>
         </div>
-        <button class="btn small" data-form="f-entita">+ Přidat firmu</button>
+        <button class="btn small" data-form="f-firma">+ Přidat firmu</button>
       </div>
 
       <div class="setpane" id="set-uzivatele">
@@ -644,13 +646,17 @@
     </div>
   </div>
 </section>
+  <footer class="pagefoot">
+    <span><b>Návrh a zpracování: Lucie Koucká Kalabisová</b> · srpen 2026</span>
+    <span>Klikací prototyp pro odsouhlasení rozsahu — prosím nešiřte mimo vaši firmu bez domluvy.</span>
+  </footer>
 </main>
 </div>
 
 <!-- ============ FORMULÁŘ: ENTITA ============ -->
-<div class="overlay" id="f-entita">
+<div class="overlay" id="f-firma">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="fe-t">
-    <button class="close" data-close="f-entita" aria-label="Zavřít">✕</button>
+    <button class="close" data-close="f-firma" aria-label="Zavřít">✕</button>
     <h2 id="fe-t">Firma — klíčová data</h2>
     <div class="formgrid">
       <div class="field full"><label>Název <span class="req">*</span></label><input value="Alfa Doprava s.r.o."></div>
@@ -664,7 +670,7 @@
         <label><input type="checkbox"> 🔒 viditelná jen pro superadmina</label>
       </div>
     </div>
-    <div class="mfoot"><button class="btn sec" data-close="f-entita">Zrušit</button><button class="btn savebtn" data-close="f-entita">Uložit</button></div>
+    <div class="mfoot"><button class="btn sec" data-close="f-firma">Zrušit</button><button class="btn savebtn" data-close="f-firma">Uložit</button></div>
   </div>
 </div>
 
@@ -834,7 +840,7 @@
     <h2 id="wz-title">Hromadné generování kalendářů</h2>
     <div class="steps"><span class="done" id="st1"></span><span id="st2"></span><span id="st3"></span></div>
     <div id="wz-1">
-      <p style="font-size:.9rem; margin-bottom:10px">Období: <b>od 1. 9. 2026, 12 měsíců</b> · Entita: <b>všechny</b></p>
+      <p style="font-size:.9rem; margin-bottom:10px">Období: <b>od 1. 9. 2026, 12 měsíců</b> · Firma: <b>všechny</b></p>
       <p style="font-size:.86rem; color:var(--muted)">Program našel <b>3 smlouvy</b>, kterým na zvolené období chybí platební kalendář. Generuje se vždy zvlášť pro nájem, energie a vodu.</p>
       <div class="mfoot"><button class="btn" id="wz-next1">Pokračovat — náhled</button></div>
     </div>
@@ -851,7 +857,7 @@
       <div class="mfoot"><button class="btn sec" id="wz-back">← Zpět</button><button class="btn" id="wz-next2">Vystavit 3 doklady</button></div>
     </div>
     <div id="wz-3" style="display:none">
-      <div class="okbox">✓ Vystaveny 3 platební kalendáře (AD-2026-017 až 019). PDF jsou v archivu, čísla přidělena z řad entit. Doklady už nelze měnit — případná změna = nový kalendář.</div>
+      <div class="okbox">✓ Vystaveny 3 platební kalendáře (AD-2026-017 až 019). Najdete je u nájemce i v přehledu Platební kalendáře. Čísla přidělil program z číselné řady příslušné firmy. Vystavený doklad už nelze měnit — případná změna ceny = nový kalendář.</div>
       <div class="mfoot"><button class="btn sec mockbtn">⬇ Stáhnout vše (ZIP)</button><button class="btn" data-close="wizard">Hotovo</button></div>
     </div>
   </div>
@@ -915,7 +921,7 @@
     });
   });
 
-  /* ---- filtry entit v nástrojových lištách ---- */
+  /* ---- filtry firem v nástrojových lištách ---- */
   document.querySelectorAll(".entsel").forEach(function(sel){
     sel.addEventListener("change", function(){
       var scope = document.getElementById(sel.dataset.scope);
