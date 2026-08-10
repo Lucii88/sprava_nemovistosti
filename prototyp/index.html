@@ -132,6 +132,10 @@
   .field input:focus, .field select:focus{border-color:var(--petrol-70)}
   .checks{display:flex; gap:14px; flex-wrap:wrap; padding-top:6px}
   .checks label{display:flex; gap:6px; align-items:center; text-transform:none; letter-spacing:0; font-size:.85rem; color:var(--text)}
+  .formsec{grid-column:1 / -1; font-size:.7rem; text-transform:uppercase; letter-spacing:.12em; color:var(--petrol-70); font-weight:700; border-top:1px dashed var(--line); padding-top:12px}
+  .radios{display:flex; gap:14px; flex-wrap:wrap; font-size:.85rem; padding-top:4px}
+  .radios label{display:flex; gap:6px; align-items:center}
+  .minitable{font-size:.8rem; margin-top:8px}
   .mfoot{display:flex; justify-content:flex-end; gap:10px; margin-top:20px}
   .steps{display:flex; gap:6px; margin:14px 0 18px}
   .steps span{flex:1; height:5px; border-radius:3px; background:var(--line)}
@@ -192,7 +196,7 @@
         <li><span class="dot warn"></span><div>Novák Autodíly — energie H1 <div class="when">období od 1. 9. 2026</div></div></li>
         <li><span class="dot info"></span><div>Pekárna U Lípy — voda K3 <div class="when">období od 1. 1. 2027</div></div></li>
       </ul>
-      <div class="foot"><button class="btn small">Vygenerovat vše</button></div>
+      <div class="foot"><button class="btn small wizbtn">Vygenerovat vše</button></div>
     </div>
     <div class="tile">
       <div class="thead"><h3>Smlouvy končící do 6 měsíců</h3><span class="count">2</span></div>
@@ -226,7 +230,7 @@
     <input class="search" type="search" placeholder="Hledat…" aria-label="Hledat ve smlouvách">
     <span class="spacer"></span>
     <button class="btn sec small">Export do Excelu</button>
-    <button class="btn small">+ Nová smlouva</button>
+    <button class="btn small" data-form="f-smlouva">+ Nová smlouva</button>
   </div>
   <div class="tablecard">
     <table>
@@ -252,7 +256,8 @@
   <h1>Platební kalendáře</h1>
   <p class="sub">Každý kalendář je daňový doklad (§ 31a) s číslem z řady entity. Vystavený se nemění — změna ceny = nový kalendář, starý zůstává v archivu. Kliknutím na řádek zobrazíte náhled PDF.</p>
   <div class="toolbar">
-    <button class="btn" id="open-wizard">⚙ Hromadné generování</button>
+    <button class="btn" data-form="f-kalendar">+ Nový kalendář</button>
+    <button class="btn sec" id="open-wizard">⚙ Hromadné generování</button>
     <button class="btn sec small" id="zipbtn">⬇ ZIP pro účetní (období…)</button>
     <span class="spacer"></span>
     <label>Entita <select class="fsel entsel" data-scope="s-kalendare"><option value="ALL">Vše</option><option value="AD">Alfa Doprava</option><option value="BL">Beta Logistika</option><option value="GR">Gama Reality</option><option value="SV">🔒 Soukromé</option></select></label>
@@ -300,7 +305,7 @@
       <span class="chip ent" id="det-ent">—</span>
       <span style="flex:1"></span>
       <button class="btn sec small" data-form="f-najemce">Upravit údaje</button>
-      <button class="btn small">Vygenerovat kalendář</button>
+      <button class="btn small" data-form="f-kalendar">Vygenerovat kalendář</button>
     </div>
     <div class="cardsgrid">
       <div class="card">
@@ -479,6 +484,117 @@
       <div class="field full"><label>Poznámka</label><textarea rows="2"></textarea></div>
     </div>
     <div class="mfoot"><button class="btn sec" data-close="f-nemovitost">Zrušit</button><button class="btn savebtn" data-close="f-nemovitost">Uložit</button></div>
+  </div>
+</div>
+
+<!-- ============ PRŮVODCE: NOVÁ SMLOUVA ============ -->
+<div class="overlay" id="f-smlouva">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="sm-t">
+    <button class="close" data-close="f-smlouva" aria-label="Zavřít">✕</button>
+    <h2 id="sm-t">Nová smlouva</h2>
+    <div class="steps"><span class="done"></span><span id="smst2"></span><span id="smst3"></span></div>
+
+    <div id="sm-1">
+      <div class="formgrid">
+        <div class="formsec">Kdo a co</div>
+        <div class="field"><label>Entita (pronajímatel) <span class="req">*</span></label>
+          <select><option>Alfa Doprava s.r.o.</option><option>Beta Logistika s.r.o.</option><option>Gama Reality s.r.o.</option><option>🔒 Soukromé — L. Včeláková</option></select></div>
+        <div class="field"><label>Nájemce <span class="req">*</span></label>
+          <select><option>Novák Autodíly s.r.o.</option><option>Pekárna U Lípy s.r.o.</option><option>KovoTech Dvořák s.r.o.</option><option>— založit nového nájemce —</option></select></div>
+        <div class="field full"><label>Nemovitosti (lze vybrat více) <span class="req">*</span></label>
+          <div class="checks">
+            <label><input type="checkbox" checked> H1 výrobní hala</label>
+            <label><input type="checkbox" checked> G2 garáž</label>
+            <label><input type="checkbox"> P4 pozemek</label>
+            <label><input type="checkbox"> K2 kancelář <span class="chip free">volná</span></label>
+          </div>
+        </div>
+        <div class="formsec">Doba a splatnost</div>
+        <div class="field"><label>Doba nájmu</label>
+          <div class="radios"><label><input type="radio" name="doba" checked> určitá</label><label><input type="radio" name="doba"> neurčitá</label></div></div>
+        <div class="field"><label>Právní režim</label>
+          <select><option>nájem prostoru k podnikání</option><option>obecný nájem</option><option>pacht (pozemek)</option></select></div>
+        <div class="field"><label>Od <span class="req">*</span></label><input type="date" value="2026-09-01"></div>
+        <div class="field"><label>Do</label><input type="date" value="2027-08-31"></div>
+        <div class="field full"><label>Splatnost — nájem se platí dopředu <span class="req">*</span></label>
+          <div class="radios" style="align-items:center">k <select class="fsel" style="width:76px"><option>25.</option><option>20.</option><option>15.</option></select> dni <select class="fsel"><option>měsíce předcházejícího</option><option>běžného měsíce</option></select>
+          <span style="color:var(--muted); font-size:.78rem">(musí být sjednáno ve smlouvě — § 2218)</span></div></div>
+      </div>
+      <div class="mfoot"><button class="btn" id="sm-next1">Pokračovat — položky a ceny</button></div>
+    </div>
+
+    <div id="sm-2" style="display:none">
+      <div class="formgrid">
+        <div class="formsec">Nájem</div>
+        <div class="field"><label>Nájemné / měs. bez DPH <span class="req">*</span></label><input type="number" value="42000"></div>
+        <div class="field"><label>Režim DPH</label>
+          <select><option>zdanit 21 % — nájemce je plátce (§ 56a odst. 3)</option><option>osvobozeno (§ 56a)</option></select></div>
+        <div class="field full" style="font-size:.78rem; color:var(--muted)">ℹ U vybrané garáže G2 bude nájem <b>vždy 21 %</b> (povinně dle § 56a) — program to nastaví sám.</div>
+        <div class="formsec">Služby</div>
+        <div class="field"><label><input type="checkbox" checked style="width:auto; margin-right:6px">Energie / služby — Kč/měs. bez DPH</label><input type="number" value="12000"></div>
+        <div class="field"><label>Režim</label><select><option>záloha (bude se vyúčtovávat)</option><option>paušál</option></select></div>
+        <div class="field"><label><input type="checkbox" style="width:auto; margin-right:6px">Voda (12 %) — Kč/měs. bez DPH</label><input type="number" placeholder="—"></div>
+        <div class="field"><label>Režim</label><select disabled><option>záloha</option></select></div>
+        <div class="formsec">Kauce</div>
+        <div class="field"><label>Výše kauce Kč</label><input type="number" value="100000"></div>
+        <div class="field"><label>Datum složení</label><input type="date" value="2026-08-25"></div>
+      </div>
+      <div class="mfoot"><button class="btn sec" id="sm-back1">← Zpět</button><button class="btn" id="sm-next2">Pokračovat — souhrn</button></div>
+    </div>
+
+    <div id="sm-3" style="display:none">
+      <dl class="kvlist" style="margin-top:6px">
+        <dt>Smlouva</dt><dd>Alfa Doprava × Novák Autodíly · H1 + G2</dd>
+        <dt>Období</dt><dd>1. 9. 2026 – 31. 8. 2027 · splatnost k 25. dni měsíce předcházejícího</dd>
+        <dt>Položky</dt><dd>nájem 42 000 Kč (21 %) · energie 12 000 Kč (21 %, záloha)</dd>
+        <dt>Kauce</dt><dd>100 000 Kč, složení 25. 8. 2026 (mimo kalendáře i DPH)</dd>
+      </dl>
+      <div class="okbox" style="margin-top:14px">Po uložení program rovnou nabídne vystavení <b>2 platebních kalendářů</b> (nájem, energie) na celé období.</div>
+      <div class="mfoot"><button class="btn sec" id="sm-back2">← Zpět</button><button class="btn" id="sm-save">Uložit smlouvu</button></div>
+    </div>
+
+    <div id="sm-4" style="display:none">
+      <div class="okbox">✓ Smlouva uložena. Vystavit k ní platební kalendáře?</div>
+      <div class="mfoot" id="sm-issue-row"><button class="btn sec" data-close="f-smlouva">Později</button><button class="btn" id="sm-issue">Vystavit 2 kalendáře teď</button></div>
+      <div id="sm-done" style="display:none">
+        <div class="okbox">✓ Vystaveny doklady <b>AD-2026-017</b> (nájem) a <b>AD-2026-018</b> (energie). PDF jsou v archivu.</div>
+        <div class="mfoot"><button class="btn sec" id="sm-showpdf">Zobrazit PDF</button><button class="btn" data-close="f-smlouva">Hotovo</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DIALOG: NOVÝ KALENDÁŘ ============ -->
+<div class="overlay" id="f-kalendar">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="k-t">
+    <button class="close" data-close="f-kalendar" aria-label="Zavřít">✕</button>
+    <h2 id="k-t">Nový platební kalendář</h2>
+
+    <div id="k-1">
+      <div class="formgrid">
+        <div class="field full"><label>Smlouva <span class="req">*</span></label>
+          <select><option>Novák Autodíly — H1 + G2 (Alfa Doprava, 9/2026–8/2027)</option><option>Pekárna U Lípy — K3 (Alfa Doprava)</option><option>KovoTech Dvořák — S2 (Beta Logistika)</option></select></div>
+        <div class="field"><label>Položka <span class="req">*</span></label>
+          <select><option>nájem (21 %)</option><option>energie — záloha (21 %)</option><option>voda — záloha (12 %)</option></select></div>
+        <div class="field"><label>Období <span class="req">*</span></label>
+          <div class="radios" style="align-items:center">od <input type="month" value="2026-09" style="width:150px"> <select class="fsel"><option>12 měsíců</option><option>6 měsíců</option><option>do konce smlouvy</option></select></div></div>
+      </div>
+      <table class="minitable">
+        <thead><tr><th>Období</th><th>Splatnost</th><th class="num">Základ</th><th class="num">DPH 21 %</th><th class="num">Celkem</th></tr></thead>
+        <tbody>
+          <tr><td>1. 9. – 30. 9. 2026</td><td class="num">25. 8. 2026</td><td class="num">42 000</td><td class="num">8 820</td><td class="num">50 820</td></tr>
+          <tr><td>1. 10. – 31. 10. 2026</td><td class="num">25. 9. 2026</td><td class="num">42 000</td><td class="num">8 820</td><td class="num">50 820</td></tr>
+          <tr><td colspan="5" style="text-align:center; color:var(--faint)">… dalších 10 měsíců · vše spočítá program …</td></tr>
+        </tbody>
+      </table>
+      <div class="okbox" style="margin-top:10px">Kontroly ✓ položka platí celé období · ✓ navazuje na předchozí kalendář (AD-2025-041) · číslo dokladu přidělí systém při vystavení</div>
+      <div class="mfoot"><button class="btn sec" data-close="f-kalendar">Zrušit</button><button class="btn" id="k-issue">Vystavit doklad</button></div>
+    </div>
+
+    <div id="k-2" style="display:none">
+      <div class="okbox">✓ Vystaven platební kalendář <b>AD-2026-017</b> — nájem H1+G2, 9/2026–8/2027. PDF je v archivu; doklad už nelze měnit (změna = nový kalendář).</div>
+      <div class="mfoot"><button class="btn sec" id="k-showpdf">Zobrazit PDF</button><button class="btn" data-close="f-kalendar">Hotovo</button></div>
+    </div>
   </div>
 </div>
 
@@ -677,6 +793,56 @@
   /* ---- pdf náhled ---- */
   document.querySelectorAll("tr[data-pdf]").forEach(function(r){
     r.addEventListener("click", function(){ open("pdfmodal"); });
+  });
+
+  /* ---- nástěnka → hromadné generování ---- */
+  document.querySelectorAll(".wizbtn").forEach(function(b){
+    b.addEventListener("click", function(){ open("wizard"); wzStep(1); });
+  });
+
+  /* ---- průvodce novou smlouvou ---- */
+  function smStep(n){
+    ["sm-1","sm-2","sm-3","sm-4"].forEach(function(id, i){
+      document.getElementById(id).style.display = (i === n-1) ? "block" : "none";
+    });
+    document.getElementById("smst2").className = n >= 2 ? "done" : "";
+    document.getElementById("smst3").className = n >= 3 ? "done" : "";
+    if(n === 4){
+      document.getElementById("sm-issue-row").style.display = "flex";
+      document.getElementById("sm-done").style.display = "none";
+    }
+  }
+  document.querySelectorAll("[data-form='f-smlouva']").forEach(function(b){
+    b.addEventListener("click", function(){ smStep(1); });
+  });
+  document.getElementById("sm-next1").addEventListener("click", function(){ smStep(2); });
+  document.getElementById("sm-back1").addEventListener("click", function(){ smStep(1); });
+  document.getElementById("sm-next2").addEventListener("click", function(){ smStep(3); });
+  document.getElementById("sm-back2").addEventListener("click", function(){ smStep(2); });
+  document.getElementById("sm-save").addEventListener("click", function(){ smStep(4); toast("✓ Smlouva uložena — v prototypu se data neukládají."); });
+  document.getElementById("sm-issue").addEventListener("click", function(){
+    document.getElementById("sm-issue-row").style.display = "none";
+    document.getElementById("sm-done").style.display = "block";
+  });
+  document.getElementById("sm-showpdf").addEventListener("click", function(){
+    document.getElementById("f-smlouva").classList.remove("on");
+    open("pdfmodal");
+  });
+
+  /* ---- dialog nový kalendář ---- */
+  document.querySelectorAll("[data-form='f-kalendar']").forEach(function(b){
+    b.addEventListener("click", function(){
+      document.getElementById("k-1").style.display = "block";
+      document.getElementById("k-2").style.display = "none";
+    });
+  });
+  document.getElementById("k-issue").addEventListener("click", function(){
+    document.getElementById("k-1").style.display = "none";
+    document.getElementById("k-2").style.display = "block";
+  });
+  document.getElementById("k-showpdf").addEventListener("click", function(){
+    document.getElementById("f-kalendar").classList.remove("on");
+    open("pdfmodal");
   });
 })();
 </script>
