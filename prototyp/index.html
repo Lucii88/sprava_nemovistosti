@@ -88,8 +88,6 @@
   .hero{background:var(--danger-bg); border:1px solid #F0CFCA; border-left:6px solid var(--danger); border-radius:var(--radius); padding:16px 18px; display:flex; align-items:center; gap:14px; margin-bottom:16px; flex-wrap:wrap}
   .hero .htxt b{font-size:1.05rem}
   .hero .hact{margin-left:auto; display:flex; gap:8px; flex-wrap:wrap}
-  .nastgrid{display:grid; grid-template-columns:1.6fr 1fr; gap:14px; align-items:start}
-  @media (max-width:980px){ .nastgrid{grid-template-columns:1fr} }
   .duerow{display:flex; gap:12px; align-items:center; padding:10px 0; border-bottom:1px dashed var(--line); font-size:.9rem; flex-wrap:wrap}
   .duerow:last-child{border-bottom:0}
   .due{min-width:76px; text-align:center; font-variant-numeric:tabular-nums; font-weight:800; color:var(--petrol); background:var(--mint-soft); border:1px solid var(--mint-line); border-radius:8px; padding:3px 8px; font-size:.8rem; flex:none}
@@ -98,10 +96,14 @@
   .duerow .who{font-weight:700}
   .duerow .what{color:var(--muted)}
   .duerow .btn{margin-left:auto}
-  .pcount{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-  .pcount div{display:flex; flex-direction:column}
-  .pnum{font-size:1.7rem; font-weight:800; color:var(--petrol); font-variant-numeric:tabular-nums; line-height:1.1}
-  .plb{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em}
+  /* portfolio v jedné lince */
+  .pstrip{display:flex; gap:0; flex-wrap:wrap; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:12px 6px; margin-bottom:16px}
+  .pstrip button{flex:1; min-width:130px; background:none; border:0; border-right:1px solid var(--line); padding:2px 14px; text-align:left; display:flex; align-items:baseline; gap:8px; border-radius:6px}
+  .pstrip button:last-child{border-right:0}
+  .pstrip button:hover{background:var(--mint-soft)}
+  .pnum{font-size:1.5rem; font-weight:800; color:var(--petrol); font-variant-numeric:tabular-nums; line-height:1}
+  .plb{font-size:.74rem; color:var(--muted)}
+  .viewbox{min-height:440px}
 
   /* ---- měsíční kalendář ---- */
   .viewtog{display:flex; gap:4px; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:3px}
@@ -113,7 +115,7 @@
   .calnav:hover{background:var(--mint-soft)}
   .calgrid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px}
   .cdow{font-size:.66rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); text-align:center; padding:2px 0 4px; font-weight:700}
-  .cday{border:1px solid var(--line); border-radius:9px; min-height:88px; padding:5px 6px; background:var(--surface); display:flex; flex-direction:column; gap:3px}
+  .cday{border:1px solid var(--line); border-radius:9px; min-height:64px; padding:5px 6px; background:var(--surface); display:flex; flex-direction:column; gap:3px}
   .cday.out{background:transparent; border-color:transparent}
   .cday.out .cnum{color:#C9CFC7}
   .cday.wknd{background:#FCFAF4}
@@ -313,6 +315,13 @@
     <span class="spill ok">✓ jinak klid</span>
   </div>
 
+  <div class="pstrip">
+    <button data-go="najemci"><span class="pnum">8</span><span class="plb">nájemců</span></button>
+    <button data-go="nemovitosti"><span class="pnum">11</span><span class="plb">nemovitostí</span></button>
+    <button data-go="smlouvy"><span class="pnum">10</span><span class="plb">aktivních smluv</span></button>
+    <button data-go="nemovitosti"><span class="pnum" style="color:var(--ok)">1</span><span class="plb">volný prostor — K2 kancelář</span></button>
+  </div>
+
   <div class="hero">
     <div class="htxt">
       <b><span class="lnk" data-tenant="Novák Autodíly s.r.o." style="cursor:pointer; text-decoration:underline">Novák Autodíly s.r.o.</span> — chybí kalendář nájmu od 9/2026</b>
@@ -324,7 +333,7 @@
     </div>
   </div>
 
-  <div class="nastgrid" id="nastgrid">
+  <div id="nastgrid">
     <div class="card">
       <div class="cardhead" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px">
         <h2 style="margin:0">Co mě čeká</h2>
@@ -334,16 +343,17 @@
         </div>
       </div>
 
-      <div id="view-list">
+      <div id="view-list" class="viewbox">
         <div class="duerow"><span class="due warn">25. 8.</span><span class="who" data-tenant="Novák Autodíly s.r.o.">Novák Autodíly s.r.o.</span><span class="what">vystavit kalendář energie od 9/2026</span><button class="btn sec small" data-form="f-kalendar">Vystavit</button></div>
         <div class="duerow"><span class="due warn">1. 9.</span><span class="who" data-tenant="Jan Horák 🔒">Jan Horák 🔒</span><span class="what">kontrola vrat garáže</span><button class="btn sec small" data-tenant="Jan Horák 🔒">Otevřít</button></div>
         <div class="duerow"><span class="due warn">30. 9.</span><span class="who" data-tenant="Marešová účetnictví">Marešová účetnictví</span><span class="what">domluvit prodloužení — smlouva končí 31. 12.</span><button class="btn sec small" data-tenant="Marešová účetnictví">Otevřít</button></div>
         <div class="duerow"><span class="due">15. 10.</span><span class="who" data-tenant="Novák Autodíly s.r.o.">Novák Autodíly s.r.o.</span><span class="what">nová požární zpráva</span><button class="btn sec small" data-tenant="Novák Autodíly s.r.o.">Otevřít</button></div>
         <div class="duerow"><span class="due">1. 1. 27</span><span class="who" data-tenant="Pekárna U Lípy s.r.o.">Pekárna U Lípy s.r.o.</span><span class="what">kalendář vody na rok 2027</span><button class="btn sec small" data-form="f-kalendar">Vystavit</button></div>
         <div class="duerow"><span class="due">28. 2. 27</span><span class="who" data-tenant="AutoServis Beneš">AutoServis Beneš</span><span class="what">končí smlouva na garáž G5</span><button class="btn sec small" data-tenant="AutoServis Beneš">Otevřít</button></div>
+        <p class="sub" style="margin:14px 0 0; font-size:.78rem">Zobrazeny všechny termíny do konce února 2027. Další přibudou samy, jakmile vzniknou.</p>
       </div>
 
-      <div id="view-cal" style="display:none">
+      <div id="view-cal" class="viewbox" style="display:none">
         <div class="calhead">
           <button class="calnav" id="cal-prev" aria-label="Předchozí měsíc">‹</button>
           <span class="mname" id="cal-name">—</span>
@@ -356,21 +366,6 @@
           <span><i style="background:var(--warn-bg); border:1px solid #EBD9AE"></i> termín</span>
           <span><i style="background:var(--mint-soft); border:1px solid var(--mint-line)"></i> splatnosti dle kalendářů</span>
         </div>
-      </div>
-    </div>
-    <div class="dcol">
-      <div class="card">
-        <h2>Portfolio v kostce</h2>
-        <div class="pcount">
-          <div><span class="pnum">8</span><span class="plb">nájemců</span></div>
-          <div><span class="pnum">11</span><span class="plb">nemovitostí</span></div>
-          <div><span class="pnum">10</span><span class="plb">aktivních smluv</span></div>
-          <div><span class="pnum" style="color:var(--ok)">1</span><span class="plb">volný prostor</span></div>
-        </div>
-      </div>
-      <div class="card">
-        <h2>Pro informaci</h2>
-        <div class="duerow"><span class="due free">volné</span><span class="who">K2 kancelář</span><span class="what">22 m² · Náměstí 1 · od 1. 7.</span><button class="btn sec small" data-go="nemovitosti">Otevřít</button></div>
       </div>
     </div>
   </div>
@@ -1214,7 +1209,6 @@
       var isCal = b.dataset.view === "cal";
       document.getElementById("view-list").style.display = isCal ? "none" : "block";
       document.getElementById("view-cal").style.display = isCal ? "block" : "none";
-      document.getElementById("nastgrid").style.gridTemplateColumns = isCal ? "1fr" : "";
       if(isCal){ renderCal(); }
     });
   });
