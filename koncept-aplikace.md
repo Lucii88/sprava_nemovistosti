@@ -20,9 +20,9 @@ Interní aplikace, která nahradí excelovou evidenci pronájmů: přehled nemov
 
 **Rozvržení:** stálá boční lišta s menu. **Číselníky a přehledy jsou seznamy — „moderní Excel"** (sloupce, řádky, filtry v nástrojové liště, řazení); dlaždice jen na nástěnce úkolů. Filtr entity je běžný filtr v liště seznamu, žádný globální přepínač. **Žádné vnitřní posuvníky** — roluje se jen celá stránka.
 
-Menu: **Přehled** (Nástěnka) · **Provoz** (Smlouvy, Platební kalendáře) · **Číselníky** (Nájemci, Nemovitosti) · **Systém** (Administrace — zde i Entity).
+Menu (ploché, bez žargonu): Nástěnka · Smlouvy · Platební kalendáře · Nájemci · Nemovitosti · **Nastavení** (zde se zakládají firmy). **V uživatelském rozhraní se „entita" vždy označuje jako „firma"** — jazyk klientky (viz `persona-lenka-vcelakova.md`); „entita" zůstává technickým pojmem dokumentace a datového modelu. Stejně tak žádné paragrafy v UI — česky („s DPH 21 %", „bez DPH"); § patří jen na PDF doklad.
 
-1. **Nástěnka** — dlaždice úkolů s proklikem: kalendáře k vygenerování, smlouvy končící do X měsíců (předstih dle výpovědní doby), poznámky s termínem, volné prostory. Žádné grafy, žádná KPI.
+1. **Nástěnka** — odpovídá na jedinou otázku: *„musím dnes něco udělat?"* Pozdrav + jedna věta souhrnu (semafor: červená = spěchá, jantarová = upozornění, zelená = v pořádku), dlaždice úkolů seřazené podle naléhavosti, **u každé položky tlačítko akce** (Vystavit / Otevřít): kalendáře k vystavení, končící smlouvy, poznámky s termínem, volné prostory jako informace. Žádné grafy, žádná KPI.
 2. **Smlouvy** — tabulka všech nájemních vztahů s filtry; export do Excelu respektující aktuální filtr.
 3. **Platební kalendáře** — seznam vygenerovaných dokladů + generování: jednotlivě i **hromadně** (průvodce s náhledem a kontrolami). Archiv všech verzí, náhled PDF. **Hromadný export PDF (ZIP) za období** pro účetní.
 4. **Číselník Nájemci** — seznam (název, IČO, entita, pronajato, nájem/měs.) → **detail nájemce**: klíčová data (IČO, DIČ, účet, stálý VS), co má pronajato, kalendáře, historie cen po letech, kauce, poznámky. Formulář klíčových dat.
