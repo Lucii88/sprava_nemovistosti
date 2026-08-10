@@ -1008,12 +1008,19 @@
     function Y(v){ return pT + (H - pT - pB) * (1 - (v - lo) / (hi - lo)); }
     var base = H - pB;
 
-    /* svislé linky a popisky let */
+    /* svislé linky a popisky let + čtvrtletní zoubky pro odečet měsíce */
     var grid = "", labs = "";
     for(var y = hist[0][0]; y <= endY; y++){
       var gx = X(y * 12);
       grid += "<line x1='"+gx+"' y1='"+pT+"' x2='"+gx+"' y2='"+base+"' stroke='var(--line)' stroke-width='1'/>";
       labs += "<text x='"+gx+"' y='"+(base+18)+"' text-anchor='"+(y === hist[0][0] ? "start" : (y === endY ? "end" : "middle"))+"' font-size='11' font-weight='700' fill='var(--muted)'>"+y+"</text>";
+      [3, 6, 9].forEach(function(q){
+        var qm = y * 12 + q;
+        if(qm > axStart && qm < axEnd){
+          var qx = X(qm);
+          grid += "<line x1='"+qx+"' y1='"+(base-4)+"' x2='"+qx+"' y2='"+base+"' stroke='var(--line)' stroke-width='1'/>";
+        }
+      });
     }
     grid += "<line x1='"+pL+"' y1='"+base+"' x2='"+(W-pR)+"' y2='"+base+"' stroke='var(--line)' stroke-width='1'/>";
 
@@ -1026,20 +1033,18 @@
       var last = i === hist.length - 1;
       marks += "<circle cx='"+X(MM(h))+"' cy='"+my+"' r='"+(last ? 5 : 4)+"' fill='"+(last ? "var(--honey)" : "var(--petrol)")+"' stroke='#fff' stroke-width='2'><title>od "+h[1]+"/"+h[0]+" · "+h[2]+" · "+vals[i].toLocaleString("cs-CZ")+" Kč/měs.</title></circle>";
       marks += "<text x='"+mx+"' y='"+(my-11)+"' text-anchor='middle' font-size='12.5' font-weight='"+(last ? "800" : "600")+"' fill='var(--text)'>"+vals[i].toLocaleString("cs-CZ")+"</text>";
+      marks += "<text x='"+(X(MM(h))+5)+"' y='"+(my+14)+"' font-size='10' fill='var(--muted)'>"+h[1]+"/"+h[0]+"</text>";
     });
     d += " L"+X(axEnd)+" "+Y(vals[vals.length-1]);
     var area = d + " L"+X(axEnd)+" "+base+" L"+X(MM(hist[0]))+" "+base+" Z";
 
-    var zmen = hist.length - 1;
-    return "<svg viewBox='0 0 "+W+" "+H+"' style='width:100%; height:auto; display:block' role='img' aria-label='Vývoj ceny nájmu po letech'>"
+    return "<p class='sub' style='margin:0 0 2px; font-size:.74rem'>Kč/měs. bez DPH</p>"
+      + "<svg viewBox='0 0 "+W+" "+H+"' style='width:100%; height:auto; display:block' role='img' aria-label='Vývoj ceny nájmu po letech'>"
       + grid
       + "<path d='"+area+"' fill='var(--mint-soft)'/>"
       + "<path d='"+d+"' fill='none' stroke='var(--petrol)' stroke-width='2.5' stroke-linejoin='round'/>"
       + marks + labs
-      + "</svg>"
-      + "<p class='sub' style='margin:6px 0 0; font-size:.76rem'>Kč/měs. bez DPH · "
-      + (zmen ? zmen + "× změna ceny od " + hist[0][1] + "/" + hist[0][0] : "cena se od " + hist[0][1] + "/" + hist[0][0] + " neměnila")
-      + " · aktuálně " + hist[hist.length-1][2] + "</p>";
+      + "</svg>";
   }
 
   function openDetail(t){
