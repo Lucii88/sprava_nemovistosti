@@ -121,6 +121,9 @@
   .dethead{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px}
   .dethead h1{margin:0}
   .cardsgrid{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
+  .detgrid{display:grid; grid-template-columns:1.55fr 1fr; gap:14px; align-items:start}
+  .dcol{display:flex; flex-direction:column; gap:14px}
+  @media (max-width:980px){ .detgrid{grid-template-columns:1fr} }
   .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px}
   .timeline{list-style:none}
   .timeline li{padding:8px 0 8px 16px; border-left:2px solid var(--mint-line); position:relative; font-size:.85rem}
@@ -366,30 +369,34 @@
     </div>
     <div class="statrow" id="det-stats"></div>
     <div class="alerts" id="det-alerts"></div>
-    <div class="cardsgrid">
-      <div class="card">
-        <h2>Klíčová data</h2>
-        <dl class="kvlist" id="det-data"></dl>
+    <div class="detgrid">
+      <div class="dcol">
+        <div class="card">
+          <h2>Smlouvy a kauce</h2>
+          <div id="det-smlouvy"></div>
+        </div>
+        <div class="card">
+          <h2>Vývoj ceny nájmu</h2>
+          <div id="det-chart"></div>
+        </div>
+        <div class="card">
+          <h2>Platební kalendáře</h2>
+          <p class="sub" style="margin-bottom:6px; font-size:.78rem">kliknutím na doklad otevřete PDF</p>
+          <ul class="task-list" id="det-cals"></ul>
+        </div>
       </div>
-      <div class="card">
-        <h2>Smlouvy a kauce</h2>
-        <div id="det-smlouvy"></div>
-      </div>
-      <div class="card">
-        <h2>Historie ceny nájmu</h2>
-        <table id="det-history"><thead><tr><th>Období</th><th>Předmět</th><th class="num">Kč/měs.</th><th></th></tr></thead><tbody></tbody></table>
-      </div>
-      <div class="card">
-        <h2>Platební kalendáře</h2>
-        <p class="sub" style="margin-bottom:6px; font-size:.78rem">kliknutím na doklad otevřete PDF</p>
-        <ul class="task-list" id="det-cals"></ul>
-      </div>
-      <div class="card">
-        <h2>Poznámky</h2>
-        <ul class="timeline" id="det-notes"></ul>
-        <div class="toolbar" style="margin:12px 0 0">
-          <input class="search" style="flex:1; min-width:0" placeholder="Nová poznámka… (+ volitelný termín)" aria-label="Nová poznámka">
-          <button class="btn small" id="note-save">Uložit</button>
+      <div class="dcol">
+        <div class="card">
+          <h2>Klíčová data</h2>
+          <dl class="kvlist" id="det-data"></dl>
+        </div>
+        <div class="card">
+          <h2>Poznámky</h2>
+          <ul class="timeline" id="det-notes"></ul>
+          <div class="toolbar" style="margin:12px 0 0">
+            <input class="search" style="flex:1; min-width:0" placeholder="Nová poznámka… (+ volitelný termín)" aria-label="Nová poznámka">
+            <button class="btn small" id="note-save">Uložit</button>
+          </div>
         </div>
       </div>
     </div>
@@ -866,6 +873,44 @@
     });
   }
   tenSel.addEventListener("change", renderTenants);
+  /* schodový graf vývoje ceny (cena drží hladinu a mění se skokem) */
+  function priceChart(hist){
+    if(hist.length < 2){
+      return "<p style='font-size:.9rem; color:var(--muted)'>Cena se zatím neměnila — <b style='color:var(--text)'>"+hist[0][2]+" Kč/měs.</b> ("+hist[0][0]+" · "+hist[0][1]+")</p>";
+    }
+    var vals = hist.map(function(h){ return parseInt(h[2].replace(/\s/g,""), 10); });
+    var min = Math.min.apply(null, vals), max = Math.max.apply(null, vals);
+    var W = 560, H = 195, pL = 12, pR = 12, pT = 32, pB = 42;
+    var iw = (W - pL - pR) / hist.length;
+    var lo = min - (max - min) * 0.4 - 1, hi = max + (max - min) * 0.2;
+    function Y(v){ return pT + (H - pT - pB) * (1 - (v - lo) / (hi - lo)); }
+    var grid = "";
+    [0.28, 0.56, 0.84].forEach(function(f){
+      var gy = pT + (H - pT - pB) * f;
+      grid += "<line x1='"+pL+"' y1='"+gy+"' x2='"+(W-pR)+"' y2='"+gy+"' stroke='var(--line)' stroke-width='1'/>";
+    });
+    var d = "M"+pL+" "+Y(vals[0]);
+    vals.forEach(function(v, i){
+      d += " L"+(pL + i*iw)+" "+Y(v)+" L"+(pL + (i+1)*iw)+" "+Y(v);
+    });
+    var area = d + " L"+(W-pR)+" "+(H-pB)+" L"+pL+" "+(H-pB)+" Z";
+    var marks = "", labs = "";
+    hist.forEach(function(h, i){
+      var cx = pL + i*iw + iw/2, cy = Y(vals[i]);
+      var last = i === hist.length - 1;
+      marks += "<circle cx='"+cx+"' cy='"+cy+"' r='"+(last ? 5.5 : 4)+"' fill='"+(last ? "var(--honey)" : "var(--petrol)")+"' stroke='#fff' stroke-width='2'><title>"+h[0]+" · "+h[1]+" · "+h[2]+" Kč/měs.</title></circle>";
+      labs += "<text x='"+cx+"' y='"+(cy-12)+"' text-anchor='middle' font-size='12.5' font-weight='"+(last ? "800" : "600")+"' fill='var(--text)'>"+h[2]+"</text>";
+      labs += "<text x='"+cx+"' y='"+(H-14)+"' text-anchor='middle' font-size='10.5' fill='var(--muted)'>"+h[0]+"</text>";
+    });
+    return "<svg viewBox='0 0 "+W+" "+H+"' style='width:100%; height:auto; display:block' role='img' aria-label='Vývoj ceny nájmu po obdobích'>"
+      + grid
+      + "<path d='"+area+"' fill='var(--mint-soft)'/>"
+      + "<path d='"+d+"' fill='none' stroke='var(--petrol)' stroke-width='2.5' stroke-linejoin='round'/>"
+      + marks + labs
+      + "</svg>"
+      + "<p class='sub' style='margin:6px 0 0; font-size:.76rem'>Kč/měs. bez DPH · aktuálně: "+hist[hist.length-1][1]+" · najetím na bod zobrazíte detail</p>";
+  }
+
   function openDetail(t){
     document.getElementById("najemci-list").style.display = "none";
     document.getElementById("najemce-detail").style.display = "block";
@@ -911,15 +956,8 @@
         + "<button class='btn sec small mockbtn' style='margin-top:8px'>Otevřít smlouvu (PDF)</button></div>";
     }).join("");
 
-    /* historie s trendem */
-    var prev = null;
-    document.querySelector("#det-history tbody").innerHTML = t.hist.map(function(h){
-      var val = parseInt(h[2].replace(/\s/g,""), 10);
-      var tr = "";
-      if(prev !== null && val > prev){ tr = "<span class='trend'>↗ +"+(val-prev).toLocaleString("cs-CZ")+"</span>"; }
-      prev = val;
-      return "<tr><td class='num'>"+h[0]+"</td><td>"+h[1]+"</td><td class='num'><b>"+h[2]+"</b></td><td>"+tr+"</td></tr>";
-    }).join("");
+    /* vývoj ceny jako graf */
+    document.getElementById("det-chart").innerHTML = priceChart(t.hist);
 
     /* kalendáře s barevným proužkem */
     document.getElementById("det-cals").innerHTML = t.calList.length ? t.calList.map(function(c){
