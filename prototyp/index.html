@@ -103,6 +103,34 @@
   .pnum{font-size:1.7rem; font-weight:800; color:var(--petrol); font-variant-numeric:tabular-nums; line-height:1.1}
   .plb{font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.06em}
 
+  /* ---- měsíční kalendář ---- */
+  .viewtog{display:flex; gap:4px; background:var(--bg); border:1px solid var(--line); border-radius:8px; padding:3px}
+  .viewtog button{border:0; background:none; padding:4px 12px; border-radius:6px; font-size:.8rem; font-weight:700; color:var(--muted)}
+  .viewtog button.on{background:var(--petrol); color:#fff}
+  .calhead{display:flex; align-items:center; gap:10px; margin-bottom:10px}
+  .calhead .mname{font-weight:800; color:var(--petrol); font-size:1rem; min-width:150px}
+  .calnav{border:1px solid var(--line); background:var(--surface); border-radius:8px; width:30px; height:30px; font-weight:800; color:var(--petrol)}
+  .calnav:hover{background:var(--mint-soft)}
+  .calgrid{display:grid; grid-template-columns:repeat(7,1fr); gap:5px}
+  .cdow{font-size:.66rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); text-align:center; padding:2px 0 4px; font-weight:700}
+  .cday{border:1px solid var(--line); border-radius:9px; min-height:88px; padding:5px 6px; background:var(--surface); display:flex; flex-direction:column; gap:3px}
+  .cday.out{background:transparent; border-color:transparent}
+  .cday.out .cnum{color:#C9CFC7}
+  .cday.wknd{background:#FCFAF4}
+  .cday.today{border-color:var(--petrol); box-shadow:inset 0 0 0 1px var(--petrol)}
+  .cnum{font-size:.78rem; font-weight:700; color:var(--text); font-variant-numeric:tabular-nums}
+  .cday.today .cnum{background:var(--petrol); color:#fff; border-radius:6px; padding:0 5px; align-self:flex-start}
+  .cev{font-size:.69rem; line-height:1.25; border-radius:5px; padding:2px 5px; cursor:pointer; text-align:left; border:0; width:100%; font-weight:600;
+       white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .cev.danger{background:var(--danger-bg); color:var(--danger)}
+  .cev.warn{background:var(--warn-bg); color:var(--warn)}
+  .cev.info{background:var(--mint-soft); color:var(--petrol-70); font-weight:600; cursor:default}
+  .duerow .who{cursor:pointer}
+  .cev:hover{filter:brightness(.96)}
+  .callegend{display:flex; gap:14px; flex-wrap:wrap; font-size:.75rem; color:var(--muted); margin-top:10px}
+  .callegend span{display:flex; gap:5px; align-items:center}
+  .callegend i{width:9px; height:9px; border-radius:3px; display:inline-block}
+
   /* ================= SEZNAMY („moderní excel“) ================= */
   .tablecard{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:2px 0}
   table{border-collapse:collapse; width:100%; font-size:.86rem}
@@ -278,7 +306,7 @@
 <!-- ============ NÁSTĚNKA ============ -->
 <section class="screen on" id="s-nastenka">
   <h1 class="greet">Dobrý den, Lenko</h1>
-  <p class="sub" style="margin-bottom:10px">neděle 10. srpna 2026</p>
+  <p class="sub" style="margin-bottom:10px">pondělí 10. srpna 2026</p>
   <div class="statuspills" style="margin-bottom:16px">
     <span class="spill danger">● 1 spěchá</span>
     <span class="spill warn">● 5 termínů</span>
@@ -287,7 +315,7 @@
 
   <div class="hero">
     <div class="htxt">
-      <b>Novák Autodíly — chybí kalendář nájmu od 9/2026</b>
+      <b><span class="lnk" data-tenant="Novák Autodíly s.r.o." style="cursor:pointer; text-decoration:underline">Novák Autodíly s.r.o.</span> — chybí kalendář nájmu od 9/2026</b>
       <div class="sec2">první splatnost už 25. 8. 2026 · hala H1 + garáž G2</div>
     </div>
     <div class="hact">
@@ -296,15 +324,39 @@
     </div>
   </div>
 
-  <div class="nastgrid">
+  <div class="nastgrid" id="nastgrid">
     <div class="card">
-      <h2>Nejbližší termíny</h2>
-      <div class="duerow"><span class="due warn">25. 8.</span><span class="who">Novák</span><span class="what">vystavit kalendář energie od 9/2026</span><button class="btn sec small" data-form="f-kalendar">Vystavit</button></div>
-      <div class="duerow"><span class="due warn">1. 9.</span><span class="who">🔒 Horák</span><span class="what">kontrola vrat garáže</span><button class="btn sec small" data-go="najemci">Otevřít</button></div>
-      <div class="duerow"><span class="due warn">30. 9.</span><span class="who">Marešová</span><span class="what">domluvit prodloužení — smlouva končí 31. 12.</span><button class="btn sec small" data-go="smlouvy">Otevřít</button></div>
-      <div class="duerow"><span class="due">15. 10.</span><span class="who">Novák</span><span class="what">nová požární zpráva</span><button class="btn sec small" data-go="najemci">Otevřít</button></div>
-      <div class="duerow"><span class="due">1. 1. 27</span><span class="who">Pekárna U Lípy</span><span class="what">kalendář vody na rok 2027</span><button class="btn sec small" data-form="f-kalendar">Vystavit</button></div>
-      <div class="duerow"><span class="due">28. 2. 27</span><span class="who">Beneš</span><span class="what">končí smlouva na garáž G5</span><button class="btn sec small" data-go="smlouvy">Otevřít</button></div>
+      <div class="cardhead" style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px">
+        <h2 style="margin:0">Co mě čeká</h2>
+        <div class="viewtog">
+          <button class="on" data-view="list">Seznam</button>
+          <button data-view="cal">Kalendář</button>
+        </div>
+      </div>
+
+      <div id="view-list">
+        <div class="duerow"><span class="due warn">25. 8.</span><span class="who" data-tenant="Novák Autodíly s.r.o.">Novák Autodíly s.r.o.</span><span class="what">vystavit kalendář energie od 9/2026</span><button class="btn sec small" data-form="f-kalendar">Vystavit</button></div>
+        <div class="duerow"><span class="due warn">1. 9.</span><span class="who" data-tenant="Jan Horák 🔒">Jan Horák 🔒</span><span class="what">kontrola vrat garáže</span><button class="btn sec small" data-tenant="Jan Horák 🔒">Otevřít</button></div>
+        <div class="duerow"><span class="due warn">30. 9.</span><span class="who" data-tenant="Marešová účetnictví">Marešová účetnictví</span><span class="what">domluvit prodloužení — smlouva končí 31. 12.</span><button class="btn sec small" data-tenant="Marešová účetnictví">Otevřít</button></div>
+        <div class="duerow"><span class="due">15. 10.</span><span class="who" data-tenant="Novák Autodíly s.r.o.">Novák Autodíly s.r.o.</span><span class="what">nová požární zpráva</span><button class="btn sec small" data-tenant="Novák Autodíly s.r.o.">Otevřít</button></div>
+        <div class="duerow"><span class="due">1. 1. 27</span><span class="who" data-tenant="Pekárna U Lípy s.r.o.">Pekárna U Lípy s.r.o.</span><span class="what">kalendář vody na rok 2027</span><button class="btn sec small" data-form="f-kalendar">Vystavit</button></div>
+        <div class="duerow"><span class="due">28. 2. 27</span><span class="who" data-tenant="AutoServis Beneš">AutoServis Beneš</span><span class="what">končí smlouva na garáž G5</span><button class="btn sec small" data-tenant="AutoServis Beneš">Otevřít</button></div>
+      </div>
+
+      <div id="view-cal" style="display:none">
+        <div class="calhead">
+          <button class="calnav" id="cal-prev" aria-label="Předchozí měsíc">‹</button>
+          <span class="mname" id="cal-name">—</span>
+          <button class="calnav" id="cal-next" aria-label="Další měsíc">›</button>
+          <button class="btn sec small" id="cal-today" style="margin-left:auto">Dnes</button>
+        </div>
+        <div class="calgrid" id="cal-grid"></div>
+        <div class="callegend">
+          <span><i style="background:var(--danger-bg); border:1px solid #F0CFCA"></i> spěchá</span>
+          <span><i style="background:var(--warn-bg); border:1px solid #EBD9AE"></i> termín</span>
+          <span><i style="background:var(--mint-soft); border:1px solid var(--mint-line)"></i> splatnosti dle kalendářů</span>
+        </div>
+      </div>
     </div>
     <div class="dcol">
       <div class="card">
@@ -1039,6 +1091,8 @@
     if(c){ document.getElementById(c.dataset.close).classList.remove("on"); return; }
     var g = e.target.closest("[data-go]");
     if(g){ var m = document.querySelector(".mitem[data-tab='"+g.dataset.go+"']"); if(m){ m.click(); } return; }
+    var tn = e.target.closest("[data-tenant]");
+    if(tn){ goToTenant(tn.dataset.tenant); return; }
     var pv = e.target.closest(".openpdf");
     if(pv){ open("pdfmodal"); return; }
     var mk = e.target.closest(".mockbtn");
@@ -1081,6 +1135,88 @@
   /* ---- pdf náhled ---- */
   document.querySelectorAll("tr[data-pdf]").forEach(function(r){
     r.addEventListener("click", function(){ open("pdfmodal"); });
+  });
+
+  /* ---- skok na konkrétního nájemce ---- */
+  function goToTenant(name){
+    var t = null;
+    T.forEach(function(x){ if(x.n === name){ t = x; } });
+    if(!t){ return; }
+    document.querySelector(".mitem[data-tab='najemci']").click();
+    if(tenSel.value !== "ALL" && tenSel.value !== t.ent){ tenSel.value = "ALL"; renderTenants(); }
+    openDetail(t);
+  }
+
+  /* ---- měsíční kalendář ---- */
+  var EV = [
+    {d:"2026-08-25", t:"Novák Autodíly s.r.o.", x:"Vystavit kalendář nájmu H1+G2", lvl:"danger"},
+    {d:"2026-08-25", t:"Novák Autodíly s.r.o.", x:"Vystavit kalendář energie H1", lvl:"danger"},
+    {d:"2026-08-25", t:"", x:"Splatnost 4 plateb", lvl:"info"},
+    {d:"2026-09-01", t:"Jan Horák 🔒", x:"Kontrola vrat garáže", lvl:"warn"},
+    {d:"2026-09-25", t:"", x:"Splatnost 6 plateb", lvl:"info"},
+    {d:"2026-09-30", t:"Marešová účetnictví", x:"Domluvit prodloužení smlouvy", lvl:"warn"},
+    {d:"2026-10-15", t:"Novák Autodíly s.r.o.", x:"Nová požární zpráva", lvl:"warn"},
+    {d:"2026-10-25", t:"", x:"Splatnost 6 plateb", lvl:"info"},
+    {d:"2026-11-25", t:"", x:"Splatnost 6 plateb", lvl:"info"},
+    {d:"2026-12-25", t:"", x:"Splatnost 6 plateb", lvl:"info"},
+    {d:"2026-12-31", t:"Marešová účetnictví", x:"Končí smlouva na kancelář K1", lvl:"warn"},
+    {d:"2027-01-01", t:"Pekárna U Lípy s.r.o.", x:"Vystavit kalendář vody na 2027", lvl:"warn"},
+    {d:"2027-02-28", t:"AutoServis Beneš", x:"Končí smlouva na garáž G5", lvl:"warn"}
+  ];
+  var MES = ["leden","únor","březen","duben","květen","červen","červenec","srpen","září","říjen","listopad","prosinec"];
+  var TODAY = "2026-08-10";
+  var cy = 2026, cm = 7; /* srpen 2026 */
+
+  function key(y, m, d){
+    return y + "-" + ("0"+(m+1)).slice(-2) + "-" + ("0"+d).slice(-2);
+  }
+  function renderCal(){
+    document.getElementById("cal-name").textContent = MES[cm] + " " + cy;
+    var first = new Date(cy, cm, 1);
+    var shift = (first.getDay() + 6) % 7;              /* pondělí = 0 */
+    var dim = new Date(cy, cm + 1, 0).getDate();
+    var dimPrev = new Date(cy, cm, 0).getDate();
+    var html = ["Po","Út","St","Čt","Pá","So","Ne"].map(function(d){ return "<div class='cdow'>"+d+"</div>"; }).join("");
+    var cells = 42;
+    for(var i = 0; i < cells; i++){
+      var dnum, cls = "cday", k = null;
+      if(i < shift){ dnum = dimPrev - shift + 1 + i; cls += " out"; }
+      else if(i - shift < dim){
+        dnum = i - shift + 1;
+        k = key(cy, cm, dnum);
+        if(i % 7 >= 5){ cls += " wknd"; }
+        if(k === TODAY){ cls += " today"; }
+      }
+      else { dnum = i - shift - dim + 1; cls += " out"; }
+      var evs = k ? EV.filter(function(e){ return e.d === k; }) : [];
+      if(i >= 35 && evs.length === 0 && cls.indexOf("out") > -1){ continue; }
+      html += "<div class='"+cls+"'><span class='cnum'>"+dnum+"</span>"
+        + evs.map(function(e){
+            var lbl = e.t ? e.t.split(" ")[0] + " — " + e.x : e.x;
+            var attr = e.t ? " data-tenant=\""+e.t+"\"" : "";
+            return "<button class='cev "+e.lvl+"'"+attr+" title='"+(e.t ? e.t+" · " : "")+e.x+"'>"+lbl+"</button>";
+          }).join("")
+        + "</div>";
+    }
+    document.getElementById("cal-grid").innerHTML = html;
+  }
+  document.getElementById("cal-prev").addEventListener("click", function(){
+    cm--; if(cm < 0){ cm = 11; cy--; } renderCal();
+  });
+  document.getElementById("cal-next").addEventListener("click", function(){
+    cm++; if(cm > 11){ cm = 0; cy++; } renderCal();
+  });
+  document.getElementById("cal-today").addEventListener("click", function(){ cy = 2026; cm = 7; renderCal(); });
+  document.querySelectorAll(".viewtog button").forEach(function(b){
+    b.addEventListener("click", function(){
+      document.querySelectorAll(".viewtog button").forEach(function(x){ x.classList.remove("on"); });
+      b.classList.add("on");
+      var isCal = b.dataset.view === "cal";
+      document.getElementById("view-list").style.display = isCal ? "none" : "block";
+      document.getElementById("view-cal").style.display = isCal ? "block" : "none";
+      document.getElementById("nastgrid").style.gridTemplateColumns = isCal ? "1fr" : "";
+      if(isCal){ renderCal(); }
+    });
   });
 
   /* ---- nástěnka → hromadné generování ---- */
