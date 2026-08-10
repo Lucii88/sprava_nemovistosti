@@ -121,9 +121,22 @@
   .dethead{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px}
   .dethead h1{margin:0}
   .cardsgrid{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(330px,1fr))}
-  .detgrid{display:grid; grid-template-columns:1.55fr 1fr; gap:14px; align-items:start}
+  .detgrid{display:grid; grid-template-columns:1.55fr 1fr; gap:18px; align-items:stretch}
   .dcol{display:flex; flex-direction:column; gap:14px}
   @media (max-width:980px){ .detgrid{grid-template-columns:1fr} }
+  .idline{font-size:.8rem; color:var(--muted); font-variant-numeric:tabular-nums; margin-top:2px}
+  .sticky{
+    background:#FBF2BE; border-radius:6px; padding:24px 18px 16px;
+    box-shadow:0 8px 18px rgba(3,54,61,.15); position:relative; transform:rotate(-.6deg);
+    display:flex; flex-direction:column; flex:1; min-height:460px;
+  }
+  .sticky::before{content:""; position:absolute; top:-9px; left:50%; width:96px; height:22px; transform:translateX(-50%) rotate(1.5deg); background:rgba(223,164,63,.4); border-radius:2px}
+  .sticky h2{color:#7A5A12}
+  .sticky .timeline li{border-left-color:#E4CB82}
+  .sticky .timeline li::before{background:#C08A1E}
+  .sticky .timeline .d{color:#8A7434}
+  .sticky .tnote{background:#F3DE9A; color:#7A5A12}
+  .sticky .search{background:#FFFDF0; border-color:#E4CB82}
   .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px}
   .timeline{list-style:none}
   .timeline li{padding:8px 0 8px 16px; border-left:2px solid var(--mint-line); position:relative; font-size:.85rem}
@@ -139,11 +152,12 @@
   .spill.warn{background:var(--warn-bg); color:var(--warn)}
   .spill.danger{background:var(--danger-bg); color:var(--danger)}
   .statrow{display:grid; grid-template-columns:repeat(auto-fit, minmax(185px, 1fr)); gap:12px; margin:4px 0 16px}
-  .stat{background:var(--surface); border:1px solid var(--line); border-left:5px solid var(--honey); border-radius:10px; padding:10px 14px}
+  .stat{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:12px 14px; min-height:90px; display:flex; flex-direction:column; gap:2px}
   .stat .lb{font-size:.66rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted)}
-  .stat .vl{font-size:1.08rem; font-weight:700; color:var(--petrol); font-variant-numeric:tabular-nums}
-  .stat .sm{font-size:.74rem; color:var(--muted)}
-  .stat.ok{border-left-color:var(--ok)} .stat.warn{border-left-color:var(--warn)} .stat.danger{border-left-color:var(--danger)}
+  .stat .vl{font-size:1.15rem; font-weight:700; color:var(--petrol); font-variant-numeric:tabular-nums}
+  .stat .sm{font-size:.74rem; color:var(--muted); display:flex; gap:6px; align-items:center; margin-top:auto}
+  .stat .sm::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--honey); flex:none}
+  .stat.ok .sm::before{background:var(--ok)} .stat.warn .sm::before{background:var(--warn)} .stat.danger .sm::before{background:var(--danger)}
   .alerts{display:flex; flex-direction:column; gap:8px; margin-bottom:16px}
   .alert{display:flex; gap:10px; align-items:center; border-radius:10px; padding:10px 14px; font-size:.86rem; font-weight:600; flex-wrap:wrap}
   .alert.danger{background:var(--danger-bg); color:var(--danger); border:1px solid #F0CFCA}
@@ -360,8 +374,10 @@
   <div id="najemce-detail" style="display:none">
     <button class="backlink" id="back-to-list">← Zpět na nájemce</button>
     <div class="dethead">
-      <h1 id="det-name">—</h1>
-      <span class="chip ent" id="det-ent">—</span>
+      <div>
+        <h1 style="display:flex; align-items:center; gap:10px; flex-wrap:wrap"><span id="det-name">—</span><span class="chip ent" id="det-ent">—</span></h1>
+        <div class="idline" id="det-idline">—</div>
+      </div>
       <span class="statuspills" id="det-pills"></span>
       <span style="flex:1"></span>
       <button class="btn sec small" data-form="f-najemce">Upravit údaje</button>
@@ -386,14 +402,10 @@
         </div>
       </div>
       <div class="dcol">
-        <div class="card">
-          <h2>Klíčová data</h2>
-          <dl class="kvlist" id="det-data"></dl>
-        </div>
-        <div class="card">
+        <div class="sticky">
           <h2>Poznámky</h2>
           <ul class="timeline" id="det-notes"></ul>
-          <div class="toolbar" style="margin:12px 0 0">
+          <div class="toolbar" style="margin:auto 0 0; padding-top:14px">
             <input class="search" style="flex:1; min-width:0" placeholder="Nová poznámka… (+ volitelný termín)" aria-label="Nová poznámka">
             <button class="btn small" id="note-save">Uložit</button>
           </div>
@@ -942,7 +954,7 @@
       return "<div class='alert "+a[0]+"'>"+ic+" "+a[1]+btn+"</div>";
     }).join("") : "<div class='alert ok'>✓ Žádné úkoly — vše v pořádku.</div>";
 
-    document.getElementById("det-data").innerHTML = "<dt>IČO</dt><dd>"+t.ico+"</dd><dt>DIČ</dt><dd>"+t.dic+"</dd><dt>Účet</dt><dd>"+t.ucet+"</dd><dt>Variabilní symbol</dt><dd>"+t.vs+"</dd>";
+    document.getElementById("det-idline").textContent = "IČO "+t.ico+" · DIČ "+t.dic+" · Účet "+t.ucet+" · Variabilní symbol "+t.vs;
 
     /* smlouvy a kauce na jednom místě */
     document.getElementById("det-smlouvy").innerHTML = t.sml.map(function(s){
