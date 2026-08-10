@@ -63,7 +63,7 @@ Implicitně ze zadání (bez nich zadané funkce nefungují):
 | Kontrola nájemců v insolvenci/exekucích | ne | hezké při novém nájemci, ale externí integrace; neřeší žádnou bolest ze zadání | **Etapa 2+** (jen nápad) |
 | Generování smluv a dodatků ze šablon | ne | smlouvy má právník/vzory; zadání chtělo jen kalendáře | **Zamítnuto pro V1** |
 | Nájemnický portál, chat, mobilní aplikace | ne | 20 nájemců, komunikace funguje; velká zátěž vývoje i uživatelů | **Zamítnuto** |
-| Napojení na účetní software (Pohoda apod.) | ne (dodatečně: účetní má vlastní program, **klientka jí vše posílá v PDF**) | integrace není potřeba — PDF workflow už existuje | **Zamítnuto trvale** |
+| Napojení na účetní software (Pohoda apod.) | ne (dodatečně: účetní má vlastní program, **klientka jí vše posílá v PDF**) | PDF workflow existuje, ale nevíme, zda účetní z PDF ručně nepřepisuje — strukturovaný export (CSV/XLSX/ISDOC) by pak pomohl víc než hezčí PDF | **Etapa 2 — otevřené**: zeptat se účetní firmy, co umí načíst; doklady jsou strukturovaná data, export v jejich formátu je levný doplněk |
 | Hromadný export PDF pro účetní (ZIP všech kalendářů za období) | ne | přímo kopíruje její dnešní workflow „posílám účetní všechno v PDF" — bez toho by PDF stahovala po jednom | **V1** (levné, pár řádků nad existujícím archivem) |
 | AI vytěžování dokumentů, přeceňování nemovitostí, hypotéky | ne | mimo problém | **Zamítnuto** |
 | Uložené pohledy filtrů, globální vyhledávání | ne | při ~20 nájemcích stačí filtry | **Zamítnuto pro V1** |
@@ -88,6 +88,7 @@ Otázky 1–8 z brainstormingu **zodpovězeny 10. 8. 2026** (viz `zadani-hlavni-
 
 1. **Vzor platebního kalendáře + Excel s nájemci** — klientka pošle (bez cen). Ověřit pole šablony 1:1 a strukturu importu.
 2. **Formát číslování kalendářů** — dnes nejednotné („PK 1, PK 2…"); klientka ověří preferenci s účetní firmou. Do té doby výchozí návrh: nové řady od nasazení, formát `<prefix entity>-<rok>-<pořadí>` (např. `TP-2026-001`), konfigurovatelný v administraci.
+3. **Účetní firma — dvě otázky najednou** (až se klientka bude ptát na číslování): (a) jaký formát číslování dokladů jim vyhovuje, (b) zda z PDF přepisují ručně a jaký strukturovaný formát by uměli načíst (CSV/XLSX/ISDOC) — rozhodne o exportu v etapě 2.
 
 ## G. Architektura (rozhodnutí)
 

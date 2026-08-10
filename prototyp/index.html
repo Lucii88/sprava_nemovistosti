@@ -1,0 +1,654 @@
+<title>Správa nemovitostí — klikací prototyp</title>
+<style>
+  :root{
+    --petrol:#03363D; --petrol-90:#0A454D; --petrol-70:#2E5E64;
+    --mint:#BDD9D7; --mint-soft:#E4EFEE; --mint-line:#CFE2E0;
+    --bg:#F6F8F8; --surface:#FFFFFF; --line:#DCE7E6;
+    --text:#12363C; --muted:#5E7A7E; --faint:#8AA0A2;
+    --ok:#2F7D4F; --ok-bg:#E7F2EB; --warn:#9A6B14; --warn-bg:#FBF2DE; --danger:#B04438; --danger-bg:#F8E9E7;
+    --radius:10px;
+  }
+  *{box-sizing:border-box; margin:0}
+  html{font-size:15px}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:"Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", sans-serif;
+    line-height:1.5; min-height:100vh;
+  }
+  button{font:inherit; cursor:pointer}
+  :focus-visible{outline:3px solid var(--petrol-70); outline-offset:2px; border-radius:4px}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} }
+
+  /* ---------- shell ---------- */
+  .topbar{
+    background:var(--petrol); color:#F2F7F6;
+    display:flex; align-items:center; gap:14px; padding:10px 22px;
+  }
+  .logo{display:flex; align-items:baseline; gap:8px}
+  .logo b{font-size:1.12rem; letter-spacing:.2px}
+  .logo span{color:var(--mint); font-size:.78rem; text-transform:uppercase; letter-spacing:.12em}
+  .topbar .user{margin-left:auto; display:flex; align-items:center; gap:10px; font-size:.86rem; color:#CFE2E0}
+  .avatar{width:28px;height:28px;border-radius:50%;background:var(--mint);color:var(--petrol);display:grid;place-items:center;font-weight:700;font-size:.8rem}
+  .proto-note{
+    background:var(--petrol-90); color:#CFE2E0; font-size:.78rem; padding:5px 22px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  .proto-note b{color:#fff}
+
+  .entbar{display:flex; align-items:center; gap:8px; padding:12px 22px 0; flex-wrap:wrap}
+  .entbar .lbl{font-size:.72rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); margin-right:4px}
+  .pill{
+    border:1px solid var(--line); background:var(--surface); color:var(--text);
+    border-radius:999px; padding:5px 14px; font-size:.85rem;
+    transition:background .12s, border-color .12s;
+  }
+  .pill:hover{border-color:var(--petrol-70)}
+  .pill.active{background:var(--petrol); border-color:var(--petrol); color:#fff}
+  .pill .tag{opacity:.65; font-size:.75rem; margin-left:4px}
+  .pill.lock.active{background:var(--petrol)}
+  .nav{display:flex; gap:2px; padding:12px 22px 0; border-bottom:1px solid var(--line); flex-wrap:wrap}
+  .nav button{
+    border:0; background:transparent; padding:9px 16px; color:var(--muted);
+    border-bottom:3px solid transparent; font-size:.93rem; font-weight:600;
+  }
+  .nav button:hover{color:var(--petrol)}
+  .nav button.active{color:var(--petrol); border-bottom-color:var(--petrol)}
+  main{padding:20px 22px 60px; max-width:1240px}
+  .screen{display:none}
+  .screen.on{display:block}
+  h1{font-size:1.3rem; color:var(--petrol); margin-bottom:4px; text-wrap:balance}
+  h2{font-size:1.02rem; color:var(--petrol); margin-bottom:10px}
+  .sub{color:var(--muted); font-size:.88rem; margin-bottom:18px; max-width:68ch}
+
+  /* ---------- cards & tables ---------- */
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px}
+  .grid{display:grid; gap:14px}
+  .grid.c3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+  .grid.c2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+  .tablewrap{overflow-x:auto; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius)}
+  table{border-collapse:collapse; width:100%; font-size:.88rem; min-width:640px}
+  th{
+    text-align:left; font-size:.7rem; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--muted); padding:10px 12px; border-bottom:1px solid var(--line); background:var(--mint-soft);
+    white-space:nowrap;
+  }
+  td{padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  tbody tr.click{cursor:pointer}
+  tbody tr.click:hover{background:var(--mint-soft)}
+  .num{font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
+  .chip{
+    display:inline-block; border-radius:6px; padding:1px 8px; font-size:.76rem; font-weight:600;
+    background:var(--mint-soft); color:var(--petrol); border:1px solid var(--mint-line); white-space:nowrap;
+  }
+  .chip.vat12{background:#EDF3E4; border-color:#DBE7C9; color:#4A6B22}
+  .chip.ent{background:var(--petrol); color:#fff; border-color:var(--petrol)}
+  .chip.free{background:var(--ok-bg); color:var(--ok); border-color:#CBE3D3}
+  .chip.state-ok{background:var(--ok-bg); color:var(--ok); border-color:#CBE3D3}
+  .chip.state-warn{background:var(--warn-bg); color:var(--warn); border-color:#EBD9AE}
+  .chip.state-old{background:#EEF1F1; color:var(--faint); border-color:var(--line)}
+  .btn{
+    background:var(--petrol); color:#fff; border:0; border-radius:8px; padding:8px 16px;
+    font-weight:600; font-size:.88rem;
+  }
+  .btn:hover{background:var(--petrol-90)}
+  .btn.sec{background:var(--surface); color:var(--petrol); border:1px solid var(--petrol-70)}
+  .btn.sec:hover{background:var(--mint-soft)}
+  .btn.small{padding:5px 11px; font-size:.8rem}
+  .toolbar{display:flex; gap:10px; align-items:center; margin-bottom:12px; flex-wrap:wrap}
+  .toolbar .spacer{flex:1}
+  .search{border:1px solid var(--line); border-radius:8px; padding:7px 12px; font:inherit; background:var(--surface); color:var(--text); min-width:200px}
+
+  /* ---------- nástěnka ---------- */
+  .task-list{list-style:none}
+  .task-list li{
+    display:flex; gap:10px; align-items:flex-start; padding:9px 0; border-bottom:1px dashed var(--line); font-size:.88rem;
+  }
+  .task-list li:last-child{border-bottom:0}
+  .task-list .when{color:var(--muted); font-size:.78rem; white-space:nowrap; font-variant-numeric:tabular-nums}
+  .dot{width:8px; height:8px; border-radius:50%; margin-top:7px; flex:none}
+  .dot.warn{background:var(--warn)} .dot.info{background:var(--petrol-70)} .dot.ok{background:var(--ok)}
+  .count{
+    font-size:1.7rem; font-weight:700; color:var(--petrol); font-variant-numeric:tabular-nums; line-height:1;
+  }
+  .cardhead{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:8px; gap:10px}
+
+  /* ---------- blueprint ---------- */
+  .flow{display:flex; gap:0; align-items:stretch; overflow-x:auto; padding:6px 0 14px}
+  .fstep{min-width:168px; flex:1}
+  .fbox{
+    background:var(--surface); border:1.5px solid var(--petrol-70); border-radius:var(--radius);
+    padding:12px 14px; height:100%;
+  }
+  .fbox h3{font-size:.88rem; color:var(--petrol); margin-bottom:4px}
+  .fbox p{font-size:.78rem; color:var(--muted)}
+  .farrow{align-self:center; padding:0 8px; color:var(--petrol-70); font-size:1.15rem; flex:none}
+  .fbox.core{background:var(--petrol); border-color:var(--petrol)}
+  .fbox.core h3{color:#fff}
+  .fbox.core p{color:var(--mint)}
+  .scope li{font-size:.86rem; padding:4px 0 4px 2px}
+  .scope ul{list-style:none}
+  .scope .yes::before{content:"✓"; color:var(--ok); font-weight:700; margin-right:8px}
+  .scope .no::before{content:"—"; color:var(--faint); font-weight:700; margin-right:8px}
+  .scope .later::before{content:"→"; color:var(--warn); font-weight:700; margin-right:8px}
+  .legalnote{font-size:.8rem; color:var(--muted); border-left:3px solid var(--mint); padding:2px 0 2px 12px; margin-top:10px}
+
+  /* ---------- detail nájemce ---------- */
+  .backlink{background:none; border:0; color:var(--petrol-70); font-weight:600; padding:0 0 10px; font-size:.86rem}
+  .backlink:hover{text-decoration:underline}
+  .dethead{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:14px}
+  .dethead h1{margin:0}
+  .timeline{list-style:none}
+  .timeline li{padding:8px 0 8px 18px; border-left:2px solid var(--mint-line); position:relative; font-size:.86rem}
+  .timeline li::before{content:""; position:absolute; left:-5px; top:14px; width:8px; height:8px; border-radius:50%; background:var(--petrol-70)}
+  .timeline .d{color:var(--muted); font-size:.76rem; font-variant-numeric:tabular-nums}
+  .kv{display:grid; grid-template-columns:auto 1fr; gap:4px 16px; font-size:.86rem}
+  .kv dt{color:var(--muted)}
+  .kv dd{font-weight:600}
+
+  /* ---------- modal ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(3,54,61,.5); display:none; align-items:flex-start;
+    justify-content:center; padding:40px 16px; overflow:auto; z-index:50;
+  }
+  .overlay.on{display:flex}
+  .modal{background:var(--surface); border-radius:12px; max-width:720px; width:100%; padding:22px 24px; box-shadow:0 18px 50px rgba(3,54,61,.35)}
+  .modal h2{margin-bottom:2px}
+  .modal .close{float:right; background:none; border:0; font-size:1.2rem; color:var(--muted); padding:2px 8px}
+  .steps{display:flex; gap:6px; margin:14px 0 18px}
+  .steps span{flex:1; height:5px; border-radius:3px; background:var(--line)}
+  .steps span.done{background:var(--petrol)}
+  .warnbox{background:var(--warn-bg); border:1px solid #EBD9AE; color:var(--warn); border-radius:8px; padding:10px 14px; font-size:.85rem; margin:10px 0}
+  .okbox{background:var(--ok-bg); border:1px solid #CBE3D3; color:var(--ok); border-radius:8px; padding:10px 14px; font-size:.85rem; margin:10px 0}
+  .mfoot{display:flex; justify-content:flex-end; gap:10px; margin-top:18px}
+
+  /* ---------- PDF preview ---------- */
+  .pdf{
+    background:#fff; color:#1A1A1A; border:1px solid var(--line); border-radius:6px;
+    padding:26px 30px; font-size:.8rem; font-family:Georgia, "Times New Roman", serif;
+    box-shadow:0 2px 10px rgba(3,54,61,.08); max-width:640px;
+  }
+  .pdf .phead{display:flex; justify-content:space-between; gap:16px; border-bottom:2px solid #1A1A1A; padding-bottom:10px; margin-bottom:12px}
+  .pdf h3{font-size:1rem; margin-bottom:2px}
+  .pdf .small{font-size:.72rem; color:#555}
+  .pdf table{min-width:0; font-size:.76rem; margin-top:10px}
+  .pdf th{background:#F1F1F1; color:#333; letter-spacing:.04em}
+  .pdf td, .pdf th{border-bottom:1px solid #DDD; padding:5px 8px}
+  .pdf tfoot td{font-weight:700; border-top:2px solid #1A1A1A; border-bottom:0}
+  .pdf .legal{margin-top:12px; font-size:.7rem; color:#555; font-style:italic}
+</style>
+
+<header class="topbar">
+  <div class="logo"><b>Správa nemovitostí</b><span>prototyp V1</span></div>
+  <div class="user"><span>Lucie Včeláková · superadmin</span><span class="avatar">LV</span></div>
+</header>
+<div class="proto-note"><b>Klikací prototyp</b> — žádná databáze, nic se neukládá. Data jsou smyšlená. Slouží k odsouhlasení vzhledu a logiky (etapa 0).</div>
+
+<div class="entbar" role="group" aria-label="Filtr entit">
+  <span class="lbl">Entita:</span>
+  <button class="pill active" data-ent="ALL">Vše</button>
+  <button class="pill" data-ent="AD">Alfa Doprava s.r.o. <span class="tag">AD</span></button>
+  <button class="pill" data-ent="BL">Beta Logistika s.r.o. <span class="tag">BL</span></button>
+  <button class="pill" data-ent="GR">Gama Reality s.r.o. <span class="tag">GR</span></button>
+  <button class="pill lock" data-ent="SV">🔒 Soukromé <span class="tag">jen vy</span></button>
+</div>
+
+<nav class="nav" aria-label="Hlavní navigace">
+  <button class="active" data-tab="blueprint">Blueprint</button>
+  <button data-tab="nastenka">Nástěnka</button>
+  <button data-tab="najemci">Nájemci</button>
+  <button data-tab="nemovitosti">Nemovitosti</button>
+  <button data-tab="smlouvy">Smlouvy</button>
+  <button data-tab="kalendare">Platební kalendáře</button>
+  <button data-tab="admin">Administrace</button>
+</nav>
+
+<main>
+
+<!-- ============ BLUEPRINT ============ -->
+<section class="screen on" id="s-blueprint">
+  <h1>Business blueprint</h1>
+  <p class="sub">Jak spolu všechno souvisí: jednou se zadá evidence, všechno ostatní se generuje. Filtr rozsahu: <em>chtěla to žadatelka? → vyžaduje to zákon? → ulehčí, nebo zahltí?</em></p>
+
+  <div class="flow" aria-label="Tok dat aplikací">
+    <div class="fstep"><div class="fbox"><h3>Entity</h3><p>3 firmy + soukromé. Vlastní IČO/DIČ, účet a číselné řady. Vše ostatní patří právě jedné entitě.</p></div></div>
+    <div class="farrow">→</div>
+    <div class="fstep"><div class="fbox"><h3>Nemovitosti a nájemci</h3><p>Garáže, kanceláře, haly, pozemky. Kdo, co, kde, odkdy — místo tří Excelů.</p></div></div>
+    <div class="farrow">→</div>
+    <div class="fstep"><div class="fbox"><h3>Smlouvy + položky</h3><p>Nájem / energie / voda, každá s vlastní sazbou DPH a platností od–do. Splatnost „X. den měsíce předem“. Kauce.</p></div></div>
+    <div class="farrow">→</div>
+    <div class="fstep"><div class="fbox core"><h3>Generátor kalendářů</h3><p>Jádro aplikace. Daňový doklad dle § 31a: číslo z řady, rozpis DPH, kontroly chyb. Jednotlivě i hromadně.</p></div></div>
+    <div class="farrow">→</div>
+    <div class="fstep"><div class="fbox"><h3>PDF archiv</h3><p>Vystavený doklad se nemění a nemaže (10 let). Změna ceny = nový kalendář, starý zůstává → historie.</p></div></div>
+    <div class="farrow">→</div>
+    <div class="fstep"><div class="fbox"><h3>Výstupy</h3><p>ZIP všech PDF za období pro účetní. Export tabulek do Excelu. Formát pro účetní SW — až řeknou jaký.</p></div></div>
+  </div>
+
+  <div class="grid c3">
+    <div class="card scope">
+      <h2>V1 — co bude</h2>
+      <ul>
+        <li class="yes">Evidence: entity, nemovitosti, nájemci, smlouvy</li>
+        <li class="yes">Platební kalendáře vč. hromadného generování</li>
+        <li class="yes">Historie cen + poznámky (i s termínem)</li>
+        <li class="yes">Kauce — složena / vrácena</li>
+        <li class="yes">Role a viditelnost entit (soukromé jen pro vás)</li>
+        <li class="yes">Export Excel + ZIP PDF pro účetní</li>
+        <li class="yes">Import stávajícího Excelu při nasazení</li>
+      </ul>
+    </div>
+    <div class="card scope">
+      <h2>Etapa 2 — až po zkušenosti s V1</h2>
+      <ul>
+        <li class="later">Roční vyúčtování záloh (V1 už rozlišuje paušál × zálohu)</li>
+        <li class="later">Platby z banky (KB) + párování dle VS</li>
+        <li class="later">Strukturovaný export pro účetní SW</li>
+        <li class="later">QR platba na kalendáři</li>
+      </ul>
+    </div>
+    <div class="card scope">
+      <h2>Schválně nebude</h2>
+      <ul>
+        <li class="no">Nájemnický portál, chat, mobilní aplikace</li>
+        <li class="no">E-mailové notifikace (stačí nástěnka)</li>
+        <li class="no">Automatická indexace (doložky se neuplatňují pravidelně)</li>
+        <li class="no">Vlastní účetnictví</li>
+      </ul>
+      <p class="legalnote">Provoz: na vašem serveru (Docker + PostgreSQL), data neopouští firmu. Přístup z PC ve firemní síti.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NÁSTĚNKA ============ -->
+<section class="screen" id="s-nastenka">
+  <h1>Nástěnka</h1>
+  <p class="sub">Co je potřeba udělat — nic víc. Žádné grafy. Kliknutím přejdete na příslušný záznam.</p>
+  <div class="grid c3">
+    <div class="card">
+      <div class="cardhead"><h2>Kalendáře k vygenerování</h2><span class="count">3</span></div>
+      <ul class="task-list">
+        <li><span class="dot warn"></span><div>Novák Autodíly — nájem H1, období od 1.&nbsp;9.&nbsp;2026 <div class="when">smlouva prodloužena, kalendář chybí</div></div></li>
+        <li><span class="dot warn"></span><div>Novák Autodíly — energie H1, období od 1.&nbsp;9.&nbsp;2026</div></li>
+        <li><span class="dot info"></span><div>Pekárna U Lípy — voda K3, období od 1.&nbsp;1.&nbsp;2027</div></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="cardhead"><h2>Smlouvy končící do 6 měsíců</h2><span class="count">2</span></div>
+      <ul class="task-list">
+        <li><span class="dot warn"></span><div>Marešová účetnictví — kancelář K1 <div class="when">končí 31. 12. 2026 · výpovědní doba 3 měsíce</div></div></li>
+        <li><span class="dot info"></span><div>AutoServis Beneš — garáž G5 <div class="when">končí 28. 2. 2027</div></div></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="cardhead"><h2>Poznámky s termínem</h2><span class="count">2</span></div>
+      <ul class="task-list">
+        <li><span class="dot warn"></span><div>Novák Autodíly — zajistit novou požární zprávu <div class="when">do 15. 10. 2026</div></div></li>
+        <li><span class="dot ok"></span><div>🔒 Horák — kontrola vrat garáže <div class="when">do 1. 9. 2026</div></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NÁJEMCI ============ -->
+<section class="screen" id="s-najemci">
+  <div id="najemci-list">
+    <h1>Nájemci</h1>
+    <p class="sub">Úzký přehled → rozklik do detailu. Filtry nahoře, entita se přepíná v horní liště.</p>
+    <div class="toolbar">
+      <input class="search" type="search" placeholder="Hledat nájemce…" aria-label="Hledat nájemce">
+      <span class="spacer"></span>
+      <button class="btn sec small">Export do Excelu</button>
+      <button class="btn small">+ Nový nájemce</button>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Nájemce</th><th>Entita</th><th>Pronajato</th><th class="num">Aktivní kalendáře</th><th class="num">Nájem / měs. bez DPH</th><th>Stav</th></tr></thead>
+        <tbody id="tenant-rows"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="najemce-detail" style="display:none">
+    <button class="backlink" id="back-to-list">← Zpět na seznam nájemců</button>
+    <div class="dethead">
+      <h1 id="det-name">—</h1>
+      <span class="chip ent" id="det-ent">—</span>
+      <span class="spacer" style="flex:1"></span>
+      <button class="btn sec small">Vygenerovat kalendář</button>
+    </div>
+    <div class="grid c2">
+      <div class="card">
+        <h2>Pronajato</h2>
+        <div id="det-props"></div>
+        <h2 style="margin-top:16px">Kauce</h2>
+        <dl class="kv" id="det-kauce"></dl>
+      </div>
+      <div class="card">
+        <h2>Historie ceny nájmu</h2>
+        <div class="tablewrap" style="border:0">
+          <table id="det-history"><thead><tr><th>Období</th><th>Předmět</th><th class="num">Kč/měs. bez DPH</th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Platební kalendáře</h2>
+        <ul class="task-list" id="det-cals"></ul>
+      </div>
+      <div class="card">
+        <h2>Poznámky</h2>
+        <ul class="timeline" id="det-notes"></ul>
+        <div class="toolbar" style="margin:12px 0 0">
+          <input class="search" style="flex:1; min-width:0" placeholder="Nová poznámka… (+ volitelný termín)" aria-label="Nová poznámka">
+          <button class="btn small">Uložit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NEMOVITOSTI ============ -->
+<section class="screen" id="s-nemovitosti">
+  <h1>Nemovitosti</h1>
+  <p class="sub">Obsazenost se odvozuje z aktivních smluv — nikde se nezadává ručně.</p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Označení</th><th>Typ</th><th>Entita</th><th>Služby</th><th>Nájemce</th><th>Stav</th></tr></thead>
+      <tbody>
+        <tr class="erow" data-ent="AD"><td><b>H1</b> — výrobní hala, Průmyslová 12</td><td><span class="chip">hala</span></td><td><span class="chip ent">AD</span></td><td>elektřina</td><td>Novák Autodíly s.r.o.</td><td><span class="chip state-ok">obsazeno</span></td></tr>
+        <tr class="erow" data-ent="AD"><td><b>G2</b> — garáž, Průmyslová 12</td><td><span class="chip">garáž</span></td><td><span class="chip ent">AD</span></td><td>elektřina</td><td>Novák Autodíly s.r.o.</td><td><span class="chip state-ok">obsazeno</span></td></tr>
+        <tr class="erow" data-ent="AD"><td><b>P4</b> — venkovní pozemek 900 m²</td><td><span class="chip">pozemek</span></td><td><span class="chip ent">AD</span></td><td>—</td><td>Novák Autodíly s.r.o.</td><td><span class="chip state-ok">obsazeno</span></td></tr>
+        <tr class="erow" data-ent="AD"><td><b>K3</b> — kancelář 48 m², Nádražní 8</td><td><span class="chip">kancelář</span></td><td><span class="chip ent">AD</span></td><td>elektřina, voda</td><td>Pekárna U Lípy s.r.o.</td><td><span class="chip state-ok">obsazeno</span></td></tr>
+        <tr class="erow" data-ent="BL"><td><b>S1</b> — skladová hala 1 200 m²</td><td><span class="chip">hala</span></td><td><span class="chip ent">BL</span></td><td>elektřina</td><td>E-shop Balíkov s.r.o.</td><td><span class="chip state-ok">obsazeno</span></td></tr>
+        <tr class="erow" data-ent="BL"><td><b>S2</b> — skladová hala 800 m²</td><td><span class="chip">hala</span></td><td><span class="chip ent">BL</span></td><td>elektřina</td><td>KovoTech Dvořák s.r.o.</td><td><span class="chip state-ok">obsazeno</span></td></tr>
+        <tr class="erow" data-ent="BL"><td><b>G5</b> — garáž + dvůr, U Skladů 3</td><td><span class="chip">garáž</span></td><td><span class="chip ent">BL</span></td><td>—</td><td>AutoServis Beneš</td><td><span class="chip state-ok">obsazeno</span></td></tr>
+        <tr class="erow" data-ent="GR"><td><b>K1</b> — kancelář 35 m², Náměstí 1</td><td><span class="chip">kancelář</span></td><td><span class="chip ent">GR</span></td><td>elektřina, voda</td><td>Marešová účetnictví</td><td><span class="chip state-ok">obsazeno</span></td></tr>
+        <tr class="erow" data-ent="GR"><td><b>H3</b> — výrobní hala 600 m²</td><td><span class="chip">hala</span></td><td><span class="chip ent">GR</span></td><td>elektřina, voda</td><td>Print+ tiskárna s.r.o.</td><td><span class="chip state-ok">obsazeno</span></td></tr>
+        <tr class="erow" data-ent="GR"><td><b>K2</b> — kancelář 22 m², Náměstí 1</td><td><span class="chip">kancelář</span></td><td><span class="chip ent">GR</span></td><td>elektřina</td><td>—</td><td><span class="chip free">volné</span></td></tr>
+        <tr class="erow" data-ent="SV"><td><b>G7</b> — garáž, Zahradní 15 🔒</td><td><span class="chip">garáž</span></td><td><span class="chip ent">SV</span></td><td>—</td><td>Jan Horák</td><td><span class="chip state-ok">obsazeno</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ SMLOUVY ============ -->
+<section class="screen" id="s-smlouvy">
+  <h1>Smlouvy</h1>
+  <p class="sub">Široká tabulka jako v Excelu — filtry, řazení, export. Položky nesou sazbu DPH; u služeb je vidět paušál × záloha.</p>
+  <div class="toolbar">
+    <input class="search" type="search" placeholder="Hledat…" aria-label="Hledat ve smlouvách">
+    <span class="spacer"></span>
+    <button class="btn sec small">Export do Excelu</button>
+    <button class="btn small">+ Nová smlouva</button>
+  </div>
+  <div class="tablewrap">
+    <table style="min-width:980px">
+      <thead><tr><th>Nájemce</th><th>Nemovitost</th><th>Entita</th><th>Období</th><th>Splatnost</th><th>Položky (DPH)</th><th class="num">Kauce</th><th>Stav</th></tr></thead>
+      <tbody>
+        <tr class="erow" data-ent="AD"><td>Novák Autodíly s.r.o.</td><td>H1 výrobní hala</td><td><span class="chip ent">AD</span></td><td class="num">1.9.2026 – 31.8.2027</td><td>25. den předch. měs.</td><td><span class="chip">nájem 21 %</span> <span class="chip">energie 21 % · záloha</span></td><td class="num">100 000</td><td><span class="chip state-ok">aktivní</span></td></tr>
+        <tr class="erow" data-ent="AD"><td>Novák Autodíly s.r.o.</td><td>G2 garáž</td><td><span class="chip ent">AD</span></td><td class="num">1.9.2026 – 31.8.2027</td><td>25. den předch. měs.</td><td><span class="chip">nájem 21 % (povinně)</span></td><td class="num">—</td><td><span class="chip state-ok">aktivní</span></td></tr>
+        <tr class="erow" data-ent="AD"><td>Novák Autodíly s.r.o.</td><td>P4 pozemek</td><td><span class="chip ent">AD</span></td><td class="num">1.9.2026 – 31.8.2027</td><td>25. den předch. měs.</td><td><span class="chip">nájem — osvobozeno §56a</span></td><td class="num">—</td><td><span class="chip state-ok">aktivní</span></td></tr>
+        <tr class="erow" data-ent="AD"><td>Pekárna U Lípy s.r.o.</td><td>K3 kancelář</td><td><span class="chip ent">AD</span></td><td class="num">1.1.2026 – 31.12.2027</td><td>20. den předch. měs.</td><td><span class="chip">nájem 21 %</span> <span class="chip">energie 21 % · paušál</span> <span class="chip vat12">voda 12 % · záloha</span></td><td class="num">36 000</td><td><span class="chip state-ok">aktivní</span></td></tr>
+        <tr class="erow" data-ent="BL"><td>E-shop Balíkov s.r.o.</td><td>S1 sklad. hala</td><td><span class="chip ent">BL</span></td><td class="num">1.3.2026 – 28.2.2029</td><td>25. den předch. měs.</td><td><span class="chip">nájem 21 %</span> <span class="chip">energie 21 % · záloha</span></td><td class="num">210 000</td><td><span class="chip state-ok">aktivní</span></td></tr>
+        <tr class="erow" data-ent="BL"><td>KovoTech Dvořák s.r.o.</td><td>S2 sklad. hala</td><td><span class="chip ent">BL</span></td><td class="num">1.6.2026 – 31.5.2027</td><td>25. den předch. měs.</td><td><span class="chip">nájem 21 %</span> <span class="chip">energie 21 % · záloha</span></td><td class="num">120 000</td><td><span class="chip state-ok">aktivní</span></td></tr>
+        <tr class="erow" data-ent="BL"><td>AutoServis Beneš</td><td>G5 garáž + dvůr</td><td><span class="chip ent">BL</span></td><td class="num">1.3.2026 – 28.2.2027</td><td>25. den předch. měs.</td><td><span class="chip">nájem 21 % (povinně)</span></td><td class="num">24 000</td><td><span class="chip state-warn">končí za 6 měs.</span></td></tr>
+        <tr class="erow" data-ent="GR"><td>Marešová účetnictví</td><td>K1 kancelář</td><td><span class="chip ent">GR</span></td><td class="num">1.1.2024 – 31.12.2026</td><td>15. den předch. měs.</td><td><span class="chip">nájem 21 %</span> <span class="chip vat12">voda 12 % · záloha</span></td><td class="num">30 000</td><td><span class="chip state-warn">končí za 4 měs.</span></td></tr>
+        <tr class="erow" data-ent="GR"><td>Print+ tiskárna s.r.o.</td><td>H3 výrobní hala</td><td><span class="chip ent">GR</span></td><td class="num">1.7.2025 – 30.6.2028</td><td>25. den předch. měs.</td><td><span class="chip">nájem 21 %</span> <span class="chip">energie 21 % · záloha</span> <span class="chip vat12">voda 12 % · záloha</span></td><td class="num">150 000</td><td><span class="chip state-ok">aktivní</span></td></tr>
+        <tr class="erow" data-ent="SV"><td>Jan Horák 🔒</td><td>G7 garáž</td><td><span class="chip ent">SV</span></td><td class="num">1.1.2026 – doba neurčitá</td><td>25. den předch. měs.</td><td><span class="chip">nájem 21 % (povinně)</span></td><td class="num">6 000</td><td><span class="chip state-ok">aktivní</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ KALENDÁŘE ============ -->
+<section class="screen" id="s-kalendare">
+  <h1>Platební kalendáře</h1>
+  <p class="sub">Každý kalendář je daňový doklad (§ 31a) s číslem z řady entity. Vystavený se nemění — změna ceny = nový kalendář, starý zůstává v archivu. Kliknutím na řádek zobrazíte náhled PDF.</p>
+  <div class="toolbar">
+    <button class="btn" id="open-wizard">⚙ Hromadné generování</button>
+    <button class="btn sec small">⬇ Stáhnout ZIP pro účetní (období…)</button>
+    <span class="spacer"></span>
+    <input class="search" type="search" placeholder="Číslo, nájemce…" aria-label="Hledat kalendář">
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Číslo dokladu</th><th>Nájemce</th><th>Předmět</th><th>Období</th><th class="num">Měsíčně vč. DPH</th><th>Stav</th></tr></thead>
+      <tbody>
+        <tr class="click erow" data-ent="AD" data-pdf="1"><td class="num"><b>AD-2026-014</b></td><td>Novák Autodíly s.r.o.</td><td>nájem — výrobní hala H1</td><td class="num">9/2026 – 8/2027</td><td class="num">50 820</td><td><span class="chip state-ok">vystaven</span></td></tr>
+        <tr class="click erow" data-ent="AD" data-pdf="1"><td class="num"><b>AD-2026-015</b></td><td>Novák Autodíly s.r.o.</td><td>energie (záloha) — hala H1</td><td class="num">9/2026 – 8/2027</td><td class="num">14 520</td><td><span class="chip state-ok">vystaven</span></td></tr>
+        <tr class="click erow" data-ent="AD" data-pdf="1"><td class="num"><b>AD-2026-016</b></td><td>Pekárna U Lípy s.r.o.</td><td>voda (záloha) — kancelář K3</td><td class="num">9/2026 – 8/2027</td><td class="num">1 344</td><td><span class="chip state-ok">vystaven</span></td></tr>
+        <tr class="click erow" data-ent="BL" data-pdf="1"><td class="num"><b>BL-2026-021</b></td><td>E-shop Balíkov s.r.o.</td><td>nájem — skladová hala S1</td><td class="num">3/2026 – 2/2027</td><td class="num">108 900</td><td><span class="chip state-ok">vystaven</span></td></tr>
+        <tr class="click erow" data-ent="AD" data-pdf="1"><td class="num"><b>AD-2025-041</b></td><td>Novák Autodíly s.r.o.</td><td>nájem — výrobní hala H1</td><td class="num">9/2025 – 8/2026</td><td class="num">48 400</td><td><span class="chip state-old">nahrazen (změna ceny)</span></td></tr>
+        <tr class="click erow" data-ent="SV" data-pdf="1"><td class="num"><b>SV-2026-003</b></td><td>Jan Horák 🔒</td><td>nájem — garáž G7</td><td class="num">1/2026 – 12/2026</td><td class="num">2 178</td><td><span class="chip state-ok">vystaven</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ ADMINISTRACE ============ -->
+<section class="screen" id="s-admin">
+  <h1>Administrace</h1>
+  <p class="sub">Entity, sazby i splatnosti jsou konfigurace — nic z toho není „zadrátováno“ v programu.</p>
+  <div class="grid c2">
+    <div class="card">
+      <h2>Entity a číselné řady</h2>
+      <div class="tablewrap" style="border:0">
+        <table><thead><tr><th>Entita</th><th>DIČ</th><th>Plátce DPH</th><th>Řada dokladů</th></tr></thead>
+        <tbody>
+          <tr><td>Alfa Doprava s.r.o.</td><td class="num">CZ12345678</td><td><span class="chip state-ok">ano</span></td><td class="num">AD-2026-###</td></tr>
+          <tr><td>Beta Logistika s.r.o.</td><td class="num">CZ23456789</td><td><span class="chip state-ok">ano</span></td><td class="num">BL-2026-###</td></tr>
+          <tr><td>Gama Reality s.r.o.</td><td class="num">CZ34567890</td><td><span class="chip state-ok">ano</span></td><td class="num">GR-2026-###</td></tr>
+          <tr><td>🔒 Soukromé — L. Včeláková</td><td class="num">—</td><td><span class="chip state-old">ne</span></td><td class="num">SV-2026-###</td></tr>
+        </tbody></table>
+      </div>
+      <p class="legalnote">Formát řady je nastavitelný — sladíme s účetní firmou. Další entitu přidáte tlačítkem, bez zásahu do programu.</p>
+    </div>
+    <div class="card">
+      <h2>Sazby DPH (číselník s platností)</h2>
+      <div class="tablewrap" style="border:0">
+        <table><thead><tr><th>Sazba</th><th class="num">%</th><th>Platnost od</th><th>Použití</th></tr></thead>
+        <tbody>
+          <tr><td>základní</td><td class="num">21</td><td class="num">1. 1. 2024</td><td>nájem (zdaněný), elektřina, plyn</td></tr>
+          <tr><td>snížená</td><td class="num">12</td><td class="num">1. 1. 2024</td><td>vodné a stočné, teplo</td></tr>
+        </tbody></table>
+      </div>
+      <h2 style="margin-top:16px">Uživatelé</h2>
+      <div class="tablewrap" style="border:0">
+        <table><thead><tr><th>Uživatel</th><th>Role</th><th>Vidí entity</th></tr></thead>
+        <tbody>
+          <tr><td>Lucie Včeláková</td><td><span class="chip">superadmin</span></td><td>AD, BL, GR, 🔒 SV</td></tr>
+          <tr><td>Petr Kolář</td><td><span class="chip">správce</span></td><td>AD, BL, GR</td></tr>
+          <tr><td>účetní (host)</td><td><span class="chip">jen náhled</span></td><td>AD, BL, GR</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ WIZARD ============ -->
+<div class="overlay" id="wizard">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="wz-title">
+    <button class="close" data-close="wizard" aria-label="Zavřít">✕</button>
+    <h2 id="wz-title">Hromadné generování kalendářů</h2>
+    <div class="steps"><span class="done" id="st1"></span><span id="st2"></span><span id="st3"></span></div>
+
+    <div id="wz-1">
+      <p style="font-size:.9rem; margin-bottom:10px">Období: <b>od 1. 9. 2026, 12 měsíců</b> · Entita: <b>všechny</b></p>
+      <p style="font-size:.86rem; color:var(--muted)">Program našel <b>3 smlouvy</b>, kterým na zvolené období chybí platební kalendář. Generuje se vždy zvlášť pro nájem, energie a vodu.</p>
+      <div class="mfoot"><button class="btn" id="wz-next1">Pokračovat — náhled</button></div>
+    </div>
+
+    <div id="wz-2" style="display:none">
+      <div class="tablewrap" style="margin-bottom:4px">
+        <table style="min-width:0">
+          <thead><tr><th>Doklad</th><th>Nájemce</th><th>Předmět</th><th class="num">Měsíčně vč. DPH</th></tr></thead>
+          <tbody>
+            <tr><td class="num">AD-2026-017</td><td>Novák Autodíly</td><td>nájem H1</td><td class="num">50 820</td></tr>
+            <tr><td class="num">AD-2026-018</td><td>Novák Autodíly</td><td>energie H1 (záloha)</td><td class="num">14 520</td></tr>
+            <tr><td class="num">AD-2026-019</td><td>Pekárna U Lípy</td><td>voda K3 (záloha, 12 %)</td><td class="num">1 344</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="warnbox">⚠ Kontrola: položka <b>energie u smlouvy KovoTech</b> má platnost jen do 31. 12. 2026 — kalendář na celé období nelze vystavit. Prodlužte platnost položky, nebo bude vynechán.</div>
+      <div class="mfoot"><button class="btn sec" id="wz-back">← Zpět</button><button class="btn" id="wz-next2">Vystavit 3 doklady</button></div>
+    </div>
+
+    <div id="wz-3" style="display:none">
+      <div class="okbox">✓ Vystaveny 3 platební kalendáře (AD-2026-017 až 019). PDF jsou v archivu, čísla přidělena z řad entit. Doklady už nelze měnit — případná změna = nový kalendář.</div>
+      <div class="mfoot"><button class="btn sec">⬇ Stáhnout vše (ZIP)</button><button class="btn" data-close="wizard">Hotovo</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PDF NÁHLED ============ -->
+<div class="overlay" id="pdfmodal">
+  <div class="modal" style="max-width:700px" role="dialog" aria-modal="true" aria-label="Náhled PDF">
+    <button class="close" data-close="pdfmodal" aria-label="Zavřít">✕</button>
+    <h2 style="margin-bottom:12px">Náhled PDF <span style="font-weight:400; color:var(--muted); font-size:.8rem">(vzhled sladíme 1:1 s vaším vzorem)</span></h2>
+    <div class="pdf">
+      <div class="phead">
+        <div>
+          <h3>PLATEBNÍ KALENDÁŘ č. AD-2026-014</h3>
+          <div class="small">Daňový doklad dle § 31a zákona č. 235/2004 Sb., o DPH</div>
+        </div>
+        <div class="small" style="text-align:right">Vystaveno: 10. 8. 2026</div>
+      </div>
+      <div style="display:flex; gap:24px; flex-wrap:wrap">
+        <div style="flex:1; min-width:200px"><b>Pronajímatel</b><br>Alfa Doprava s.r.o.<br>Průmyslová 12, 500 01 Hradec Králové<br>IČO 12345678 · DIČ CZ12345678<br>Účet: 123456789/0100</div>
+        <div style="flex:1; min-width:200px"><b>Nájemce</b><br>Novák Autodíly s.r.o.<br>Dlouhá 44, 500 02 Hradec Králové<br>IČO 87654321 · DIČ CZ87654321</div>
+      </div>
+      <p style="margin-top:10px"><b>Předmět:</b> nájem výrobní haly H1, Průmyslová 12 · <b>Období:</b> 1. 9. 2026 – 31. 8. 2027 · VS: 202614</p>
+      <table>
+        <thead><tr><th>Období</th><th>Splatnost</th><th class="num">Základ</th><th class="num">DPH 21 %</th><th class="num">Celkem Kč</th></tr></thead>
+        <tbody>
+          <tr><td>1. 9. – 30. 9. 2026</td><td>25. 8. 2026</td><td class="num">42 000,00</td><td class="num">8 820,00</td><td class="num">50 820,00</td></tr>
+          <tr><td>1. 10. – 31. 10. 2026</td><td>25. 9. 2026</td><td class="num">42 000,00</td><td class="num">8 820,00</td><td class="num">50 820,00</td></tr>
+          <tr><td>1. 11. – 30. 11. 2026</td><td>25. 10. 2026</td><td class="num">42 000,00</td><td class="num">8 820,00</td><td class="num">50 820,00</td></tr>
+          <tr><td colspan="5" style="text-align:center; color:#888">… dalších 8 měsíců …</td></tr>
+          <tr><td>1. 8. – 31. 8. 2027</td><td>25. 7. 2027</td><td class="num">42 000,00</td><td class="num">8 820,00</td><td class="num">50 820,00</td></tr>
+        </tbody>
+        <tfoot><tr><td colspan="2">Celkem za období</td><td class="num">504 000,00</td><td class="num">105 840,00</td><td class="num">609 840,00</td></tr></tfoot>
+      </table>
+      <p class="legal">Nájemné se dle smlouvy hradí předem, vždy k 25. dni měsíce předcházejícího měsíci užívání. Daň se přiznává ke dni přijetí úplaty (§ 20a). Uplatněno zdanění nájmu dle § 56a odst. 3.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  /* ---- tabs ---- */
+  var tabs = document.querySelectorAll(".nav button");
+  tabs.forEach(function(b){
+    b.addEventListener("click", function(){
+      tabs.forEach(function(x){ x.classList.remove("active"); });
+      b.classList.add("active");
+      document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("on"); });
+      document.getElementById("s-"+b.dataset.tab).classList.add("on");
+    });
+  });
+
+  /* ---- entity filter ---- */
+  var pills = document.querySelectorAll(".entbar .pill");
+  pills.forEach(function(p){
+    p.addEventListener("click", function(){
+      pills.forEach(function(x){ x.classList.remove("active"); });
+      p.classList.add("active");
+      var ent = p.dataset.ent;
+      document.querySelectorAll(".erow").forEach(function(r){
+        r.style.display = (ent === "ALL" || r.dataset.ent === ent) ? "" : "none";
+      });
+      renderTenants(ent);
+    });
+  });
+
+  /* ---- tenants data ---- */
+  var T = [
+    {id:"novak", n:"Novák Autodíly s.r.o.", ent:"AD", props:["H1 výrobní hala","G2 garáž","P4 pozemek"], cals:6, rent:"64 500", kauce:{v:"100 000 Kč", s:"12. 8. 2019", r:"—"},
+     hist:[["2019–2021","hala H1","36 000"],["2022–2023","hala H1 + garáž G2","41 500"],["2024–2025","hala H1 + G2 + pozemek P4","59 900"],["od 9/2026","hala H1 + G2 + P4","64 500"]],
+     calList:[["AD-2026-014","nájem H1 · 9/2026–8/2027","vystaven"],["AD-2026-015","energie H1 · 9/2026–8/2027","vystaven"],["AD-2025-041","nájem H1 · 9/2025–8/2026","nahrazen"]],
+     notes:[["3. 6. 2026","Vymalováno halu H1 na naše náklady — o 900 Kč/měs. navýšen nájem od 9/2026."],["15. 3. 2026","Domluveno prodloužení do 8/2027; do 15. 10. 2026 zajistit novou požární zprávu."]]},
+    {id:"pekarna", n:"Pekárna U Lípy s.r.o.", ent:"AD", props:["K3 kancelář"], cals:3, rent:"14 200", kauce:{v:"36 000 Kč", s:"2. 1. 2026", r:"—"},
+     hist:[["od 1/2026","kancelář K3","14 200"]], calList:[["AD-2026-016","voda K3 · 9/2026–8/2027","vystaven"]], notes:[["2. 1. 2026","Předání kanceláře, drobné vady zaznamenány v protokolu."]]},
+    {id:"kovotech", n:"KovoTech Dvořák s.r.o.", ent:"BL", props:["S2 skladová hala"], cals:2, rent:"52 000", kauce:{v:"120 000 Kč", s:"1. 6. 2026", r:"—"},
+     hist:[["od 6/2026","hala S2","52 000"]], calList:[["BL-2026-025","nájem S2 · 6/2026–5/2027","vystaven"]], notes:[]},
+    {id:"benes", n:"AutoServis Beneš", ent:"BL", props:["G5 garáž + dvůr"], cals:1, rent:"9 800", kauce:{v:"24 000 Kč", s:"1. 3. 2026", r:"—"},
+     hist:[["od 3/2026","garáž G5 + dvůr","9 800"]], calList:[["BL-2026-018","nájem G5 · 3/2026–2/2027","vystaven"]], notes:[["1. 7. 2026","Zvažuje prodloužení — ozvat se v lednu 2027."]]},
+    {id:"balikov", n:"E-shop Balíkov s.r.o.", ent:"BL", props:["S1 skladová hala"], cals:2, rent:"90 000", kauce:{v:"210 000 Kč", s:"1. 3. 2026", r:"—"},
+     hist:[["od 3/2026","hala S1","90 000"]], calList:[["BL-2026-021","nájem S1 · 3/2026–2/2027","vystaven"]], notes:[]},
+    {id:"maresova", n:"Marešová účetnictví", ent:"GR", props:["K1 kancelář"], cals:2, rent:"11 500", kauce:{v:"30 000 Kč", s:"2. 1. 2024", r:"—"},
+     hist:[["2024","kancelář K1","10 500"],["od 1/2025","kancelář K1","11 500"]], calList:[["GR-2026-009","nájem K1 · 1/2026–12/2026","vystaven"]], notes:[["10. 6. 2026","Smlouva končí 31. 12. 2026 — domluvit prodloužení do konce září."]]},
+    {id:"print", n:"Print+ tiskárna s.r.o.", ent:"GR", props:["H3 výrobní hala"], cals:3, rent:"48 000", kauce:{v:"150 000 Kč", s:"1. 7. 2025", r:"—"},
+     hist:[["od 7/2025","hala H3","48 000"]], calList:[["GR-2026-011","nájem H3 · 7/2026–6/2027","vystaven"]], notes:[]},
+    {id:"horak", n:"Jan Horák 🔒", ent:"SV", props:["G7 garáž"], cals:1, rent:"1 800", kauce:{v:"6 000 Kč", s:"2. 1. 2026", r:"—"},
+     hist:[["od 1/2026","garáž G7","1 800"]], calList:[["SV-2026-003","nájem G7 · 1/2026–12/2026","vystaven"]], notes:[["5. 8. 2026","Do 1. 9. 2026 zkontrolovat vrata garáže."]]}
+  ];
+
+  var rowsEl = document.getElementById("tenant-rows");
+  function renderTenants(ent){
+    rowsEl.innerHTML = "";
+    T.forEach(function(t){
+      if(ent !== "ALL" && t.ent !== ent) return;
+      var tr = document.createElement("tr");
+      tr.className = "click";
+      tr.innerHTML = "<td><b>"+t.n+"</b></td><td><span class='chip ent'>"+t.ent+"</span></td><td>"+t.props.join(", ")+"</td><td class='num'>"+t.cals+"</td><td class='num'>"+t.rent+"</td><td><span class='chip state-ok'>aktivní</span></td>";
+      tr.addEventListener("click", function(){ openDetail(t); });
+      rowsEl.appendChild(tr);
+    });
+  }
+  function openDetail(t){
+    document.getElementById("najemci-list").style.display = "none";
+    document.getElementById("najemce-detail").style.display = "block";
+    document.getElementById("det-name").textContent = t.n;
+    document.getElementById("det-ent").textContent = t.ent;
+    document.getElementById("det-props").innerHTML = t.props.map(function(p){ return "<span class='chip' style='margin:2px 4px 2px 0'>"+p+"</span>"; }).join(" ");
+    document.getElementById("det-kauce").innerHTML = "<dt>Výše</dt><dd>"+t.kauce.v+"</dd><dt>Složena</dt><dd>"+t.kauce.s+"</dd><dt>Vrácena</dt><dd>"+t.kauce.r+"</dd>";
+    document.querySelector("#det-history tbody").innerHTML = t.hist.map(function(h){ return "<tr><td class='num'>"+h[0]+"</td><td>"+h[1]+"</td><td class='num'>"+h[2]+"</td></tr>"; }).join("");
+    document.getElementById("det-cals").innerHTML = t.calList.length ? t.calList.map(function(c){
+      var cls = c[2] === "vystaven" ? "state-ok" : "state-old";
+      return "<li><span class='dot info'></span><div><b>"+c[0]+"</b> — "+c[1]+" <span class='chip "+cls+"'>"+c[2]+"</span></div></li>";
+    }).join("") : "<li><span class='dot ok'></span><div>Žádné kalendáře.</div></li>";
+    document.getElementById("det-notes").innerHTML = t.notes.length ? t.notes.map(function(n){
+      return "<li><span class='d'>"+n[0]+"</span><br>"+n[1]+"</li>";
+    }).join("") : "<li><span class='d'>—</span><br>Zatím žádné poznámky.</li>";
+  }
+  document.getElementById("back-to-list").addEventListener("click", function(){
+    document.getElementById("najemce-detail").style.display = "none";
+    document.getElementById("najemci-list").style.display = "block";
+  });
+  renderTenants("ALL");
+
+  /* ---- modals ---- */
+  function open(id){ document.getElementById(id).classList.add("on"); }
+  function close(id){ document.getElementById(id).classList.remove("on"); }
+  document.querySelectorAll("[data-close]").forEach(function(b){
+    b.addEventListener("click", function(){ close(b.dataset.close); });
+  });
+  document.querySelectorAll(".overlay").forEach(function(o){
+    o.addEventListener("click", function(e){ if(e.target === o){ o.classList.remove("on"); } });
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){ document.querySelectorAll(".overlay.on").forEach(function(o){ o.classList.remove("on"); }); }
+  });
+
+  /* wizard */
+  document.getElementById("open-wizard").addEventListener("click", function(){
+    open("wizard"); wzStep(1);
+  });
+  function wzStep(n){
+    document.getElementById("wz-1").style.display = n === 1 ? "block" : "none";
+    document.getElementById("wz-2").style.display = n === 2 ? "block" : "none";
+    document.getElementById("wz-3").style.display = n === 3 ? "block" : "none";
+    document.getElementById("st1").className = "done";
+    document.getElementById("st2").className = n >= 2 ? "done" : "";
+    document.getElementById("st3").className = n >= 3 ? "done" : "";
+  }
+  document.getElementById("wz-next1").addEventListener("click", function(){ wzStep(2); });
+  document.getElementById("wz-back").addEventListener("click", function(){ wzStep(1); });
+  document.getElementById("wz-next2").addEventListener("click", function(){ wzStep(3); });
+
+  /* pdf preview */
+  document.querySelectorAll("tr[data-pdf]").forEach(function(r){
+    r.addEventListener("click", function(){ open("pdfmodal"); });
+  });
+})();
+</script>
