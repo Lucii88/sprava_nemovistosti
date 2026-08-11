@@ -1,0 +1,199 @@
+<title>Návrh a orientační odhad — Aplikace pro správu nemovitostí</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    color-scheme:light;
+    --bg:#F8F5EE; --surface:#FFFFFF; --surface-2:#FCFAF4;
+    --petrol:#03363D; --petrol-90:#0A454D; --petrol-70:#2E5E64;
+    --ink:#1F3A38; --muted:#69766D; --faint:#97A196;
+    --line:#E6E0D1; --line-soft:#EFE9DB;
+    --mint:#BDD9D7; --mint-soft:#EAF2F1; --mint-line:#CFE2E0;
+    --honey:#B9821C; --honey-fill:#DFA43F; --honey-bg:#FAF0DB; --honey-line:#EFDDB6;
+    --ok:#2F7D4F; --ok-bg:#E7F2EB;
+    --radius:14px;
+    --shadow:0 1px 2px rgba(3,54,61,.05),0 10px 30px rgba(3,54,61,.06);
+    --font:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.62;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:0 clamp(20px,5vw,36px)}
+  p{margin:0 0 .85em}
+  strong{font-weight:650;color:var(--petrol)}
+  h1,h2,h3{color:var(--petrol);letter-spacing:-.01em}
+
+  /* masthead */
+  header.mast{padding:clamp(34px,6vw,58px) 0 8px}
+  .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--honey);margin-bottom:14px;display:flex;gap:10px;align-items:center}
+  .kicker::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,var(--honey-line),transparent)}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(1.7rem,1.2rem+2vw,2.5rem);line-height:1.08;margin:0 0 .35em;text-wrap:balance}
+  .lede{font-size:clamp(1.02rem,.97rem+.3vw,1.14rem);color:var(--muted);max-width:60ch;margin:0}
+  .fromline{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;align-items:center}
+  .chip{font-family:var(--mono);font-size:.72rem;letter-spacing:.02em;padding:5px 11px;border-radius:100px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+  .chip b{color:var(--petrol);font-weight:650}
+
+  section{padding:26px 0;border-top:1px solid var(--line-soft)}
+  section:first-of-type{border-top:0}
+  h2{font-size:1.24rem;margin:0 0 4px;display:flex;align-items:baseline;gap:10px}
+  h2 .n{font-family:var(--mono);font-size:.8rem;color:var(--honey);font-weight:700}
+  .sintro{color:var(--muted);font-size:.95rem;margin:0 0 16px}
+
+  .lead-note{background:var(--mint-soft);border:1px solid var(--mint-line);border-radius:var(--radius);padding:16px 18px;font-size:.96rem;color:var(--ink);box-shadow:var(--shadow)}
+  .lead-note strong{color:var(--petrol)}
+
+  /* feature grid */
+  .feat{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+  .fcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:15px 16px;box-shadow:var(--shadow)}
+  .fcard .ic{width:30px;height:30px;border-radius:9px;background:var(--mint-soft);border:1px solid var(--mint-line);color:var(--petrol);display:grid;place-items:center;font-size:.9rem;margin-bottom:9px}
+  .fcard h3{font-size:1rem;margin:0 0 4px}
+  .fcard p{font-size:.88rem;color:var(--muted);margin:0}
+
+  /* timeline */
+  .tl{list-style:none;margin:6px 0 0;padding:0}
+  .tl li{position:relative;padding:0 0 16px 30px;border-left:2px solid var(--mint-line)}
+  .tl li:last-child{border-left-color:transparent;padding-bottom:0}
+  .tl li::before{content:"";position:absolute;left:-8px;top:2px;width:14px;height:14px;border-radius:50%;background:var(--honey-fill);border:3px solid var(--bg)}
+  .tl .w{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--honey);font-weight:700}
+  .tl .t{font-weight:650;color:var(--petrol)}
+  .tl .d{font-size:.9rem;color:var(--muted)}
+
+  /* price */
+  .price{background:var(--petrol);color:#EAF4F2;border-radius:var(--radius);padding:22px 24px;box-shadow:0 12px 34px rgba(3,54,61,.24)}
+  .price .lab{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--mint)}
+  .price .big{font-family:var(--serif);font-size:clamp(2rem,1.4rem+2.6vw,2.9rem);font-weight:600;line-height:1;margin:6px 0 2px;color:#fff}
+  .price .big .u{font-size:.42em;color:var(--mint);font-weight:600}
+  .price .sub{font-size:.9rem;color:#CFE2E0;margin:0}
+  .incl{list-style:none;margin:16px 0 0;padding:14px 0 0;border-top:1px solid rgba(255,255,255,.16);display:grid;grid-template-columns:1fr 1fr;gap:6px 18px}
+  @media (max-width:520px){.incl{grid-template-columns:1fr}}
+  .incl li{font-size:.9rem;color:#E4F0EE;position:relative;padding-left:22px}
+  .incl li::before{content:"✓";position:absolute;left:0;color:var(--honey-fill);font-weight:800}
+  .payrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .payrow span{font-family:var(--mono);font-size:.78rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:5px 10px;color:#EAF4F2}
+  .after{background:var(--honey-bg);border:1px solid var(--honey-line);border-radius:var(--radius);padding:13px 16px;font-size:.9rem;color:var(--ink);margin-top:12px}
+  .after strong{color:var(--honey)}
+
+  /* roadmap table */
+  .rm{width:100%;border-collapse:collapse;font-size:.92rem;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+  .rm th{background:var(--surface-2);text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:10px 14px;border-bottom:1px solid var(--line)}
+  .rm td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  .rm tr:last-child td{border-bottom:0}
+  .rm .p{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right;color:var(--petrol);font-weight:650}
+  .rmwrap{overflow-x:auto}
+
+  ul.need{list-style:none;margin:6px 0 0;padding:0}
+  ul.need li{position:relative;padding:7px 0 7px 28px;border-bottom:1px dashed var(--line-soft);font-size:.95rem}
+  ul.need li:last-child{border-bottom:0}
+  ul.need li::before{content:"";position:absolute;left:4px;top:15px;width:8px;height:8px;border-radius:2px;background:var(--honey-fill)}
+
+  .close{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--honey-fill);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow)}
+  .close p{margin:0 0 .5em}
+  .close .sign{font-family:var(--serif);font-size:1.25rem;color:var(--petrol);margin-top:12px}
+  .close .contact{font-size:.86rem;color:var(--muted);margin-top:2px}
+
+  footer{padding:24px 0 56px;color:var(--faint);font-size:.76rem;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+
+  <header class="mast">
+    <div class="kicker">Návrh řešení · pro Lenku Včelákovou</div>
+    <h1>Aplikace pro správu nájmů a platebních kalendářů</h1>
+    <p class="lede">Shrnutí toho, na čem jsme se domluvily na hovoru — jak by program vypadal, co umí, kolik zabere času a jaká je orientační cena.</p>
+    <div class="fromline">
+      <span class="chip">Připravila <b>Lucie Koucká Kalabisová</b></span>
+      <span class="chip">Srpen <b>2026</b></span>
+      <span class="chip">Fáze <b>návrh + orientační odhad</b></span>
+    </div>
+  </header>
+
+  <section>
+    <div class="lead-note">
+      Děkuju za hovor — moc mi pomohl. Tady je slíbený návrh: <strong>jak by program vypadal</strong> (viz klikací prototyp, který jste už viděla), <strong>kolik času</strong> by to zabralo a <strong>orientační cena</strong>. Není to závazná objednávka ani konečný ceník — je to podklad, abyste viděla, jestli to takhle dává smysl. Oficiální nabídku připravím, až si odsouhlasíme prototyp. Cokoliv v něm klidně změníme.
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">01</span> Co program umí</h2>
+    <p class="sintro">Verze 1 — přesně to, co jste viděla v prototypu.</p>
+    <div class="feat">
+      <div class="fcard"><div class="ic">⌂</div><h3>Přehledná nástěnka</h3><p>Hned po přihlášení vidíte, co Vás čeká, co spěchá a jaké jsou splatnosti — konec hlídání v hlavě a v Excelu.</p></div>
+      <div class="fcard"><div class="ic">▦</div><h3>Platební kalendáře automaticky</h3><p>Program vygeneruje daňové doklady (nájem, energie, voda) se správným DPH, splatností i číslováním — i hromadně, bez chyb.</p></div>
+      <div class="fcard"><div class="ic">●</div><h3>Nájemci a historie</h3><p>U každého historie cen, poznámky (např. „zajistit požární zprávu") a přehled kaucí — vše na jednom místě.</p></div>
+      <div class="fcard"><div class="ic">▤</div><h3>Smlouvy a nemovitosti</h3><p>Přehled napříč třemi firmami i soukromými nemovitostmi, s možností přístupu pro víc lidí a omezenými právy.</p></div>
+      <div class="fcard"><div class="ic">🔒</div><h3>Vaše data u Vás</h3><p>Běží lokálně na Vašem serveru, data nikam neodcházejí. Přenos ze stávajícího Excelu zajistím za Vás — nic nepřepisujete ručně.</p></div>
+      <div class="fcard"><div class="ic">↧</div><h3>Export a tisk</h3><p>Doklady jako PDF přesně ve Vaší podobě, seznamy do Excelu — připravené pro Vaši účetní firmu.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">02</span> Jak to bude probíhat</h2>
+    <p class="sintro">Orientačně zhruba šest týdnů od chvíle, kdy odsouhlasíme prototyp.</p>
+    <ul class="tl">
+      <li><div class="w">Teď</div><div class="t">Odsouhlasení prototypu</div><div class="d">Projdeme vzhled a logiku, doladíme, co chcete jinak.</div></li>
+      <li><div class="w">Týden 1–2</div><div class="t">Jádro programu</div><div class="d">Datový model, evidence, generátor platebních kalendářů.</div></li>
+      <li><div class="w">Týden 3–4</div><div class="t">Vaše data a doklady „na korunu"</div><div class="d">Přenos z Excelu, sladění dokladů a číselných řad s Vaší účetní.</div></li>
+      <li><div class="w">Týden 5–6</div><div class="t">Nasazení a zaškolení</div><div class="d">Spuštění u Vás na serveru, testování, krátké zaškolení, předání.</div></li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="n">03</span> Orientační cena</h2>
+    <div class="price">
+      <div class="lab">Verze 1 — kompletní aplikace</div>
+      <div class="big">149 000 Kč <span class="u">bez DPH · pevná cena</span></div>
+      <p class="sub">Jedna pevná cena za hotový výsledek — ne za odpracované hodiny.</p>
+      <ul class="incl">
+        <li>Vývoj celé aplikace (V1)</li>
+        <li>Přenos dat z Excelu</li>
+        <li>Nasazení na Váš server</li>
+        <li>Zaškolení</li>
+        <li>3 měsíce podpory v ceně</li>
+        <li>Doklady přesně ve Vaší podobě</li>
+      </ul>
+      <div class="payrow"><span>40 % při podpisu</span><span>30 % po odsouhlasení</span><span>30 % po předání</span></div>
+    </div>
+    <div class="after">Po prvních 3 měsících <strong>údržba od 2 900 Kč/měsíc</strong> (aktualizace, zálohy, drobné úpravy). Další rozvoj podle potřeby. — Kdybyste chtěla začít menším rozsahem, umím připravit i lehčí <strong>Základ za ~99 000 Kč</strong>.</div>
+  </section>
+
+  <section>
+    <h2><span class="n">04</span> Na co umím navázat</h2>
+    <p class="sintro">Nemusíme řešit teď — ať víte, že to všechno postavím na stejném základu.</p>
+    <div class="rmwrap">
+      <table class="rm">
+        <thead><tr><th>Další krok</th><th>K čemu je</th><th class="p">Orientačně</th></tr></thead>
+        <tbody>
+          <tr><td>Roční vyúčtování záloh</td><td>Vyúčtování energií a služeb na konci roku</td><td class="p">od 35 000</td></tr>
+          <tr><td>Přehled plateb / import z banky</td><td>Vidíte, kdo zaplatil, bez závislosti na účetní</td><td class="p">od 39 000</td></tr>
+          <tr><td>Kniha jízd</td><td>Konec ručního vypisování</td><td class="p">od 59 000</td></tr>
+          <tr><td>Digitalizace stazek (tablet pro řidiče)</td><td>Řidič vyplní stazku v tabletu, ne na papír</td><td class="p">od 120 000</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="n">05</span> Co k tomu potřebuju od Vás</h2>
+    <ul class="need">
+      <li>Vzor platebního kalendáře a Vaši tabulku s nájemci (klidně zatím bez cen).</li>
+      <li>Kontakt na Vaši účetní firmu — kvůli číslování dokladů, ať na sebe nové navážou.</li>
+      <li>Potvrzení, že prototyp vystihuje, jak pracujete (nebo co upravit).</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="close">
+      <p>Návrh je orientační a platí do <strong>31. 8. 2026</strong>. Jakmile řeknete „jde se do toho", připravím smlouvu s přesným rozsahem a spustíme se.</p>
+      <p>Díky za důvěru — těším se na spolupráci.</p>
+      <div class="sign">Lucie Koucká Kalabisová</div>
+      <div class="contact">kalabisova.l@gmail.com</div>
+    </div>
+  </section>
+
+  <footer>
+    Orientační návrh a odhad · připraveno pro Lenku Včelákovou · srpen 2026. Ceny bez DPH.
+  </footer>
+
+</div>
