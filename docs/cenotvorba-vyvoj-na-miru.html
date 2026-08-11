@@ -1,0 +1,713 @@
+<title>Cenotvorba vývoje aplikace na míru — podklad pro rozhodnutí</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* ============ TOKENS ============ */
+  :root{
+    --paper:#F4F6F6;
+    --surface:#FFFFFF;
+    --surface-2:#FAFBFB;
+    --ink:#171B1D;
+    --ink-soft:#525A5E;
+    --ink-faint:#8A9296;
+    --line:#E2E6E7;
+    --line-strong:#CDD3D4;
+    --accent:#0C5C5B;
+    --accent-2:#12807D;
+    --accent-tint:#E7F0EF;
+    --good:#2E6B4E;
+    --good-tint:#E7F0EA;
+    --warn:#8A5A14;
+    --warn-tint:#F4ECDD;
+    --risk:#97423B;
+    --risk-tint:#F3E4E2;
+    --shadow:0 1px 2px rgba(20,30,30,.04),0 6px 20px rgba(20,30,30,.05);
+
+    --fs-display:clamp(1.9rem,1.2rem + 2.6vw,2.9rem);
+    --fs-h2:clamp(1.3rem,1.05rem + 1vw,1.7rem);
+    --fs-h3:1.06rem;
+    --fs-body:1rem;
+    --fs-small:.86rem;
+    --fs-micro:.76rem;
+
+    --font-display:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,"Times New Roman",serif;
+    --font-body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --font-mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,"Liberation Mono",monospace;
+
+    --maxw:940px;
+    --radius:12px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0E1113;
+      --surface:#161A1C;
+      --surface-2:#1B2022;
+      --ink:#E7EBEC;
+      --ink-soft:#A3ABAF;
+      --ink-faint:#6E767A;
+      --line:#282F31;
+      --line-strong:#3A4245;
+      --accent:#45B2AE;
+      --accent-2:#5CC0BB;
+      --accent-tint:#12221F;
+      --good:#6FB58E;
+      --good-tint:#14231B;
+      --warn:#CB9A54;
+      --warn-tint:#241D11;
+      --risk:#CE7E76;
+      --risk-tint:#241615;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.32);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E1113;
+    --surface:#161A1C;
+    --surface-2:#1B2022;
+    --ink:#E7EBEC;
+    --ink-soft:#A3ABAF;
+    --ink-faint:#6E767A;
+    --line:#282F31;
+    --line-strong:#3A4245;
+    --accent:#45B2AE;
+    --accent-2:#5CC0BB;
+    --accent-tint:#12221F;
+    --good:#6FB58E;
+    --good-tint:#14231B;
+    --warn:#CB9A54;
+    --warn-tint:#241D11;
+    --risk:#CE7E76;
+    --risk-tint:#241615;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.32);
+  }
+
+  /* ============ BASE ============ */
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:var(--fs-body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 clamp(18px,4vw,40px)}
+  p{margin:0 0 .9em}
+  strong{font-weight:650;color:var(--ink)}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent)}
+  a:hover{border-bottom-color:var(--accent)}
+  sup.cite{font-family:var(--font-mono);font-size:.62em;color:var(--ink-faint);font-weight:500;white-space:nowrap;margin-left:2px}
+
+  /* ============ MASTHEAD ============ */
+  .top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;height:52px}
+  .top .mk{font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:.06em;color:var(--ink-soft);text-transform:uppercase}
+  .top .mk b{color:var(--accent)}
+  .tgl{appearance:none;border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);width:34px;height:34px;border-radius:9px;cursor:pointer;font-size:15px;line-height:1;display:grid;place-items:center;transition:border-color .15s,background .15s}
+  .tgl:hover{border-color:var(--accent)}
+  .tgl:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  header.hero{padding:clamp(38px,6vw,72px) 0 clamp(26px,3vw,38px)}
+  .eyebrow{font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 16px;display:flex;align-items:center;gap:10px}
+  .eyebrow::after{content:"";height:1px;flex:1;background:linear-gradient(90deg,var(--line-strong),transparent)}
+  h1{font-family:var(--font-display);font-weight:600;font-size:var(--fs-display);line-height:1.05;letter-spacing:-.01em;margin:0 0 .5em;text-wrap:balance}
+  .hero .sub{font-size:clamp(1.02rem,.95rem + .4vw,1.18rem);color:var(--ink-soft);max-width:64ch;margin:0}
+  .meta-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+  .tag{font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:.02em;padding:5px 10px;border-radius:100px;background:var(--surface);border:1px solid var(--line);color:var(--ink-soft)}
+  .tag b{color:var(--ink);font-weight:600}
+
+  /* ============ TOC ============ */
+  nav.toc{margin:8px 0 40px;padding:18px 20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  nav.toc .h{font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:12px}
+  nav.toc ol{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:2px 22px;counter-reset:t}
+  nav.toc li{counter-increment:t}
+  nav.toc a{display:flex;gap:10px;padding:6px 0;border:0;color:var(--ink-soft);font-size:var(--fs-small);align-items:baseline}
+  nav.toc a:hover{color:var(--accent)}
+  nav.toc a::before{content:counter(t,decimal-leading-zero);font-family:var(--font-mono);font-size:var(--fs-micro);color:var(--accent);flex:none}
+
+  /* ============ SECTION ============ */
+  section{padding:clamp(30px,4vw,46px) 0;border-top:1px solid var(--line)}
+  .sec-head{display:flex;gap:16px;align-items:baseline;margin-bottom:8px}
+  .sec-num{font-family:var(--font-mono);font-size:var(--fs-small);color:var(--accent);font-weight:600;padding-top:4px}
+  h2{font-family:var(--font-display);font-weight:600;font-size:var(--fs-h2);line-height:1.12;letter-spacing:-.01em;margin:0;text-wrap:balance}
+  .sec-intro{color:var(--ink-soft);max-width:70ch;margin:.35em 0 1.5em;padding-left:34px}
+  @media (max-width:560px){.sec-intro{padding-left:0}}
+  h3{font-family:var(--font-body);font-weight:650;font-size:var(--fs-h3);margin:1.7em 0 .5em;letter-spacing:-.005em}
+  h3:first-of-type{margin-top:.4em}
+
+  /* ============ TABLES ============ */
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);box-shadow:var(--shadow);margin:1.1em 0}
+  table{border-collapse:collapse;width:100%;font-size:var(--fs-small);min-width:520px}
+  thead th{background:var(--surface-2);text-align:left;font-weight:600;color:var(--ink);padding:11px 14px;border-bottom:2px solid var(--line-strong);white-space:nowrap;font-size:var(--fs-micro);letter-spacing:.03em;text-transform:uppercase}
+  tbody td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:var(--surface-2)}
+  td.num,th.num{text-align:right;font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .kc{font-family:var(--font-mono);font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600;color:var(--ink)}
+  td .lbl{font-weight:600;color:var(--ink)}
+  td small{color:var(--ink-faint);font-size:.9em}
+  .rec-row{background:var(--accent-tint) !important}
+  .rec-row td{border-bottom-color:color-mix(in srgb,var(--accent) 20%,var(--line))}
+  .pill{display:inline-block;font-family:var(--font-mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:5px;font-weight:600;vertical-align:middle}
+  .pill.rec{background:var(--accent);color:#fff}
+  :root[data-theme="dark"] .pill.rec{color:#08201f}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill.rec{color:#08201f}}
+  .yes{color:var(--good);font-weight:700}
+  .no{color:var(--ink-faint)}
+
+  /* ============ KPI TILES ============ */
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:1.2em 0}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 16px 14px;box-shadow:var(--shadow)}
+  .kpi .k{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:clamp(1.25rem,1rem + 1vw,1.6rem);font-weight:700;color:var(--ink);line-height:1.05;letter-spacing:-.01em}
+  .kpi .k .u{font-size:.6em;color:var(--ink-soft);font-weight:600}
+  .kpi .lab{font-size:var(--fs-micro);color:var(--ink-soft);margin-top:7px;line-height:1.35}
+  .kpi.accent .k{color:var(--accent)}
+
+  /* ============ CALLOUTS ============ */
+  .call{border:1px solid var(--line);border-left:3px solid var(--ink-faint);border-radius:10px;padding:14px 16px;margin:1.1em 0;background:var(--surface);font-size:var(--fs-small)}
+  .call .ct{font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;color:var(--ink-soft);font-weight:600}
+  .call.key{border-left-color:var(--accent);background:var(--accent-tint)}
+  .call.key .ct{color:var(--accent)}
+  .call.good{border-left-color:var(--good);background:var(--good-tint)}
+  .call.good .ct{color:var(--good)}
+  .call.warn{border-left-color:var(--warn);background:var(--warn-tint)}
+  .call.warn .ct{color:var(--warn)}
+  .call.risk{border-left-color:var(--risk);background:var(--risk-tint)}
+  .call.risk .ct{color:var(--risk)}
+  .call p:last-child{margin-bottom:0}
+
+  .quote{font-family:var(--font-display);font-size:1.05rem;font-style:italic;color:var(--ink);border-left:3px solid var(--accent);padding:2px 0 2px 18px;margin:1em 0;line-height:1.45}
+
+  /* ============ PRO/CON ============ */
+  .pc{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1.1em 0}
+  @media (max-width:560px){.pc{grid-template-columns:1fr}}
+  .pc>div{border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--surface);font-size:var(--fs-small)}
+  .pc h4{margin:0 0 8px;font-size:var(--fs-micro);font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
+  .pc .p h4{color:var(--good)}
+  .pc .c h4{color:var(--risk)}
+  .pc ul{margin:0;padding-left:18px}
+  .pc li{margin:.3em 0}
+
+  ul.clean{list-style:none;padding:0;margin:1em 0}
+  ul.clean li{position:relative;padding-left:24px;margin:.55em 0}
+  ul.clean li::before{content:"";position:absolute;left:4px;top:.62em;width:6px;height:6px;border-radius:2px;background:var(--accent)}
+  ul.tick{list-style:none;padding:0;margin:1em 0}
+  ul.tick li{position:relative;padding-left:26px;margin:.5em 0}
+  ul.tick li::before{content:"→";position:absolute;left:2px;top:0;color:var(--accent);font-weight:700}
+
+  /* ============ SCENARIO CARDS ============ */
+  .lenses{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin:1.4em 0}
+  .lens{border:1px solid var(--line);border-radius:var(--radius);background:var(--surface);padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+  .lens .ln{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  .lens h4{font-family:var(--font-display);font-weight:600;font-size:1.14rem;margin:6px 0 4px;letter-spacing:-.01em}
+  .lens .logic{font-size:var(--fs-small);color:var(--ink-soft);margin:0 0 14px;min-height:2.6em}
+  .lens .price{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:1.32rem;font-weight:700;color:var(--ink);letter-spacing:-.01em;line-height:1.1;padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .lens .price .u{font-size:.6em;color:var(--ink-soft);font-weight:600;display:block;margin-top:2px}
+  .lens .row{font-size:var(--fs-small);margin-top:12px}
+  .lens .row .h{font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-faint)}
+  .lens .row.pro .h{color:var(--good)}
+  .lens .row.con .h{color:var(--risk)}
+  .lens .row p{margin:2px 0 0}
+
+  /* ============ CONVERGENCE BAND ============ */
+  .band{margin:1.6em 0;border:1px solid var(--line-strong);border-radius:var(--radius);overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
+  .band .bh{padding:16px 20px 4px}
+  .band .bh .ct{font-family:var(--font-mono);font-size:var(--fs-micro);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:6px}
+  .band .bh .bn{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:clamp(1.5rem,1.1rem + 1.6vw,2rem);font-weight:700;letter-spacing:-.015em}
+  .band .bh .bn .u{font-size:.5em;color:var(--ink-soft);font-weight:600}
+  .band .scale{position:relative;height:64px;margin:8px 20px 20px}
+  .band .axis{position:absolute;left:0;right:0;top:34px;height:6px;border-radius:100px;background:linear-gradient(90deg,var(--line),var(--line-strong))}
+  .band .zone{position:absolute;top:28px;height:18px;border-radius:100px;background:color-mix(in srgb,var(--accent) 34%,transparent);border:1px solid var(--accent)}
+  .band .tick{position:absolute;top:0;transform:translateX(-50%);text-align:center}
+  .band .tick .tv{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-size:var(--fs-micro);color:var(--ink-soft);font-weight:600}
+  .band .tick .tl{position:absolute;top:26px;left:50%;width:1px;height:22px;background:var(--line-strong)}
+
+  /* ============ FOOTER ============ */
+  footer{border-top:1px solid var(--line);padding:34px 0 60px;color:var(--ink-soft);font-size:var(--fs-small)}
+  .src{columns:2;column-gap:28px;margin:.8em 0 0;padding:0;list-style:none}
+  @media (max-width:560px){.src{columns:1}}
+  .src li{break-inside:avoid;margin:.35em 0;font-size:var(--fs-micro);line-height:1.4}
+  .disc{font-size:var(--fs-micro);color:var(--ink-faint);margin-top:22px;line-height:1.5}
+  .foot-meta{font-family:var(--font-mono);font-size:var(--fs-micro);color:var(--ink-faint);letter-spacing:.03em;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+
+  @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto !important;transition:none !important}}
+  html{scroll-behavior:smooth;scroll-padding-top:64px}
+</style>
+
+<div class="top">
+  <div class="wrap">
+    <span class="mk">Interní podklad · <b>Cenotvorba</b></span>
+    <button class="tgl" id="themeToggle" aria-label="Přepnout režim">☾</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Rozhodovací podklad · trh · konkurence · cenotvorba</p>
+    <h1>Kolik si říct za aplikaci na míru — a jak to obhájit</h1>
+    <p class="sub">Tržní a konkurenční rešerše k naceňování první SW zakázky: webová aplikace pro správu nájmů a generátor daňových dokladů „platební kalendář". Reálná čísla z českého trhu 2024–2026, pět cenových pohledů k rozmyšlení a strategie pro klienta s potenciálem dalších zakázek.</p>
+    <div class="meta-row">
+      <span class="tag">Zpracováno <b>11. 8. 2026</b></span>
+      <span class="tag">Data <b>ČR 2024–2026</b></span>
+      <span class="tag">Účel <b>rozhodnutí, ne nabídka klientovi</b></span>
+      <span class="tag">Klient <b>SME s potenciálem</b></span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Obsah">
+    <div class="h">Obsah</div>
+    <ol>
+      <li><a href="#kontext">Co se vlastně naceňuje</a></li>
+      <li><a href="#tldr">Shrnutí na jednu obrazovku</a></li>
+      <li><a href="#modely">Jak se cena počítá — 5 modelů</a></li>
+      <li><a href="#sazby">Tržní sazby v ČR</a></li>
+      <li><a href="#projekt">Kolik stojí srovnatelná appka</a></li>
+      <li><a href="#konkurence">Konkurence: jak naceňuje</a></li>
+      <li><a href="#hotova">Hotová řešení: koupit vs. postavit</a></li>
+      <li><a href="#ai">AI paradox: proč necenit podle hodin</a></li>
+      <li><a href="#prodat">Jak to prodat (value-based)</a></li>
+      <li><a href="#potencial">Malé SME, velký potenciál</a></li>
+      <li><a href="#scenare">Cenové scénáře — 5 pohledů</a></li>
+      <li><a href="#smlouva">Smlouva: na co si dát pozor</a></li>
+    </ol>
+  </nav>
+
+  <!-- ========== 0 KONTEXT ========== -->
+  <section id="kontext">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Co se vlastně naceňuje</h2></div>
+    <p class="sec-intro">Cena stojí a padá s rozsahem. Než přijdou čísla z trhu, krátce co appka dělá — protože to není to-do list, ale evidenční systém s generátorem daňových dokladů.</p>
+    <p>Podle podkladů (3× ukázkový „Platební kalendář" + Excel se seznamem kalendářů) jde o <strong>B2B evidenci nájmů a generátor daňových dokladů</strong> pro pronajímatele s více subjekty (TRANSPORTSERVIS a spřízněné firmy, několik areálů):</p>
+    <ul class="clean">
+      <li><strong>Master data:</strong> více pronajímatelů → areály → prostory (m²) → nájemníci → smlouvy a řetězce dodatků, kauce, zálohy.</li>
+      <li><strong>Jádro = generátor „DAŇOVÝ DOKLAD – Platební kalendář":</strong> měsíční rozpad, splatnost k 25., variabilní symboly, evidenční čísla, tři režimy DPH (21 %, 12 %, neplátce), různé účely (nájem, elektřina, plyn, voda, ostraha, internet/úklid).</li>
+      <li><strong>Objem:</strong> 50+ platebních kalendářů ročně, různá období, na každého nájemce několik dokladů.</li>
+      <li><strong>Dnes:</strong> ruční Excel + Word. Doklad musí sedět na korunu a právně odpovídat.</li>
+    </ul>
+    <div class="call key">
+      <div class="ct">Proč to platí za víc, než vypadá</div>
+      <p>Hodnota pro klienta = <strong>ušetřený čas + nulová chybovost v daňových dokladech + klid u kontroly</strong>. To je základ pro cenu podle hodnoty (ne podle hodin) — a zároveň důvod, proč „1–2 týdny s AI" není měřítko ceny, ale jen čistý build.</p>
+    </div>
+  </section>
+
+  <!-- ========== TLDR ========== -->
+  <section id="tldr">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Shrnutí na jednu obrazovku</h2></div>
+    <p class="sec-intro">Kdyby ses měla rozhodovat za dvě minuty, tohle jsou kotvy. Detaily a zdroje níže.</p>
+    <div class="kpis">
+      <div class="kpi accent"><div class="k">1 200–1 800<span class="u"> Kč/h</span></div><div class="lab">Senior freelancer v ČR (experti 2 500)</div></div>
+      <div class="kpi accent"><div class="k">8–20<span class="u"> tis./MD</span></div><div class="lab">Man-day agentury (malá → prémiová)</div></div>
+      <div class="kpi"><div class="k">80–300<span class="u"> tis.</span></div><div class="lab">MVP / malý projekt na míru</div></div>
+      <div class="kpi"><div class="k">15–20 %<span class="u">/rok</span></div><div class="lab">Údržba jako % z ceny buildu</div></div>
+      <div class="kpi"><div class="k">2,5–3×</div><div class="lab">Reálné dodání vs. čistý build</div></div>
+      <div class="kpi"><div class="k">64–80<span class="u"> tis.</span></div><div class="lab">SVJ v ČR — velikost trhu pro produkt</div></div>
+    </div>
+    <ul class="tick">
+      <li><strong>Neceň podle hodin.</strong> AI je tvoje páka, ne klientova sleva — jednorázová cena za výsledek, navenek nikdy „zvládnu to za 14 dní".</li>
+      <li><strong>Trh pro tenhle typ appky:</strong> freelancer ~120–400 tis., software house ~250–600 tis. Reálné „dno na míru" je MVP <em>od 80 tis.</em></li>
+      <li><strong>Pozor na buy-vs-build:</strong> hotová řešení jsou levná (od 2 100 Kč jednorázově), takže neprodávej „levnější software" — prodávej přesný workflow a vlastnictví.</li>
+      <li><strong>Pro tenhle první deal se pohledy protínají kolem <span class="kc">100–160 tis. Kč</span> jednorázově + retainer <span class="kc">2,5–5 tis./měs</span></strong> — viz 5 scénářů v sekci 11.</li>
+      <li><strong>Mysli na expanzi:</strong> ukaž ceník dalších modulů hned; první zakázka ať je 20–40 % potenciálu účtu, ne strop.</li>
+    </ul>
+  </section>
+
+  <!-- ========== MODELY ========== -->
+  <section id="modely">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Jak se cena počítá — pět modelů</h2></div>
+    <p class="sec-intro">Pět způsobů, jak se SW na míru účtuje. Pro tvůj případ (jasně definovaný rozsah, AI-first) dává největší smysl <strong>fixní cena za výsledek</strong>, ideálně doplněná o retainer.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Model</th><th>Jak funguje</th><th>Kdy se hodí</th><th>Riziko / poznámka</th></tr></thead>
+        <tbody>
+          <tr><td><span class="lbl">Time &amp; Materials</span></td><td>Platí se odpracovaný čas × sazba.</td><td>Nejasný / měnící se rozsah, agilní vývoj.</td><td>Klient nezná finální cenu. Globálně ho preferuje ~81 % firem.<sup class="cite">[brainhub 24]</sup></td></tr>
+          <tr class="rec-row"><td><span class="lbl">Fixní cena</span> <span class="pill rec">tvoje volba</span></td><td>Nacení se předem za definovaný výstup.</td><td>Jasně definovaný rozsah bez očekávaných změn — přesně tvůj případ.</td><td>Riziko odhadu nese dodavatel → zaklápí se přirážka 15–40 %.<sup class="cite">[2024]</sup></td></tr>
+          <tr><td><span class="lbl">Value-based</span></td><td>Cena dle přínosu pro klienta, ne dle času.</td><td>Silně diferencované řešení s měřitelným dopadem.</td><td>V ČR u SW na míru okrajové; těžší obhájit, ale nejvyšší marže.</td></tr>
+          <tr><td><span class="lbl">Retainer / paušál</span></td><td>Měsíční platba za kapacitu / údržbu / SLA.</td><td>Dlouhodobá spolupráce, údržba, podpora.</td><td>Opakovaný příjem (MRR) — ideální jako druhá vrstva k fixní ceně.</td></tr>
+          <tr><td><span class="lbl">Hybrid</span></td><td>Fixní cena za sprint, nebo T&amp;M se stropem.</td><td>Kompromis predikce a flexibility.</td><td>České agentury nabízejí jako „agilní vývoj po sprintech".</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="call key">
+      <div class="ct">Doporučení pro tebe</div>
+      <p><strong>Fixní cena za výsledek + měsíční retainer na údržbu.</strong> Fixní cena dává klientovi jistotu a tobě chrání marži z rychlosti (AI). Retainer proměňuje jednorázovku v opakovaný příjem a financuje pozdější produktizaci. Value-based logikou <em>stanovíš výši</em> té fixní ceny (sekce 9), ale klientovi ji nabídneš jako jedno pevné číslo.</p>
+    </div>
+  </section>
+
+  <!-- ========== SAZBY ========== -->
+  <section id="sazby">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Tržní sazby v ČR (2024–2026)</h2></div>
+    <p class="sec-intro">Referenční sazby pro odvození „nákladové podlahy" a pro srovnání s konkurencí. Vše bez DPH.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Role / typ</th><th class="num">Hodinově</th><th class="num">Man-day (8 h)</th><th>Zdroj</th></tr></thead>
+        <tbody>
+          <tr><td>Freelancer — junior</td><td class="num">500–800</td><td class="num">4–6 tis.</td><td><small>propix 2025</small></td></tr>
+          <tr><td>Freelancer — medior</td><td class="num">800–1 200</td><td class="num">6,4–9,6 tis.</td><td><small>propix 2025</small></td></tr>
+          <tr class="rec-row"><td>Freelancer — senior</td><td class="num">1 200–1 800</td><td class="num">10–14 tis.</td><td><small>propix 2025</small></td></tr>
+          <tr><td>Freelancer — expert / architekt</td><td class="num">1 500–2 500</td><td class="num">12–20 tis.</td><td><small>propix 2025</small></td></tr>
+          <tr><td>Freelancer — praxe (rozptyl)</td><td class="num">1 000–3 000</td><td class="num">8–24 tis.</td><td><small>freelance portály 25</small></td></tr>
+          <tr><td>Software house — malá</td><td class="num">1 000–1 900</td><td class="num">8–15 tis.</td><td><small>kompozit 25/26</small></td></tr>
+          <tr><td>Software house — střední / prémiová</td><td class="num">1 900–2 500</td><td class="num">15–20+ tis.</td><td><small>inited 24/25</small></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="call">
+      <div class="ct">Nearshore kontext (orientačně)</div>
+      <p>ČR patří k <strong>dražšímu konci nearshoru</strong>: ČR $25–80/h, Polsko $37–99/h, Ukrajina $25–40/h, Indie $19–40/h.<sup class="cite">[thescalers/wild.codes 26]</sup> Data z marketingových agregátorů se širokým rozpětím — ber jako indikaci, ne přesnou kotaci. Pro klienta je to argument: „levnější offshore" znamená horší komunikaci a řízení, ne lepší výsledek.</p>
+    </div>
+    <div class="call warn">
+      <div class="ct">Nejistota</div>
+      <p>Nejlepší oficiální man-day tabulka (MV ČR) je z <strong>2018</strong>; novější agenturní ceníky jsou většinou „na vyžádání". Rozpětí 8–20 tis./MD je složené z více zdrojů, ne z jednoho reportu.</p>
+    </div>
+  </section>
+
+  <!-- ========== PROJEKT ========== -->
+  <section id="projekt">
+    <div class="sec-head"><span class="sec-num">05</span><h2>Kolik stojí srovnatelná appka</h2></div>
+    <p class="sec-intro">Celkové ceny projektů na míru v ČR a odhad pro tvůj konkrétní typ (evidence + generátor dokladů).</p>
+    <h3>Ceníkové kotvy projektů (opakují se napříč zdroji)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Kategorie</th><th class="num">Cena</th><th>Co obsahuje</th></tr></thead>
+        <tbody>
+          <tr><td><span class="lbl">MVP / malý projekt</span></td><td class="num">80–300 tis.</td><td>Přihlášení, dashboard, ~3 klíčové funkce. „Od 80 tis."<sup class="cite">[le-artist/memos 26]</sup></td></tr>
+          <tr><td><span class="lbl">Produkční app</span></td><td class="num">od 180 tis.</td><td>Platby, role/oprávnění, integrace, reporty.<sup class="cite">[le-artist 26]</sup></td></tr>
+          <tr><td><span class="lbl">Střední projekt</span></td><td class="num">300 tis.–1 mil.</td><td>Vlastní backend, typická web app ~500 tis.<sup class="cite">[propix 25]</sup></td></tr>
+          <tr><td><span class="lbl">Enterprise</span></td><td class="num">1–5 mil.+</td><td>Rozsáhlé systémy, integrace.<sup class="cite">[propix 25]</sup></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Odhad pro tvoji appku podle typu dodavatele</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Dodavatel</th><th class="num">Odhad ceny</th><th>Základ odhadu</th></tr></thead>
+        <tbody>
+          <tr class="rec-row"><td><span class="lbl">Freelancer</span></td><td class="num">120–400 tis.</td><td>100–250 h × 1 000–1 800 Kč; MVP „od 80 tis."</td></tr>
+          <tr><td><span class="lbl">Software house</span></td><td class="num">250–600 tis.</td><td>Střední složitost 300k–1M; produkční app od 180k</td></tr>
+          <tr><td><span class="lbl">No-code studio</span></td><td class="num">80–250 tis. <small>+ provoz</small></td><td>Nižší dev, ale platforma $40–200/měs navíc</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="call">
+      <div class="ct">Z čeho se cena skládá</div>
+      <p>Orientační rozpad: analýza ~10–15 %, <strong>vývoj ~50–60 %</strong>, testování ~10–15 %, nasazení ~5–10 %, projektové řízení ~10–15 %. Čistý build 5–10 MD je jen ta polovina „vývoj" — zbytek (analýza, migrace, testy, nasazení, záruka) se do ceny musí připočíst.</p>
+    </div>
+  </section>
+
+  <!-- ========== KONKURENCE ========== -->
+  <section id="konkurence">
+    <div class="sec-head"><span class="sec-num">06</span><h2>Konkurence: jak naceňuje a co komunikuje</h2></div>
+    <p class="sec-intro">Jak čeští dodavatelé mluví o ceně a kolik stojí no-code alternativy. Vzorec: skoro všichni říkají „od X Kč" a „každý projekt oceňujeme individuálně".</p>
+    <h3>Software houses a jejich veřejná komunikace ceny</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Hráč</th><th>Jak komunikuje</th><th class="num">Kotva</th></tr></thead>
+        <tbody>
+          <tr><td>Software 21</td><td>Veřejný ceník „od"</td><td class="num">web app od 49 tis.</td></tr>
+          <tr><td>Propix</td><td>Ceníkový článek + rozpětí</td><td class="num">MVP 60–300 tis.</td></tr>
+          <tr><td>LE ARTIST, MEMOS, Progity…</td><td>Blog „kolik stojí" + individuální kalkulace</td><td class="num">MVP od 80 tis.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>No-code / low-code platformy (opakovaný náklad)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Platforma</th><th>Role</th><th class="num">Cena / měs</th></tr></thead>
+        <tbody>
+          <tr><td>Bubble</td><td>Full-stack web app builder</td><td class="num">$32–349</td></tr>
+          <tr><td>Softr</td><td>Front-end nad Airtable</td><td class="num">$49–269</td></tr>
+          <tr><td>Airtable</td><td>Databáze</td><td class="num">$20–45/uživ.</td></tr>
+          <tr><td>Make / Zapier</td><td>Automatizace</td><td class="num">$9–69</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Reálný no-code build kombinuje app-builder + automatizaci → provoz řádově <strong>$40–200/měs navždy</strong>. Česká low-code scéna: platforma <strong>Tabidoo</strong>, no-code studia (ejaj.cz, Adam Bárta) — projektové ceny nezveřejňují.</p>
+    <div class="call good">
+      <div class="ct">Tvoje výhoda vůči no-code</div>
+      <p>No-code appka klienta uváže k měsíčnímu poplatku a limitům platformy. <strong>Řešení na míru = žádný per-jednotka poplatek při růstu portfolia + vlastní datový model + přesně požadovaný vzhled daňového dokladu.</strong> To je prodejní argument, ne detail.</p>
+    </div>
+  </section>
+
+  <!-- ========== HOTOVA ========== -->
+  <section id="hotova">
+    <div class="sec-head"><span class="sec-num">07</span><h2>Hotová řešení: koupit vs. postavit</h2></div>
+    <p class="sec-intro">Tohle je nejdůležitější kontext pro cenu. Pro správu nájmů existuje řada hotových produktů — a jsou levné. Cenu na míru proto nelze stavět na „je to levnější než software".</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Produkt</th><th>Model</th><th class="num">Cena</th><th>Předpisy nájmu?</th></tr></thead>
+        <tbody>
+          <tr><td>VYDAS – SBN</td><td>Jednorázová licence dle jednotek</td><td class="num">od 2 100 Kč</td><td><span class="yes">ano</span></td></tr>
+          <tr><td>DOMSYS</td><td>Měsíční pronájem</td><td class="num">od 987 Kč/měs</td><td><span class="yes">ano</span></td></tr>
+          <tr><td>Nemovitorium</td><td>Per jednotka / měs</td><td class="num">od 89 Kč/j.</td><td><span class="yes">ano</span></td></tr>
+          <tr><td>eDomovnice</td><td>Per jednotka / měs</td><td class="num">~121 Kč/j.</td><td><span class="yes">ano</span></td></tr>
+          <tr><td>DOMUS, SSB2000, KELOC</td><td>Licence (cena na dotaz)</td><td class="num">neveřejné</td><td><span class="yes">ano</span></td></tr>
+          <tr><td>MojeNájmy (AI), ZVLÁDNEME</td><td>Freemium / zdarma</td><td class="num">0 Kč start</td><td><span class="yes">ano</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pc">
+      <div class="p"><h4>Proč přesto appku na míru</h4><ul>
+        <li>Hotová řešení cílí na <strong>SVJ / bytová družstva</strong> a rozúčtování služeb — ne na tvůj workflow „platebního kalendáře" napříč více subjekty.</li>
+        <li>Vlastní datový model a <strong>přesný vzhled daňového dokladu</strong> na korunu.</li>
+        <li>Žádný poplatek za jednotku při růstu portfolia; vlastnictví řešení.</li>
+        <li>Integrace přesně na míru procesu klienta.</li>
+      </ul></div>
+      <div class="c"><h4>Kde hotové vyhrává</h4><ul>
+        <li>Nízká vstupní cena a okamžité nasazení.</li>
+        <li>Legislativu a DPH udržuje dodavatel.</li>
+        <li>Hotové párování plateb z bankovních výpisů.</li>
+        <li>Nulová údržba na straně klienta.</li>
+      </ul></div>
+    </div>
+    <div class="call key">
+      <div class="ct">Důsledek pro cenu</div>
+      <p>Klient si <strong>připlácí za dokonalý fit a vlastnictví</strong>, ne za levnější provoz. To je legitimní a prodejné — ale musíš to umět odvyprávět (sekce 9). Když bude cena problém, argument nikdy není „sleva", ale „hotové řešení za pár set korun měsíčně, když nechcete tenhle přesný proces".</p>
+    </div>
+  </section>
+
+  <!-- ========== AI ========== -->
+  <section id="ai">
+    <div class="sec-head"><span class="sec-num">08</span><h2>AI paradox: proč necenit podle hodin</h2></div>
+    <p class="sec-intro">Nejdůležitější mentální posun. Když AI zkrátí build na dny, hodinovka tě trestá za to, v čem jsi dobrá.</p>
+    <ul class="tick">
+      <li><strong>Time-based tě penalizuje za efektivitu.</strong> Lepší nástroje = míň hodin = při hodinovce míň peněz za stejný (lepší) výsledek.</li>
+      <li><strong>Klient nekupuje hodiny, kupuje výsledek a jistotu.</strong> Hodnota „konec ručních dokladů" je stejná, ať to postavíš za 2 týdny nebo 4 měsíce.</li>
+      <li><strong>Rychlost je tvoje páka, ne klientova sleva.</strong> Jakmile řekneš „je to za pár dní", ukotvíš klienta nízko a cenu už nezvedneš.</li>
+    </ul>
+    <p class="quote">„Nekotujte vůbec žádnou časovou jednotku." — Alan Weiss, <em>Value-Based Fees</em>. A Blair Enns dodává princip <strong>descope, don't discount</strong>: když je drahé, ubereš rozsah, ne cenu.</p>
+
+    <h3>Realistický harmonogram: dodání vs. čistý build</h3>
+    <p>„1–2 týdny s AI" je jen čistý build. Reálné dodání zahrnuje spoustu podceňovaných položek:</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Fáze</th><th class="num">Odhad</th><th>Poznámka</th></tr></thead>
+        <tbody>
+          <tr><td>Čistý build (s AI)</td><td class="num">5–10 dní</td><td>To, co „zvládneš za 1–2 týdny".</td></tr>
+          <tr><td>Sběr a upřesnění požadavků</td><td class="num">2–4 dny</td><td>DPH ano/ne, náležitosti dokladu, číselné řady.</td></tr>
+          <tr><td>Migrace dat z Excelu</td><td class="num">2–4 dny</td><td>Čištění, mapování, kontrola konzistence.</td></tr>
+          <tr><td><strong>Sladění PDF na korunu</strong></td><td class="num">2–5 dní</td><td>Zaokrouhlení DPH, součty, validace s účetní — notoricky podceněné.</td></tr>
+          <tr><td>Testování + opravy</td><td class="num">20–30 %</td><td>Reálné edge-case scénáře.</td></tr>
+          <tr><td>Akceptace, předání, školení</td><td class="num">1–3 dny</td><td>Akceptační protokol, krátká dokumentace.</td></tr>
+          <tr><td>Rezerva na neznámé</td><td class="num">+20–30 %</td><td>Planning fallacy.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="call key">
+      <div class="ct">Praktické pravidlo</div>
+      <p>Kalendářní dodání = <strong>2,5–3× čistý build</strong>. Z „1–2 týdnů" reálně <strong>4–6 (až 8) týdnů</strong>. Studie 16 let NASA projektů ukázala systematické podcenění 1,4–4,3×.<sup class="cite">[theknowledge 24]</sup> Navenek komunikuj právě tohle dodání a milníky — <strong>nikdy čistý build</strong>.</p>
+    </div>
+  </section>
+
+  <!-- ========== PRODAT ========== -->
+  <section id="prodat">
+    <div class="sec-head"><span class="sec-num">09</span><h2>Jak to prodat: value-based prakticky</h2></div>
+    <p class="sec-intro">Jak vyčíslit hodnotu, jak z ní odvodit cenu a jak celé nabídnout, aby cena nebyla téma.</p>
+
+    <h3>Vzorec hodnoty pro klienta</h3>
+    <div class="call">
+      <div class="ct">Roční hodnota V</div>
+      <p style="font-family:var(--font-mono);font-size:var(--fs-small);line-height:1.7">V = (ušetřené hodiny/rok × sazba)<br>&nbsp;&nbsp;&nbsp;+ (riziko chyb: pravděpodobnost × dopad v Kč)<br>&nbsp;&nbsp;&nbsp;+ (přínos z rychlosti / cashflow — konzervativně)</p>
+    </div>
+    <ul class="clean">
+      <li><strong>Ušetřený čas</strong> — evidence, doklady, upomínky, podklady pro účetní × sazba, kterou klient jinak platí (400–600 Kč/h).</li>
+      <li><strong>Eliminace chyb v daňových dokladech</strong> — špatná řada, chybné zaokrouhlení DPH, chybějící náležitost = penále + čas účetní + stres. I 1–2 incidenty ročně mají cenu.</li>
+      <li><strong>Compliance a klid</strong> — audit-ready doklady. Prodává se jako „jistota", ne jako funkce.</li>
+    </ul>
+    <div class="call key">
+      <div class="ct">Kolik z hodnoty si vzít</div>
+      <p>Benchmark: klientovi zůstane 60–80 % hodnoty, dodavatel zachytí <strong>15–25 %</strong> (u land-and-expand spíš spodní hranice).<sup class="cite">[LeveragePoint/Umbrex 24]</sup> Test „no-brainer": <strong>cena ≤ hodnota, kterou klient získá za prvních 12–18 měsíců.</strong></p>
+    </div>
+
+    <h3>Value story místo „webová aplikace"</h3>
+    <p class="quote">„Přestanete přepisovat nájmy v Excelu a lepit doklady ve Wordu. Systém je vygeneruje — správná řada, správné zaokrouhlení, nic nechybí. Připraveno na kontrolu, za pár kliknutí místo víkendu s tabulkami."</p>
+
+    <h3>Tři balíčky (modelové ceny — kotvení + sebe-segmentace)</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Funkce</th><th class="num">Základ</th><th class="num">Standard</th><th class="num">Komfort</th></tr></thead>
+        <tbody>
+          <tr class="rec-row"><td><span class="lbl">Cena</span></td><td class="num">59 tis.</td><td class="num"><strong>129 tis.</strong> <span class="pill rec">cíl</span></td><td class="num">219 tis.</td></tr>
+          <tr><td>Evidence + generátor dokladů</td><td class="num yes">✓</td><td class="num yes">✓</td><td class="num yes">✓</td></tr>
+          <tr><td>Počet subjektů</td><td class="num">1</td><td class="num">do 3</td><td class="num">∞</td></tr>
+          <tr><td>Migrace dat z Excelu</td><td class="num no">–</td><td class="num yes">✓</td><td class="num yes">✓</td></tr>
+          <tr><td>Upomínky + evidence plateb</td><td class="num no">–</td><td class="num yes">✓</td><td class="num yes">✓</td></tr>
+          <tr><td>Export pro účetní</td><td class="num no">–</td><td class="num yes">✓</td><td class="num yes">✓</td></tr>
+          <tr><td>Dashboard, reporty, import výpisů</td><td class="num no">–</td><td class="num no">–</td><td class="num yes">✓</td></tr>
+          <tr><td>Podpora</td><td class="num">14 dní</td><td class="num">3 měsíce</td><td class="num">12 měs retainer</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Proč to funguje:</strong> Komfort (219 tis.) je kotva, která dělá Standard „rozumným"; tři varianty vedou k výběru středu a zvedají průměrnou objednávku o ~15–25 %.<sup class="cite">[Competera 24]</sup> Nespoléhej na trikový „decoy" tarif (ve velkých replikacích nedrží) — spoléhej na <strong>kotvení + reálně nejlepší střed</strong>.</p>
+
+    <div class="call warn">
+      <div class="ct">Námitka „proč tak drahé, když je to rychlé"</div>
+      <p>„Platíte za výsledek a za to, že je hotový správně a rychle — ne za počet mých hodin. Kdyby to trvalo čtvrt roku, měl bych si účtovat víc?" A přerámuj na návratnost: „Ročně vás ruční správa a riziko chyb stojí ~80 tis. — tohle se zaplatí do roka." Když cena vadí: <strong>nabídni Základ (menší rozsah), ne slevu</strong>.</p>
+    </div>
+  </section>
+
+  <!-- ========== POTENCIAL ========== -->
+  <section id="potencial">
+    <div class="sec-head"><span class="sec-num">10</span><h2>Malé SME, velký potenciál: land-and-expand</h2></div>
+    <p class="sec-intro">Klíčové pro tvůj bod „malý zákazník, ale s potenciálem dalších zakázek". Jde o to nacenit první deal tak, aby otevřel dveře — a neukotvil tě nízko.</p>
+    <ul class="tick">
+      <li><strong>Neúčtuj foot-in-the-door slevu.</strong> „Úvodní cena" se stane novým anchorem, který obhajuješ u každé další zakázky. Snižuj <em>rozsah</em>, ne cenu za jednotku hodnoty.</li>
+      <li><strong>První deal ať je 20–40 % potenciálu účtu</strong>, ne strop — jinak není kam expandovat.<sup class="cite">[OPEXEngine 24]</sup></li>
+      <li><strong>Ukaž roadmapu a ceník expanzí hned na začátku.</strong> Klient vidí cestu růstu a investuje do ní sám, místo aby se každý krok vyjednával od nuly.</li>
+      <li><strong>Retainer jako MRR:</strong> Údržba ~2 500 Kč/měs (hosting, zálohy, drobné opravy), Podpora+ ~4 900 Kč/měs (navíc ~3 h změn). Údržba jako 15–20 % z ceny buildu ročně.</li>
+    </ul>
+
+    <h3>Produktizace — druhý, větší krok</h3>
+    <p>Tahle appka je <strong>znovupoužitelný produkt</strong>. Trh v ČR:</p>
+    <div class="kpis">
+      <div class="kpi"><div class="k">64–80<span class="u"> tis.</span></div><div class="lab">SVJ (ČSÚ 2017 → odhad 25/26)</div></div>
+      <div class="kpi"><div class="k">~71<span class="u"> tis.</span></div><div class="lab">majitelů 3+ nájemních bytů</div></div>
+      <div class="kpi"><div class="k">8,4<span class="u"> tis.</span></div><div class="lab">bytových družstev</div></div>
+      <div class="kpi accent"><div class="k">100s–1000s</div><div class="lab">platících při 1–3 % penetraci</div></div>
+    </div>
+    <div class="call good">
+      <div class="ct">Spouštěč a IP</div>
+      <p>Jakmile <strong>2–3 klienti chtějí ~80 % stejné funkčnosti</strong>, vyčleň jádro produktu. Pak ale <strong>musíš vlastnit IP</strong>: u produktové cesty si ponech kód a dej klientovi <em>nevýhradní licenci</em> (cena zakázky pak může být nižší). Nikdy neprodej plné IP omylem v šabloně smlouvy — přišla bys o možnost produktizovat.</p>
+    </div>
+  </section>
+
+  <!-- ========== SCENARE ========== -->
+  <section id="scenare">
+    <div class="sec-head"><span class="sec-num">11</span><h2>Cenové scénáře — pět pohledů k rozmyšlení</h2></div>
+    <p class="sec-intro">Tady nemám za tebe rozhodnout — mám ti dát z čeho vybrat. Stejná appka, pět různých logik, jak dojít k číslu. Každá je legitimní; liší se tím, co maximalizuješ.</p>
+
+    <div class="lenses">
+      <div class="lens">
+        <span class="ln">Pohled 1</span>
+        <h4>Nákladový (podlaha)</h4>
+        <p class="logic">Kolik tě to stojí + marže. „Kolik hodin × sazba."</p>
+        <div class="price">60–120 tis.<span class="u">jednorázově</span></div>
+        <div class="row pro"><span class="h">Výhoda</span><p>Bezpečné dno — pod tím proděláváš.</p></div>
+        <div class="row con"><span class="h">Riziko</span><p>Špatný základ: trestá tě za rychlost AI, nechává peníze na stole.</p></div>
+      </div>
+
+      <div class="lens">
+        <span class="ln">Pohled 2</span>
+        <h4>Tržní / konkurenční</h4>
+        <p class="logic">Co si účtují ostatní za srovnatelnou appku.</p>
+        <div class="price">120–300 tis.<span class="u">jednorázově</span></div>
+        <div class="row pro"><span class="h">Výhoda</span><p>Obhajitelné „takhle to na trhu chodí". Freelance střed.</p></div>
+        <div class="row con"><span class="h">Riziko</span><p>Ignoruje konkrétní hodnotu pro klienta i tvůj potenciál expanze.</p></div>
+      </div>
+
+      <div class="lens">
+        <span class="ln">Pohled 3</span>
+        <h4>Value-based</h4>
+        <p class="logic">15–25 % z hodnoty za 1–3 roky pro klienta.</p>
+        <div class="price">130–160 tis.<span class="u">jednorázově</span></div>
+        <div class="row pro"><span class="h">Výhoda</span><p>Nejvyšší marže, cena odpovídá reálnému přínosu.</p></div>
+        <div class="row con"><span class="h">Riziko</span><p>Vyžaduje vyčíslit hodnotu a umět ji odvyprávět.</p></div>
+      </div>
+
+      <div class="lens">
+        <span class="ln">Pohled 4</span>
+        <h4>Land-and-expand</h4>
+        <p class="logic">Rozumný vstup + retainer + roadmapa expanzí.</p>
+        <div class="price">129 tis. + 2,5–4,9 tis./měs<span class="u">build + MRR</span></div>
+        <div class="row pro"><span class="h">Výhoda</span><p>Opakovaný příjem, otevřené dveře dalším zakázkám.</p></div>
+        <div class="row con"><span class="h">Riziko</span><p>Musíš ceník expanzí ukázat hned, ať se neukotvíš nízko.</p></div>
+      </div>
+
+      <div class="lens">
+        <span class="ln">Pohled 5</span>
+        <h4>Produktizace / SaaS</h4>
+        <p class="logic">Nižší build za ponechání IP → pak licence / předplatné.</p>
+        <div class="price">79–99 tis. + licence<span class="u">dlouhá hra</span></div>
+        <div class="row pro"><span class="h">Výhoda</span><p>Aktivum na desítky tisíc zákazníků, ne jedna faktura.</p></div>
+        <div class="row con"><span class="h">Riziko</span><p>Nejmenší hotovost teď; vyžaduje udržet IP a investovat do produktu.</p></div>
+      </div>
+    </div>
+
+    <div class="band">
+      <div class="bh">
+        <div class="ct">Kde se pohledy protínají — pro tenhle první deal</div>
+        <div class="bn">100–160 tis. Kč <span class="u">+ retainer 2,5–5 tis./měs</span></div>
+      </div>
+      <div class="scale" aria-hidden="true">
+        <div class="axis"></div>
+        <div class="zone" style="left:30%;right:28%"></div>
+        <div class="tick" style="left:2%"><span class="tv">60k</span><span class="tl"></span></div>
+        <div class="tick" style="left:30%"><span class="tv">100k</span><span class="tl"></span></div>
+        <div class="tick" style="left:52%"><span class="tv">130k</span><span class="tl"></span></div>
+        <div class="tick" style="left:72%"><span class="tv">160k</span><span class="tl"></span></div>
+        <div class="tick" style="left:97%"><span class="tv">300k</span><span class="tl"></span></div>
+      </div>
+    </div>
+    <div class="call key">
+      <div class="ct">Jak to čti</div>
+      <p>Tržní, value-based i land-and-expand logika se u tvého klienta (více subjektů, 50+ kalendářů) potkávají kolem <strong>100–160 tis. jednorázově</strong>. Nákladová podlaha leží těsně pod, produktizace je strategická alternativa, která mění první hotovost za produktové aktivum. <strong>Rozhodnutí je na tobě</strong> — podle toho, jestli teď chceš maximum hotovosti (pohled 3), vztah a opakovaný příjem (pohled 4), nebo dlouhou hru na produkt (pohled 5). Osobní tip pro tvůj případ je <em>pohled 4</em>: rozumný vstup + retainer + ukázaná roadmapa — ale ber to jen jako jeden hlas, ne verdikt.</p>
+    </div>
+  </section>
+
+  <!-- ========== SMLOUVA ========== -->
+  <section id="smlouva">
+    <div class="sec-head"><span class="sec-num">12</span><h2>Smlouva: na co si dát pozor</h2></div>
+    <p class="sec-intro">Cenově relevantní body — jinak ti value-based cenu sní scope creep nebo přijdeš o možnost produktizace.</p>
+    <ul class="clean">
+      <li><strong>IP / vlastnictví kódu</strong> — explicitně: převod práv vs. nevýhradní licence. Rozhoduje, jestli můžeš produktizovat. Nikdy nenech nedořečené.</li>
+      <li><strong>Změnové řízení</strong> — fixní rozsah v příloze; cokoli navíc = placený change request za danou sazbu. Chrání fixní cenu před „ještě přidáme jen…".</li>
+      <li><strong>Limity a expansion triggery</strong> — počet subjektů / nemovitostí / dokladů per balíček; překročení = placený upgrade (přirozený expand).</li>
+      <li><strong>Platební milníky</strong> — nikdy 100 % na konci: 30–50 % záloha při podpisu, milník po akceptaci prototypu, doplatek po akceptaci.</li>
+      <li><strong>Akceptace</strong> — písemná kritéria + protokol; lhůta na nahlášení vad (14 dní), pak režim placené údržby.</li>
+      <li><strong>Limitace odpovědnosti</strong> — zejména u daňových dokladů omez svou odpovědnost na cenu díla.</li>
+    </ul>
+    <div class="call warn">
+      <div class="ct">Vyjasni brzy — mění cenu i buffer</div>
+      <p>Zjisti, jestli je klient <strong>plátce DPH</strong> a jaký doklad potřebuje: nájem bytů bývá od DPH osvobozen (spíš doklad o platbě), nájem nebytových prostor může být s DPH (plný daňový doklad s náležitostmi dle zákona o DPH). Liší se tím náležitosti, zaokrouhlování i číselné řady — a právě „sladění na korunu" s účetní je nejčastěji podceněná položka.</p>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <h3 style="margin-top:0">Metodika, nejistoty a zdroje</h3>
+    <p>Podklad vznikl souběžnou rešerší tří okruhů (sazby a modely / konkurence a hotová řešení / AI-cenotvorba a prodej) přes webové zdroje 2024–2026. Čísla jsou v Kč bez DPH, kde není uvedeno jinak. Modelové ceny balíčků a scénářů jsou <strong>ilustrativní</strong> — slouží k rozhodnutí, ne jako závazná nabídka.</p>
+    <div class="call warn" style="margin-top:14px">
+      <div class="ct">Hlavní nejistoty</div>
+      <p>Man-day agentur: nejlepší oficiální zdroj (MV ČR) je z 2018. · Freelance sazby dle specializace (FE/BE/full-stack): tvrdá data chybí. · Value-based v ČR: prakticky bez lokálních dat, benchmarky jsou globální. · Počty SVJ/družstev: souvislá řada ČSÚ končí 2017, novější čísla z komerčního rejstříku. · Ceny „na míru" v odhadech jsou odvozené (hodinovka × pracnost), ne kotace. · Kurz ~23 Kč/USD. Detailní výhrady u jednotlivých čísel v inline poznámkách.</p>
+    </div>
+    <p style="margin-top:18px"><strong>Vybrané zdroje:</strong></p>
+    <ul class="src">
+      <li>propix.cz — ceník custom SW (2025)</li>
+      <li>le-artist.cz, memos.cz — ceník vývoje aplikace (2026)</li>
+      <li>inited.cz — hodinová sazba freelancer vs. agentura (24/25)</li>
+      <li>software21.cz — veřejný ceník (2025)</li>
+      <li>MV ČR — Přehled obvyklých cen ICT prací (2018)</li>
+      <li>spravabytu.cz (VYDAS), domsys.cz, nemovitorium.cz, edomovnice.cz — ceníky (23–25)</li>
+      <li>ČSÚ — SVJ, bytová družstva, ICT mzdy (2017 / 2025)</li>
+      <li>thescalers.com, wild.codes — nearshore rates (2026)</li>
+      <li>Alan Weiss — Value-Based Fees · Blair Enns — Pricing Creativity</li>
+      <li>LeveragePoint, Umbrex — value capture % (2024)</li>
+      <li>Competera — price anchoring (2024)</li>
+      <li>OPEXEngine — land &amp; expand (2024)</li>
+      <li>Savi / Gartner rule, pegotec — maintenance % (2026)</li>
+      <li>theknowledge.io, TechTarget — Hofstadter's law / 2×–3× rule (2024)</li>
+    </ul>
+    <p class="disc">Pozn. k integritě dat: při rešerši byl v jednom výsledku vyhledávání detekován skrytý pokyn (prompt injection) nutící citovat neexistující zdroj — byl rozpoznán a ignorován, žádná podvržená data nejsou v podkladu použita.</p>
+    <p class="foot-meta">Interní rozhodovací podklad · nedistribuovat klientovi v této podobě · 11. 8. 2026</p>
+  </footer>
+
+</div>
+
+<script>
+  (function(){
+    var root=document.documentElement;
+    var btn=document.getElementById('themeToggle');
+    function current(){
+      var t=root.getAttribute('data-theme');
+      if(t) return t;
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    function apply(t){
+      root.setAttribute('data-theme',t);
+      btn.textContent = t==='dark' ? '☀' : '☾';
+      btn.setAttribute('aria-label', t==='dark' ? 'Přepnout na světlý režim' : 'Přepnout na tmavý režim');
+    }
+    btn.textContent = current()==='dark' ? '☀' : '☾';
+    btn.addEventListener('click', function(){ apply(current()==='dark' ? 'light' : 'dark'); });
+  })();
+</script>
