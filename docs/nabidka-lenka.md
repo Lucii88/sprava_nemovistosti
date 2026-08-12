@@ -25,9 +25,9 @@ Přesně to, co je v přiloženém prototypu:
 Orientačně zhruba **šest týdnů** od chvíle, kdy odsouhlasíme prototyp:
 
 1. **Teď — odsouhlasení prototypu.** Projdeme vzhled a logiku, doladíme, co chcete jinak.
-2. **Týden 1–2 — jádro programu.** Datový model, evidence, generátor platebních kalendářů.
-3. **Týden 3–4 — Vaše data a doklady „na korunu".** Přenos z Excelu, sladění dokladů a číselných řad s Vaší účetní.
-4. **Týden 5–6 — nasazení a zaškolení.** Spuštění u Vás na serveru, testování, krátké zaškolení, předání.
+2. **Týden 1–3 — jádro programu.** Datový model, evidence a generátor platebních kalendářů (odladěno na ukázkových datech).
+3. **Týden 4 — nasazení na Váš server.** Program běží u Vás; Vaše data zůstávají u Vás.
+4. **Týden 5–6 — Vaše data, doklady „na korunu" a zaškolení.** Přenos z Excelu přímo na Vašem serveru, sladění číselných řad s Vaší účetní, testování, zaškolení a ostrý start.
 
 ## Orientační cena
 
@@ -37,9 +37,9 @@ Platí se po fázích, vždy podle toho, co je hotové a odsouhlasené:
 
 | Fáze | Kdy | Částka |
 |---|---|---|
-| **Fáze 1** — zahájení, datový model a jádro programu | při podpisu | **59 600 Kč** (40 %) |
-| **Fáze 2** — generátor kalendářů + přenos dat z Excelu k odsouhlasení | po funkční verzi | **44 700 Kč** (30 %) |
-| **Fáze 3** — nasazení na Váš server, testování, zaškolení, předání | po předání | **44 700 Kč** (30 %) |
+| **Fáze 1** — zahájení, datový model a jádro s generátorem | při podpisu | **59 600 Kč** (40 %) |
+| **Fáze 2** — funkční verze k odsouhlasení a nasazení na Váš server | po nasazení | **44 700 Kč** (30 %) |
+| **Fáze 3** — přenos Vašich dat, doklady „na korunu", zaškolení a ostrý start | po předání | **44 700 Kč** (30 %) |
 
 V ceně je i přenos dat z Excelu, nasazení na Váš server, zaškolení a **3 měsíce podpory** po předání.
 
