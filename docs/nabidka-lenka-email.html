@@ -1,0 +1,195 @@
+<title>Nabídka pro Lenku</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --paper:#F3F1EA;
+    --sheet:#FFFFFF;
+    --ink:#202623;
+    --ink-soft:#54605B;
+    --ink-faint:#8A938E;
+    --line:#E6E2D7;
+    --line-soft:#EFEBE1;
+    --accent:#0C5C5B;
+    --accent-soft:#E7F0EF;
+    --shadow:0 1px 2px rgba(20,30,28,.05),0 14px 40px rgba(20,30,28,.07);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0E1211;--sheet:#161B19;--ink:#E7EBE9;--ink-soft:#A3ADA8;--ink-faint:#6E7873;
+      --line:#272E2B;--line-soft:#222825;--accent:#4FB3AE;--accent-soft:#12211F;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 44px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E1211;--sheet:#161B19;--ink:#E7EBE9;--ink-soft:#A3ADA8;--ink-faint:#6E7873;
+    --line:#272E2B;--line-soft:#222825;--accent:#4FB3AE;--accent-soft:#12211F;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 44px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--font);font-size:16px;line-height:1.62;
+    -webkit-font-smoothing:antialiased;padding:clamp(16px,4vw,44px) 0;
+  }
+  .sheet{
+    max-width:720px;margin:0 auto;background:var(--sheet);
+    border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);
+    padding:clamp(24px,5vw,52px);
+  }
+  p{margin:0 0 .85em}
+  strong{font-weight:650;color:var(--ink)}
+  h2{
+    font-size:1.16rem;color:var(--accent);margin:2em 0 .7em;
+    padding-bottom:.35em;border-bottom:1px solid var(--line);letter-spacing:.005em;
+  }
+  h3{font-size:1rem;color:var(--ink);margin:1.5em 0 .6em}
+  .ft, .pt{font-weight:650;color:var(--ink);margin:0 0 .15em}
+  .feat{margin:0 0 1.05em}
+  .feat p:last-child{margin:0;color:var(--ink-soft)}
+  .phase{margin:0 0 1em;padding-left:14px;border-left:2px solid var(--line)}
+  .phase p:last-child{margin:0;color:var(--ink-soft)}
+  ul{margin:.2em 0 .9em;padding-left:1.25em}
+  li{margin:.28em 0}
+  .price-line{
+    background:var(--accent-soft);border:1px solid var(--line);
+    border-radius:10px;padding:12px 16px;margin:.4em 0 1em;
+  }
+  .price-line strong{color:var(--accent);font-size:1.08rem}
+  .price-line span{color:var(--ink-soft);font-size:.9rem}
+  .pay{margin:0 0 1.05em}
+  .pay .pt{color:var(--accent)}
+  .validity{margin-top:2em;padding-top:1em;border-top:1px solid var(--line);color:var(--ink-soft);font-size:.92rem}
+  .sig{margin-top:1.6em;color:var(--ink)}
+  .sig .ph{color:var(--ink-faint)}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="sheet">
+
+  <p>Dobrý den, Leni,</p>
+  <p>děkuji Vám za zaslání podrobných informací.</p>
+  <p>Data jsem bezpečně uložila pro případnou další práci. Pokud se dohodneme na spolupráci, budu z nich při realizaci vycházet. V opačném případě budou odstraněna. Veškerá data jsou uložena výhradně lokálně na mém počítači.</p>
+
+  <h2>Koncept řešení</h2>
+
+  <h3>Co bude aplikace umět</h3>
+
+  <div class="feat">
+    <p class="ft">Přehledná nástěnka</p>
+    <p>Po přihlášení budete mít okamžitý přehled o tom, co Vás čeká, které úkoly vyžadují pozornost a jaké termíny splatnosti se blíží. Odpadne nutnost sledovat vše ručně v Excelu nebo si informace pamatovat.</p>
+  </div>
+
+  <div class="feat">
+    <p class="ft">Platební kalendáře</p>
+    <p>Aplikace bude automaticky generovat daňové doklady za nájem, energie i vodu se správně nastaveným DPH, splatností a číselnými řadami. Doklady bude možné vytvářet jednotlivě i hromadně.</p>
+  </div>
+
+  <div class="feat">
+    <p class="ft">Nájemci a historie</p>
+    <p>U každého nájemce bude k dispozici kompletní historie cen, poznámky (např. „zajistit požární zprávu“) i přehled složených kaucí. Veškeré informace budou dostupné na jednom místě.</p>
+  </div>
+
+  <div class="feat">
+    <p class="ft">Smlouvy a nemovitosti</p>
+    <p>Systém poskytne jednotný přehled napříč třemi společnostmi i soukromými nemovitostmi. Součástí bude možnost přístupu více uživatelů s rozdílnými úrovněmi oprávnění.</p>
+  </div>
+
+  <div class="feat">
+    <p class="ft">Export a tisk</p>
+    <p>Doklady bude možné generovat do PDF ve Vámi požadované podobě. Přehledy a seznamy bude možné exportovat do Excelu a předávat účetní firmě.</p>
+  </div>
+
+  <div class="feat">
+    <p class="ft">Vaše data zůstávají u Vás</p>
+    <p>Aplikace poběží lokálně na Vašem serveru. Data nebudou odesílána mimo Vaši infrastrukturu.</p>
+  </div>
+
+  <h3>Co aktuální koncept nezahrnuje</h3>
+  <ul>
+    <li>Evidenci a správu revizí (kotle, komíny apod.)</li>
+    <li>Párování plateb s bankou</li>
+    <li>Evidenci uhrazených a neuhrazených plateb včetně automatických upozornění</li>
+  </ul>
+  <p>Tyto oblasti mohu v případě zájmu doplnit v navazující druhé etapě projektu.</p>
+
+  <h2>Postup realizace</h2>
+
+  <div class="phase">
+    <p class="pt">Nyní</p>
+    <p>Odsouhlasení prototypu – společně projdeme vzhled i logiku aplikace a doladíme případné úpravy.</p>
+  </div>
+
+  <div class="phase">
+    <p class="pt">Týdny 1–5</p>
+    <p>Vývoj základního jádra systému, datového modelu, evidence a generátoru platebních kalendářů. Funkčnost bude průběžně ověřována na ukázkových datech.</p>
+  </div>
+
+  <div class="phase">
+    <p class="pt">Týden 6</p>
+    <p>Nasazení aplikace na Váš server.</p>
+  </div>
+
+  <div class="phase">
+    <p class="pt">Týdny 7–8</p>
+    <p>Import Vašich dat, kontrola správnosti dokladů ve spolupráci s účetní, převod historických dat z Excelů, sjednocení číselných řad, zaškolení uživatelů, testování v provozu a následné spuštění ostrého provozu. V této fázi poskytuji maximální podporu online i osobně.</p>
+  </div>
+
+  <h2>Cenová nabídka</h2>
+
+  <p class="ft">Verze 1 – kompletní aplikace</p>
+  <div class="price-line">
+    <strong>Pevná cena: 149 000 Kč</strong><br>
+    <span>(nejsem plátce DPH)</span>
+  </div>
+  <p>Platba probíhá po jednotlivých etapách vždy na základě dokončených a odsouhlasených výstupů.</p>
+
+  <div class="pay">
+    <p class="pt">Fáze 1 – při podpisu smlouvy — 59 600 Kč (40 %)</p>
+    <ul>
+      <li>zahájení projektu</li>
+      <li>návrh datového modelu</li>
+      <li>vytvoření jádra systému a generátoru platebních kalendářů</li>
+    </ul>
+  </div>
+
+  <div class="pay">
+    <p class="pt">Fáze 2 – po nasazení — 44 700 Kč (30 %)</p>
+    <ul>
+      <li>funkční verze připravená k odsouhlasení</li>
+      <li>nasazení na Váš server</li>
+    </ul>
+  </div>
+
+  <div class="pay">
+    <p class="pt">Fáze 3 – předání projektu — 44 700 Kč (30 %)</p>
+    <ul>
+      <li>import a kontrola Vašich dat</li>
+      <li>nastavení dokladů „na korunu“</li>
+      <li>zaškolení</li>
+      <li>spuštění ostrého provozu</li>
+    </ul>
+  </div>
+
+  <p>Pokud byste chtěla začít v menším rozsahu, mohu připravit také variantu <strong>Základ za 99 000 Kč</strong>.</p>
+
+  <p>V ceně je zahrnut import dat, nasazení systému, zaškolení uživatelů a <strong>6 měsíců bezplatných oprav vad</strong>. Vadou se rozumí situace, kdy aplikace nefunguje v souladu s odsouhlaseným zadáním.</p>
+
+  <p>Nové funkce, změny nad rámec zadání a následná podpora jsou účtovány sazbou <strong>1 490 Kč/hod.</strong> na vyžádání (minimálně 1 hodina, při zásahu na místě také doprava).</p>
+
+  <h2>Vlastnictví programu a dat</h2>
+
+  <p>Je důležité rozlišovat mezi vlastnictvím dat a vlastnictvím programu.</p>
+  <p><strong>Vaše data jsou vždy ze 100 % Vaše.</strong> Jsou uložena na Vašem serveru, nikam neodcházejí a kdykoliv je možné je exportovat.</p>
+  <p>Program (zdrojový kód aplikace) získáváte formou licence. To znamená, že jej můžete trvale a bez omezení používat, avšak autorská práva ke zdrojovému kódu zůstávají zachována mně jako autorovi.</p>
+  <p>V praxi to znamená, že mohu využít stejný technologický základ i pro další projekty. Vaše data, nastavení ani konkrétní podobu řešení však nejsou nikomu poskytována. Díky tomuto modelu mohu nabídnout výrazně příznivější cenu.</p>
+  <p>Pokud byste měla zájem o výhradní vlastnictví programu včetně převodu zdrojového kódu, je i tato varianta možná. V takovém případě Vám připravím samostatnou cenovou kalkulaci.</p>
+
+  <p class="validity">Tato nabídka je orientační a platí do 21. 8. 2026.</p>
+
+  <div class="sig">
+    <p>S pozdravem,<br><span class="ph">[Vaše jméno / podpis]</span></p>
+  </div>
+
+</div>
